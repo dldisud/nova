@@ -49,13 +49,13 @@
   }
 
   function formatCount(value) {
-    return new Intl.NumberFormat("ko-KR").format(Number(value || 0));
+    return new Intl.NumberFormat(window.inkroadI18n.locale).format(Number(value || 0));
   }
 
   function formatDate(value) {
-    if (!value) return "날짜 정보 없음";
+    if (!value) return t("common.no_date");
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "날짜 정보 없음";
+    if (Number.isNaN(date.getTime())) return t("common.no_date");
     return new Intl.DateTimeFormat("ko-KR", {
       year: "numeric",
       month: "short",
@@ -64,7 +64,7 @@
   }
 
   function summary(work) {
-    return work.shortDescription || "작품 소개가 아직 짧게 정리되지 않았습니다.";
+    return work.shortDescription || t("common.no_description_short");
   }
 
   function cover(work) {
@@ -74,12 +74,12 @@
 
   function statusLabel(status) {
     const labels = {
-      serializing: "연재 중",
-      completed: "완결",
-      draft: "작성 중",
-      hiatus: "휴재"
+      serializing: t("status.serializing"),
+      completed: t("status.completed"),
+      draft: t("status.draft"),
+      hiatus: t("status.hiatus")
     };
-    return labels[status] || "정리 중";
+    return labels[status] || t("status.unknown");
   }
 
   function detailHref(slug) {
@@ -111,8 +111,8 @@
     refs.authShell.innerHTML =
       "<div class='auth-card' data-tone='warning'>" +
       "<div class='auth-head'>" +
-      "<span class='eyebrow'>연결 필요</span>" +
-      "<h2 class='auth-title'>Supabase 연결 값이 비어 있습니다</h2>" +
+      "<span class='eyebrow'>" + t("auth.config_title") + "</span>" +
+      "<h2 class='auth-title'>" + t("auth.config_message") + "</h2>" +
       "<p class='auth-text'><code>assets/supabase-config.js</code>에 프로젝트 URL과 공개 키를 먼저 넣어주세요.</p>" +
       "</div>" +
       "</div>";
@@ -122,18 +122,18 @@
   function renderSignedIn(session) {
     if (!refs.authShell) return;
     const profileName = session.user.user_metadata && session.user.user_metadata.display_name;
-    const displayName = profileName || session.user.email || "크리에이터";
+    const displayName = profileName || session.user.email || t("auth.creator");
     refs.authShell.innerHTML =
       "<div class='auth-card' data-tone='success'>" +
       "<div class='auth-status-row'>" +
       "<div class='auth-user'>" +
-      "<span class='auth-badge'>로그인됨</span>" +
+      "<span class='auth-badge'>" + t("auth.logged_in") + "</span>" +
       "<strong>" + esc(displayName) + "</strong>" +
       "<span class='auth-note'>이 계정으로 발행한 작품만 여기에서 불러옵니다.</span>" +
       "</div>" +
       "<div class='auth-actions'>" +
-      "<a class='button ghost' href='novel_upload_pc.html'>새 작품 쓰기</a>" +
-      "<button class='button secondary' type='button' data-creator-logout>로그아웃</button>" +
+      "<a class='button ghost' href='novel_upload_pc.html'>" + t("dashboard.new_work") + "</a>" +
+      "<button class='button secondary' type='button' data-creator-logout>" + t("auth.logout") + "</button>" +
       "</div>" +
       "</div>" +
       "</div>";
@@ -154,8 +154,8 @@
     refs.authShell.innerHTML =
       "<div class='auth-card'>" +
       "<div class='auth-head'>" +
-      "<span class='eyebrow'>크리에이터 로그인</span>" +
-      "<h2 class='auth-title'>내 작품을 보려면 먼저 로그인해야 합니다</h2>" +
+      "<span class='eyebrow'>" + t("dashboard.auth_gate_title") + "</span>" +
+      "<h2 class='auth-title'>" + t("dashboard.auth_gate_subtitle") + "</h2>" +
       "<p class='auth-text'>로그인된 계정의 작가 정보와 작품 목록을 연결해서 보여줍니다.</p>" +
       "</div>" +
       "<form class='auth-form' data-creator-auth-form>" +
@@ -187,7 +187,7 @@
           const result = await state.client.auth.signInWithPassword({ email: email, password: password });
           if (result.error) throw result.error;
         } catch (error) {
-          renderAuthGate(error.message || "로그인에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.login_failed"));
         }
       });
     }
@@ -214,7 +214,7 @@
             renderAuthGate("가입 요청이 접수되었습니다. 메일 인증이 켜져 있다면 메일 확인 후 다시 로그인하세요.");
           }
         } catch (error) {
-          renderAuthGate(error.message || "회원가입에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.signup_failed"));
         }
       });
     }
@@ -282,7 +282,7 @@
       if (!episodeMap.has(row.novel_id)) {
         episodeMap.set(row.novel_id, {
           episodeNumber: Number(row.episode_number || 1),
-          title: row.title || "최근 회차",
+          title: row.title || t("editor.latest_episode"),
           publishedAt: row.published_at || null
         });
       }
@@ -316,33 +316,33 @@
     if (!refs.featured) return;
     if (!work) {
       refs.featured.innerHTML =
-        "<div class='creator-featured-thumb'><img src='https://placehold.co/320x440/111827/f3f4f6?text=InkRoad' alt='기본 표지'></div>" +
+        "<div class='creator-featured-thumb'><img src='https://placehold.co/320x440/111827/f3f4f6?text=InkRoad' alt='" + t("common.default_cover_alt") + "'></div>" +
         "<div class='creator-featured-copy'>" +
-        "<span class='eyebrow'>가장 최근 작품</span>" +
-        "<h2>아직 등록한 작품이 없습니다</h2>" +
+        "<span class='eyebrow'>" + t("dashboard.featured_title") + "</span>" +
+        "<h2>" + t("dashboard.featured_empty") + "</h2>" +
         "<p>새 작품을 업로드하면 여기서 최근 작품과 마지막 회차를 바로 확인할 수 있습니다.</p>" +
-        "<div class='button-row'><a class='button primary' href='novel_upload_pc.html'>첫 작품 업로드</a></div>" +
+        "<div class='button-row'><a class='button primary' href='novel_upload_pc.html'>" + t("dashboard.first_work_cta") + "</a></div>" +
         "</div>";
       return;
     }
 
     const latest = work.latestEpisode
       ? "최근 발행: " + work.latestEpisode.episodeNumber + "화 · " + esc(work.latestEpisode.title)
-      : "최근 발행 회차가 아직 없습니다.";
+      : t("dashboard.no_latest");
     const tags = work.tags.length
       ? work.tags.slice(0, 4).map(function (tag) { return "<span class='creator-chip'>" + esc(tag) + "</span>"; }).join("")
-      : "<span class='creator-chip'>태그 없음</span>";
+      : "<span class='creator-chip'>" + t("common.no_tags") + "</span>";
 
     refs.featured.innerHTML =
       "<a class='creator-featured-thumb' href='" + detailHref(work.slug) + "'><img src='" + esc(cover(work)) + "' alt='" + esc(work.title) + " 표지'></a>" +
       "<div class='creator-featured-copy'>" +
-      "<span class='eyebrow'>가장 최근 작품</span>" +
+      "<span class='eyebrow'>" + t("dashboard.featured_title") + "</span>" +
       "<h2>" + esc(work.title) + "</h2>" +
       "<p>" + esc(summary(work)) + "</p>" +
       "<div class='creator-meta-row'><span class='creator-chip' data-tone='" + esc(work.status) + "'>" + statusLabel(work.status) + "</span><span class='creator-chip'>총 " + formatCount(work.totalEpisodeCount) + "화</span><span class='creator-chip'>조회 " + formatCount(work.viewCount) + "</span></div>" +
       "<p class='creator-help'>" + latest + "</p>" +
       "<div class='creator-tag-row'>" + tags + "</div>" +
-      "<div class='button-row'><a class='button primary' href='" + detailHref(work.slug) + "'>상세 보기</a><a class='button secondary' href='" + episodeUploadHref(work.slug) + "'>새 회차</a><a class='button ghost' href='" + viewerHref(work.slug, work.latestEpisode ? work.latestEpisode.episodeNumber : 1) + "'>읽기 확인</a></div>" +
+      "<div class='button-row'><a class='button primary' href='" + detailHref(work.slug) + "'>" + t("dashboard.detail_link") + "</a><a class='button secondary' href='" + episodeUploadHref(work.slug) + "'>" + t("dashboard.new_episode_link") + "</a><a class='button ghost' href='" + viewerHref(work.slug, work.latestEpisode ? work.latestEpisode.episodeNumber : 1) + "'>" + t("dashboard.read_check_link") + "</a></div>" +
       "</div>";
   }
 
@@ -378,7 +378,7 @@
       refs.list.innerHTML = "";
       refs.empty.hidden = false;
       refs.empty.innerHTML =
-        "<strong>아직 발행한 작품이 없습니다</strong>" +
+        "<strong>" + t("dashboard.no_works") + "</strong>" +
         "<p>먼저 업로드 페이지에서 작품 제목과 첫 회차를 입력해 한 작품을 만들어보세요.</p>" +
         "<div class='button-row' style='justify-content:center;'><a class='button primary' href='novel_upload_pc.html'>첫 작품 만들기</a></div>";
       return;
@@ -388,8 +388,8 @@
       refs.list.innerHTML = "";
       refs.empty.hidden = false;
       refs.empty.innerHTML =
-        "<strong>이 상태의 작품은 아직 없습니다</strong>" +
-        "<p>필터를 바꾸면 다른 작품을 볼 수 있습니다.</p>";
+        "<strong>" + t("dashboard.filtered_empty") + "</strong>" +
+        "<p>" + t("dashboard.filtered_empty_hint") + "</p>";
       return;
     }
 
@@ -397,23 +397,23 @@
     refs.list.innerHTML = works.map(function (work) {
       const tags = work.tags.length
         ? work.tags.slice(0, 3).map(function (tag) { return "<span class='creator-chip'>" + esc(tag) + "</span>"; }).join("")
-        : "<span class='creator-chip'>태그 없음</span>";
+        : "<span class='creator-chip'>" + t("common.no_tags") + "</span>";
       const latestLabel = work.latestEpisode
         ? work.latestEpisode.episodeNumber + "화 · " + esc(work.latestEpisode.title)
-        : "회차 정보 없음";
+        : t("dashboard.no_episode_info");
       return "<article class='creator-work-card'>" +
         "<a class='creator-work-thumb' href='" + detailHref(work.slug) + "'><img src='" + esc(cover(work)) + "' alt='" + esc(work.title) + " 표지'></a>" +
         "<div class='creator-work-copy'>" +
-        "<div class='creator-meta-row'><span class='creator-chip' data-tone='" + esc(work.status) + "'>" + statusLabel(work.status) + "</span><span class='meta-text'>마지막 수정 " + esc(formatDate(work.updatedAt)) + "</span></div>" +
+        "<div class='creator-meta-row'><span class='creator-chip' data-tone='" + esc(work.status) + "'>" + statusLabel(work.status) + "</span><span class='meta-text'>" + t("dashboard.last_modified") + esc(formatDate(work.updatedAt)) + "</span></div>" +
         "<h3>" + esc(work.title) + "</h3>" +
         "<p>" + esc(summary(work)) + "</p>" +
         "<div class='creator-tag-row'>" + tags + "</div>" +
         "<div class='creator-stat-row'><span class='meta-text'>무료 " + formatCount(work.freeEpisodeCount) + "화</span><span class='meta-text'>전체 " + formatCount(work.totalEpisodeCount) + "화</span><span class='meta-text'>조회 " + formatCount(work.viewCount) + "</span><span class='meta-text'>반응 " + work.reactionScore.toFixed(1) + "</span></div>" +
         "</div>" +
         "<div class='creator-work-side'>" +
-        "<span class='meta-text'>최근 회차</span>" +
+        "<span class='meta-text'>" + t("editor.latest_episode") + "</span>" +
         "<strong>" + latestLabel + "</strong>" +
-        "<div class='button-row creator-action-row'><a class='button small ghost' href='" + detailHref(work.slug) + "'>상세 보기</a><a class='button small secondary' href='" + episodeUploadHref(work.slug) + "'>새 회차</a><a class='button small primary' href='" + viewerHref(work.slug, work.latestEpisode ? work.latestEpisode.episodeNumber : 1) + "'>읽기 확인</a></div>" +
+        "<div class='button-row creator-action-row'><a class='button small ghost' href='" + detailHref(work.slug) + "'>" + t("dashboard.detail_link") + "</a><a class='button small secondary' href='" + episodeUploadHref(work.slug) + "'>" + t("dashboard.new_episode_link") + "</a><a class='button small primary' href='" + viewerHref(work.slug, work.latestEpisode ? work.latestEpisode.episodeNumber : 1) + "'>" + t("dashboard.read_check_link") + "</a></div>" +
         "</div>" +
         "</article>";
     }).join("");
@@ -485,7 +485,7 @@
 
   boot().catch(function (error) {
     console.error("[InkRoad] creator dashboard boot failed:", error);
-    renderAuthGate(error.message || "연결 중 오류가 생겼습니다.");
+    renderAuthGate(error.message || t("auth.boot_error"));
   });
 })();
 

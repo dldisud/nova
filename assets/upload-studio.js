@@ -98,7 +98,7 @@
     refs.preview.hidden = !state.previewMode;
     refs.previewToggles.forEach(function (button) {
       if (button.textContent.trim()) {
-        button.textContent = state.previewMode ? "편집으로 돌아가기" : "미리보기";
+        button.textContent = state.previewMode ? t("upload.preview_edit") : t("upload.preview_toggle");
       }
       button.setAttribute("aria-pressed", String(state.previewMode));
     });
@@ -108,7 +108,7 @@
     if (!refs.preview || !refs.body) return;
     const source = String(refs.body.value || "").trim();
     if (!source) {
-      refs.preview.innerHTML = "<p>본문을 입력하면 여기에서 읽는 화면처럼 미리볼 수 있습니다.</p>";
+      refs.preview.innerHTML = "<p>" + t("upload.preview_empty") + "</p>";
       return;
     }
 
@@ -136,7 +136,7 @@
       refs.coverPreview.hidden = true;
       refs.coverPreview.removeAttribute("src");
       refs.coverPlaceholder.hidden = false;
-      refs.coverHint.textContent = "클릭 또는 드래그하여 업로드";
+      refs.coverHint.textContent = t("upload.cover_hint");
       return;
     }
 
@@ -217,11 +217,11 @@
     refs.submitButtons.forEach(function (button) {
       button.disabled = disabled;
       if (state.busy) {
-        button.textContent = "발행 중...";
+        button.textContent = t("upload.publishing_button");
       } else if (!hasSession) {
-        button.textContent = "로그인 필요";
+        button.textContent = t("upload.login_required_button");
       } else {
-        button.textContent = "발행하기";
+        button.textContent = t("upload.publish_button");
       }
     });
   }
@@ -241,16 +241,16 @@
   function renderSignedIn(session) {
     if (!refs.authShell) return;
     const profileName = session.user.user_metadata && session.user.user_metadata.display_name;
-    const displayName = profileName || session.user.email || "크리에이터";
+    const displayName = profileName || session.user.email || t("auth.creator");
     refs.authShell.innerHTML =
       "<div class='auth-card' data-tone='success'>" +
       "<div class='auth-status-row'>" +
       "<div class='auth-user'>" +
-      "<span class='auth-badge'>로그인됨</span>" +
+      "<span class='auth-badge'>" + t("auth.logged_in") + "</span>" +
       "<strong>" + esc(displayName) + "</strong>" +
-      "<span class='auth-note'>표지 업로드와 작품 발행을 바로 진행할 수 있습니다.</span>" +
+      "<span class='auth-note'>" + t("upload.auth_note") + "</span>" +
       "</div>" +
-      "<div class='auth-actions'><a class='button ghost' href='creator_dashboard_pc.html'>내 작품 관리</a><button class='button secondary' type='button' data-upload-logout>로그아웃</button></div>" +
+      "<div class='auth-actions'><a class='button ghost' href='creator_dashboard_pc.html'>" + t("auth.manage_works") + "</a><button class='button secondary' type='button' data-upload-logout>" + t("auth.logout") + "</button></div>" +
       "</div>" +
       "</div>";
     showForm(true);
@@ -260,7 +260,7 @@
         try {
           await state.client.auth.signOut();
         } catch (error) {
-          setStatus(error.message || "로그아웃 중 오류가 생겼습니다.", "error");
+          setStatus(error.message || t("auth.logout_error"), "error");
         }
       });
     }
@@ -274,8 +274,8 @@
     refs.authShell.innerHTML =
       "<div class='auth-card'>" +
       "<div class='auth-head'>" +
-      "<span class='eyebrow'>크리에이터 로그인</span>" +
-      "<h2 class='auth-title'>작품을 올리려면 먼저 로그인해야 합니다</h2>" +
+      "<span class='eyebrow'>" + t("upload.auth_gate_title") + "</span>" +
+      "<h2 class='auth-title'>" + t("upload.auth_gate_subtitle") + "</h2>" +
       "<p class='auth-text'>지금 만든 작품은 로그인한 계정의 작가명으로 저장됩니다.</p>" +
       "</div>" +
       "<form class='auth-form' data-upload-auth-form>" +
@@ -305,9 +305,9 @@
         try {
           const result = await state.client.auth.signInWithPassword({ email: email, password: password });
           if (result.error) throw result.error;
-          setStatus("로그인되었습니다. 작품 발행을 계속하세요.", "success");
+          setStatus(t("auth.login_success"), "success");
         } catch (error) {
-          renderAuthGate(error.message || "로그인에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.login_failed"));
         }
       });
     }
@@ -331,12 +331,12 @@
           });
           if (result.error) throw result.error;
           if (result.data && result.data.session) {
-            setStatus("회원가입과 로그인이 완료되었습니다.", "success");
+            setStatus(t("auth.signup_success"), "success");
             return;
           }
           renderAuthGate("가입 요청이 접수되었습니다. 메일 인증이 켜져 있다면 메일 확인 후 다시 로그인하세요.");
         } catch (error) {
-          renderAuthGate(error.message || "회원가입에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.signup_failed"));
         }
       });
     }
@@ -347,8 +347,8 @@
     refs.authShell.innerHTML =
       "<div class='auth-card' data-tone='warning'>" +
       "<div class='auth-head'>" +
-      "<span class='eyebrow'>연결 필요</span>" +
-      "<h2 class='auth-title'>Supabase 연결 값이 비어 있습니다</h2>" +
+      "<span class='eyebrow'>" + t("auth.config_title") + "</span>" +
+      "<h2 class='auth-title'>" + t("auth.config_message") + "</h2>" +
       "<p class='auth-text'><code>assets/supabase-config.js</code>에 프로젝트 URL과 공개 키가 들어가야 업로드가 동작합니다.</p>" +
       "</div>" +
       "</div>";
@@ -359,16 +359,16 @@
     if (!file) return;
     const allowed = ["image/png", "image/jpeg", "image/webp", "image/gif"];
     if (allowed.indexOf(file.type) === -1) {
-      setStatus("표지는 JPG, PNG, WEBP, GIF만 올릴 수 있습니다.", "error");
+      setStatus(t("upload.cover_format_error"), "error");
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
-      setStatus("표지 이미지는 2MB 이하만 올릴 수 있습니다.", "error");
+      setStatus(t("upload.cover_size_error"), "error");
       return;
     }
     state.coverFile = file;
     setCoverPreview(file);
-    setStatus("표지 파일을 선택했습니다. 발행하면 함께 업로드됩니다.", "info");
+    setStatus(t("upload.cover_selected"), "info");
   }
 
   async function uploadCover(session) {
@@ -393,8 +393,8 @@
     const sessionResult = await state.client.auth.getSession();
     const session = sessionResult.data.session;
     if (!session) {
-      renderAuthGate("발행 전에 먼저 로그인해주세요.");
-      setStatus("로그인이 필요합니다.", "error");
+      renderAuthGate(t("upload.publish_auth_required"));
+      setStatus(t("auth.login_required_msg"), "error");
       return;
     }
 
@@ -410,24 +410,24 @@
     const tags = getSelectedTags();
 
     if (!title) {
-      setStatus("작품 제목을 입력해주세요.", "error");
+      setStatus(t("upload.title_required"), "error");
       refs.title.focus();
       return;
     }
     if (!episodeTitle) {
-      setStatus("첫 회차 제목을 입력해주세요.", "error");
+      setStatus(t("upload.episode_title_required"), "error");
       refs.episodeTitle.focus();
       return;
     }
     if (!body) {
-      setStatus("첫 회차 본문을 입력해주세요.", "error");
+      setStatus(t("upload.body_required"), "error");
       refs.body.focus();
       return;
     }
 
     state.busy = true;
     setSubmitState(true);
-    setStatus("표지 업로드와 작품 발행을 진행하고 있습니다...", "info");
+    setStatus(t("upload.publishing_message"), "info");
 
     try {
       const coverUrl = await uploadCover(session);
@@ -446,17 +446,17 @@
 
       if (rpcResult.error) throw rpcResult.error;
       const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
-      if (!row || !row.novel_slug) throw new Error("작품은 저장됐지만 이동할 주소를 찾지 못했습니다.");
+      if (!row || !row.novel_slug) throw new Error(t("upload.publish_address_error"));
 
-      setStatus("발행이 완료되었습니다. 상세 페이지로 이동합니다.", "success");
+      setStatus(t("upload.publish_success"), "success");
       refs.submitButtons.forEach(function (button) {
-        button.textContent = "이동 중...";
+        button.textContent = t("upload.publish_moving");
       });
       window.setTimeout(function () {
         window.location.href = "novel_detail_pc.html?slug=" + encodeURIComponent(row.novel_slug);
       }, 700);
     } catch (error) {
-      setStatus(error.message || "발행 중 오류가 생겼습니다.", "error");
+      setStatus(error.message || t("upload.publish_error"), "error");
       state.busy = false;
       setSubmitState(false);
     }
@@ -590,8 +590,8 @@
 
   boot().catch(function (error) {
     console.error("[InkRoad] upload studio boot failed:", error);
-    setStatus(error.message || "업로드 페이지를 준비하는 중 오류가 생겼습니다.", "error");
-    renderAuthGate("로그인 연결 중 문제가 생겼습니다. 잠시 후 다시 시도해주세요.");
+    setStatus(error.message || t("upload.boot_error"), "error");
+    renderAuthGate(t("auth.auth_boot_error"));
   });
 })();
 

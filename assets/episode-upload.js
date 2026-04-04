@@ -69,11 +69,11 @@
   }
 
   function formatCount(value) {
-    return new Intl.NumberFormat("ko-KR").format(Number(value || 0));
+    return new Intl.NumberFormat(window.inkroadI18n.locale).format(Number(value || 0));
   }
 
   function summary(work) {
-    return work.shortDescription || "작품 소개가 아직 짧게 정리되지 않았습니다.";
+    return work.shortDescription || t("common.no_description_short");
   }
 
   function cover(work) {
@@ -81,8 +81,8 @@
   }
 
   function statusLabel(st) {
-    var labels = { serializing: "연재 중", completed: "완결", draft: "작성 중", hiatus: "휴재" };
-    return labels[st] || "정리 중";
+    var labels = { serializing: t("status.serializing"), completed: t("status.completed"), draft: t("status.draft"), hiatus: t("status.hiatus") };
+    return labels[st] || t("status.unknown");
   }
 
   function viewerHref(slug, episodeNumber) {
@@ -107,11 +107,7 @@
 
   function formatTime(dateStr) {
     var d = new Date(dateStr);
-    var h = d.getHours();
-    var m = String(d.getMinutes()).padStart(2, "0");
-    var ampm = h < 12 ? "오전" : "오후";
-    var hour12 = h % 12 || 12;
-    return ampm + " " + hour12 + ":" + m;
+    return new Intl.DateTimeFormat(window.inkroadI18n.locale, { hour: "numeric", minute: "2-digit" }).format(d);
   }
 
   function formatDate(dateStr) {
@@ -154,7 +150,7 @@
     var disabled = Boolean(forceBusy || state.busy || !valid);
     refs.submitButtons.forEach(function (btn) {
       btn.disabled = disabled;
-      btn.textContent = state.busy ? "발행 중..." : "회차 발행";
+      btn.textContent = state.busy ? t("editor.publishing") : t("editor.publish");
     });
   }
 
@@ -193,7 +189,7 @@
         ["hr", "quote"],
         ["ul", "ol"]
       ],
-      placeholder: "에피소드 내용을 작성하세요...",
+      placeholder: t("editor.placeholder"),
       usageStatistics: false
     });
 
@@ -203,7 +199,7 @@
     });
 
     if (draft) {
-      setSaveStatus("임시 저장본 복원됨", "offline");
+      setSaveStatus(t("editor.draft_restored"), "offline");
     }
   }
 
@@ -255,7 +251,7 @@
     clearTimeout(state.debounceTimer);
     var current = getEditorContent();
     if (current !== state.lastSavedBody) {
-      setSaveStatus("변경사항 있음", "unsaved");
+      setSaveStatus(t("editor.unsaved"), "unsaved");
     }
     state.debounceTimer = setTimeout(saveDraft, 5000);
   }
@@ -280,7 +276,7 @@
 
     localStorage.setItem(draftKey(), body);
     state.lastSavedBody = body;
-    setSaveStatus("저장됨 " + formatTime(new Date().toISOString()), "saved");
+    setSaveStatus(t("editor.saved_at", { time: formatTime(new Date().toISOString()) }), "saved");
   }
 
   /* ── Snapshots (Supabase, for existing episodes) ── */
@@ -298,7 +294,7 @@
       return;
     }
 
-    setSaveStatus("저장 중...", "saving");
+    setSaveStatus(t("editor.saving"), "saving");
     try {
       var result = await state.client.from("episode_snapshots").insert({
         episode_id: episodeId,
@@ -308,12 +304,12 @@
       });
       if (result.error) throw result.error;
       state.lastSavedBody = body;
-      setSaveStatus("저장됨 " + formatTime(new Date().toISOString()), "saved");
+      setSaveStatus(t("editor.saved_at", { time: formatTime(new Date().toISOString()) }), "saved");
       await loadSnapshots();
     } catch (e) {
       console.error("[InkRoad] snapshot save failed:", e);
       localStorage.setItem(draftKey(), body);
-      setSaveStatus("오프라인 저장됨", "offline");
+      setSaveStatus(t("editor.offline_saved"), "offline");
     }
   }
 
@@ -344,7 +340,7 @@
     if (!refs.snapshotList) return;
 
     if (!state.snapshots.length) {
-      refs.snapshotList.innerHTML = "<p class='snapshot-list-empty'>저장된 스냅샷이 없습니다.</p>";
+      refs.snapshotList.innerHTML = "<p class='snapshot-list-empty'>" + esc(t("editor.no_snapshots")) + "</p>";
       return;
     }
 
@@ -359,9 +355,9 @@
           labelHtml +
         "</div>" +
         "<div class='snapshot-item-actions'>" +
-          "<button type='button' data-action='restore' data-id='" + esc(snap.id) + "'>복원</button>" +
-          "<button type='button' data-action='diff' data-id='" + esc(snap.id) + "'>비교</button>" +
-          "<button type='button' data-action='label' data-id='" + esc(snap.id) + "'>이름</button>" +
+          "<button type='button' data-action='restore' data-id='" + esc(snap.id) + "'>" + esc(t("editor.snapshot_restore")) + "</button>" +
+          "<button type='button' data-action='diff' data-id='" + esc(snap.id) + "'>" + esc(t("editor.snapshot_diff")) + "</button>" +
+          "<button type='button' data-action='label' data-id='" + esc(snap.id) + "'>" + esc(t("editor.snapshot_name")) + "</button>" +
         "</div>" +
       "</div>";
     }).join("");
@@ -381,20 +377,20 @@
     var snap = state.snapshots.find(function (s) { return s.id === id; });
     if (!snap) return;
 
-    var confirmed = window.confirm("현재 내용을 이 버전으로 교체합니다. 계속할까요?");
+    var confirmed = window.confirm(t("editor.restore_confirm"));
     if (!confirmed) return;
 
-    await saveSnapshot("복원 전 자동저장");
+    await saveSnapshot(t("editor.restore_auto_label"));
     setEditorContent(snap.body);
     state.lastSavedBody = snap.body;
-    setSaveStatus("버전 복원됨", "saved");
+    setSaveStatus(t("editor.restored"), "saved");
   }
 
   async function labelSnapshot(id) {
     var snap = state.snapshots.find(function (s) { return s.id === id; });
     if (!snap || !state.client) return;
 
-    var name = window.prompt("스냅샷 이름을 입력하세요:", snap.label || "");
+    var name = window.prompt(t("editor.snapshot_label_prompt"), snap.label || "");
     if (name === null) return;
 
     try {
@@ -406,7 +402,7 @@
       await loadSnapshots();
     } catch (e) {
       console.error("[InkRoad] label update failed:", e);
-      window.alert("이름 저장에 실패했습니다.");
+      window.alert(t("editor.snapshot_label_failed"));
     }
   }
 
@@ -450,16 +446,16 @@
   function renderConfigMessage() {
     if (!refs.authShell) return;
     refs.authShell.innerHTML =
-      "<div class='auth-card' data-tone='warning'><div class='auth-head'><span class='eyebrow'>연결 필요</span><h2 class='auth-title'>Supabase 연결 값이 비어 있습니다</h2><p class='auth-text'><code>assets/supabase-config.js</code>에 프로젝트 URL과 공개 키를 먼저 넣어주세요.</p></div></div>";
+      "<div class='auth-card' data-tone='warning'><div class='auth-head'><span class='eyebrow'>" + esc(t("auth.config_title")) + "</span><h2 class='auth-title'>" + esc(t("auth.config_message")) + "</h2><p class='auth-text'><code>assets/supabase-config.js</code>에 프로젝트 URL과 공개 키를 먼저 넣어주세요.</p></div></div>";
     showForm(false);
     showEmpty("연결값이 준비되면 회차를 발행할 수 있습니다.");
   }
 
   function renderSignedIn(session) {
     var profileName = session.user.user_metadata && session.user.user_metadata.display_name;
-    var displayName = profileName || session.user.email || "크리에이터";
+    var displayName = profileName || session.user.email || t("auth.creator");
     refs.authShell.innerHTML =
-      "<div class='auth-card' data-tone='success'><div class='auth-status-row'><div class='auth-user'><span class='auth-badge'>로그인됨</span><strong>" + esc(displayName) + "</strong><span class='auth-note'>내가 올린 작품에만 새 회차를 추가할 수 있습니다.</span></div><div class='auth-actions'><a class='button ghost' href='creator_dashboard_pc.html'>내 작품 관리</a><button class='button secondary' type='button' data-episode-logout>로그아웃</button></div></div></div>";
+      "<div class='auth-card' data-tone='success'><div class='auth-status-row'><div class='auth-user'><span class='auth-badge'>" + esc(t("auth.logged_in")) + "</span><strong>" + esc(displayName) + "</strong><span class='auth-note'>내가 올린 작품에만 새 회차를 추가할 수 있습니다.</span></div><div class='auth-actions'><a class='button ghost' href='creator_dashboard_pc.html'>" + esc(t("auth.manage_works")) + "</a><button class='button secondary' type='button' data-episode-logout>" + esc(t("auth.logout")) + "</button></div></div></div>";
     var logoutButton = q("[data-episode-logout]", refs.authShell);
     if (logoutButton) {
       logoutButton.addEventListener("click", async function () {
@@ -473,7 +469,7 @@
       ? "<p class='auth-note'>" + esc(message) + "</p>"
       : "<p class='auth-note'>업로드 페이지에서 쓰던 계정으로 로그인하면 내가 올린 작품 목록이 자동으로 뜹니다.</p>";
     refs.authShell.innerHTML =
-      "<div class='auth-card'><div class='auth-head'><span class='eyebrow'>크리에이터 로그인</span><h2 class='auth-title'>회차를 추가하려면 먼저 로그인해야 합니다</h2><p class='auth-text'>로그인한 계정이 올린 작품만 선택 목록에 나타납니다.</p></div><form class='auth-form' data-episode-auth-form><div class='auth-grid'><label class='auth-label'><span>이메일</span><input class='auth-input' type='email' name='email' placeholder='you@example.com' required></label><label class='auth-label'><span>비밀번호</span><input class='auth-input' type='password' name='password' minlength='8' placeholder='8자 이상' required></label></div><label class='auth-label'><span>닉네임</span><input class='auth-input' type='text' name='displayName' placeholder='처음 가입할 때만 사용됩니다'></label><div class='auth-actions'><button class='button primary' type='submit'>로그인</button><button class='button secondary' type='button' data-episode-signup>회원가입</button></div>" + note + "</form></div>";
+      "<div class='auth-card'><div class='auth-head'><span class='eyebrow'>" + esc(t("editor.auth_gate_title")) + "</span><h2 class='auth-title'>" + esc(t("editor.auth_gate_subtitle")) + "</h2><p class='auth-text'>로그인한 계정이 올린 작품만 선택 목록에 나타납니다.</p></div><form class='auth-form' data-episode-auth-form><div class='auth-grid'><label class='auth-label'><span>이메일</span><input class='auth-input' type='email' name='email' placeholder='you@example.com' required></label><label class='auth-label'><span>비밀번호</span><input class='auth-input' type='password' name='password' minlength='8' placeholder='8자 이상' required></label></div><label class='auth-label'><span>닉네임</span><input class='auth-input' type='text' name='displayName' placeholder='처음 가입할 때만 사용됩니다'></label><div class='auth-actions'><button class='button primary' type='submit'>로그인</button><button class='button secondary' type='button' data-episode-signup>회원가입</button></div>" + note + "</form></div>";
     showForm(false);
     showEmpty("로그인하면 회차 발행 폼이 열립니다.");
 
@@ -490,7 +486,7 @@
           var result = await state.client.auth.signInWithPassword({ email: email, password: password });
           if (result.error) throw result.error;
         } catch (error) {
-          renderAuthGate(error.message || "로그인에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.login_failed"));
         }
       });
     }
@@ -513,7 +509,7 @@
             renderAuthGate("가입 요청이 접수되었습니다. 메일 인증이 켜져 있다면 메일 확인 후 다시 로그인하세요.");
           }
         } catch (error) {
-          renderAuthGate(error.message || "회원가입에 실패했습니다.");
+          renderAuthGate(error.message || t("auth.signup_failed"));
         }
       });
     }
@@ -570,7 +566,7 @@
       if (!episodeMap.has(row.novel_id)) {
         episodeMap.set(row.novel_id, {
           episodeNumber: Number(row.episode_number || 0),
-          title: row.title || "최근 회차"
+          title: row.title || t("editor.latest_episode")
         });
       }
     });
@@ -610,20 +606,20 @@
     if (refs.selectedTags) {
       refs.selectedTags.innerHTML = work.tags.length
         ? work.tags.slice(0, 4).map(function (tag) { return "<span class='episode-chip'>" + esc(tag) + "</span>"; }).join("")
-        : "<span class='episode-chip'>태그 없음</span>";
+        : "<span class='episode-chip'>" + esc(t("common.no_tags")) + "</span>";
     }
 
     var draft = localStorage.getItem(draftKey());
     if (draft && !getEditorContent().trim()) {
       setEditorContent(draft);
-      setSaveStatus("임시 저장본 복원됨", "offline");
+      setSaveStatus(t("editor.draft_restored"), "offline");
     }
   }
 
   function renderNovelOptions() {
     if (!refs.novelSelect) return;
     if (!state.works.length) {
-      refs.novelSelect.innerHTML = "<option value=''>선택 가능한 작품이 없습니다</option>";
+      refs.novelSelect.innerHTML = "<option value=''>" + esc(t("editor.no_works_option")) + "</option>";
       return;
     }
     refs.novelSelect.innerHTML = state.works.map(function (work) {
@@ -651,7 +647,7 @@
     if (state.busy) return;
     var work = selectedWork();
     if (!work) {
-      setStatus("먼저 작품을 선택해주세요.", "error");
+      setStatus(t("editor.work_required"), "error");
       return;
     }
 
@@ -661,18 +657,18 @@
     var price = refs.priceInput ? Number(refs.priceInput.value || 0) : 0;
 
     if (!title) {
-      setStatus("회차 제목을 입력해주세요.", "error");
+      setStatus(t("editor.title_required"), "error");
       refs.titleInput.focus();
       return;
     }
     if (!body) {
-      setStatus("회차 본문을 입력해주세요.", "error");
+      setStatus(t("editor.body_required"), "error");
       return;
     }
 
     state.busy = true;
     setSubmitState(true);
-    setStatus("회차를 저장하고 발행하고 있습니다...", "info");
+    setStatus(t("editor.publishing_message"), "info");
 
     try {
       var rpcResult = await state.client.rpc("create_episode_for_author_novel", {
@@ -692,7 +688,7 @@
             episode_id: row.episode_id,
             author_id: state.authorId,
             body: body,
-            label: "발행됨"
+            label: t("editor.published_label")
           });
         } catch (ignore) { /* non-critical */ }
       }
@@ -700,13 +696,13 @@
       localStorage.removeItem(draftKey());
       stopAutoSave();
 
-      setStatus("회차 발행이 완료되었습니다. 읽기 화면으로 이동합니다.", "success");
-      refs.submitButtons.forEach(function (btn) { btn.textContent = "이동 중..."; });
+      setStatus(t("editor.publish_success"), "success");
+      refs.submitButtons.forEach(function (btn) { btn.textContent = t("editor.moving"); });
       window.setTimeout(function () {
         window.location.href = viewerHref(row.novel_slug, row.episode_number || ((work.totalEpisodeCount || 0) + 1));
       }, 700);
     } catch (error) {
-      setStatus(error.message || "회차 발행 중 오류가 생겼습니다.", "error");
+      setStatus(error.message || t("editor.publish_error"), "error");
       state.busy = false;
       setSubmitState(false);
     }
@@ -769,7 +765,7 @@
     state.works = await fetchWorks(state.session.user.id);
     if (!state.works.length) {
       showForm(false);
-      showEmpty("먼저 작품을 하나 발행해야 회차를 추가할 수 있습니다.", "첫 작품 업로드", "novel_upload_pc.html");
+      showEmpty(t("editor.no_works_message"), t("editor.first_work_upload"), "novel_upload_pc.html");
       return;
     }
 
@@ -820,6 +816,6 @@
 
   boot().catch(function (error) {
     console.error("[InkRoad] episode upload boot failed:", error);
-    renderAuthGate(error.message || "연결 중 오류가 생겼습니다.");
+    renderAuthGate(error.message || t("auth.config_message"));
   });
 })();

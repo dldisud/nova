@@ -16,6 +16,11 @@
   const EPISODE_PRICE = 300;
   let cachedCatalog = null;
 
+  window.addEventListener("inkroad-locale-change", function () {
+    var page = window.location.pathname.split("/").pop() || "";
+    if (typeof renderCurrentPage === "function") renderCurrentPage();
+  });
+
   function q(selector, root) {
     return (root || document).querySelector(selector);
   }
@@ -39,11 +44,11 @@
   }
 
   function formatCount(value) {
-    return new Intl.NumberFormat("ko-KR").format(Number(value || 0));
+    return new Intl.NumberFormat(window.inkroadI18n.locale).format(Number(value || 0));
   }
 
   function formatWon(value) {
-    return new Intl.NumberFormat("ko-KR").format(Number(value || 0)) + "원";
+    return new Intl.NumberFormat(window.inkroadI18n.locale).format(Number(value || 0)) + t("common.won");
   }
 
   function placeholder(title) {
@@ -59,7 +64,7 @@
   }
 
   function summary(novel) {
-    return novel.shortDescription || novel.description || "작품 소개가 아직 준비되지 않았습니다.";
+    return novel.shortDescription || novel.description || t("common.no_description");
   }
 
   function salePercent(novel) {
@@ -87,25 +92,25 @@
 
   function originLabel(code, isTranslation) {
     const map = {
-      KR: "한국",
-      JP: "일본",
-      CN: "중국",
-      US: "영미",
-      GB: "영미"
+      KR: t("origin.korea"),
+      JP: t("origin.japan"),
+      CN: t("origin.china"),
+      US: t("origin.western"),
+      GB: t("origin.western")
     };
     if (map[String(code || "").toUpperCase()]) return map[String(code || "").toUpperCase()];
-    return isTranslation ? "번역작" : "한국";
+    return isTranslation ? t("genre.translated") : t("origin.korea");
   }
 
   function translationDirection(novel) {
     const origin = originLabel(novel.originCountry, novel.isTranslation);
-    return novel.isTranslation ? origin + " → 한국" : "한국 → 영어";
+    return novel.isTranslation ? origin + " → " + t("origin.korea") : t("origin.korea") + " → 영어";
   }
 
   function countdownLabel(value) {
-    if (!value) return "진행 중";
+    if (!value) return t("countdown.ongoing");
     const diff = new Date(value).getTime() - Date.now();
-    if (!Number.isFinite(diff) || diff <= 0) return "마감 임박";
+    if (!Number.isFinite(diff) || diff <= 0) return t("countdown.urgent");
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const mins = Math.floor((diff / (1000 * 60)) % 60);
@@ -207,7 +212,7 @@
         bundleListPrice: novel.bundle_list_price !== null ? Number(novel.bundle_list_price) : null,
         bundleSalePrice: novel.bundle_sale_price !== null ? Number(novel.bundle_sale_price) : null,
         updatedAt: novel.updated_at || "",
-        authorName: author && author.pen_name ? author.pen_name : "작가 미상",
+        authorName: author && author.pen_name ? author.pen_name : t("common.unknown_author"),
         tags: tagMap.get(novel.id) || []
       };
       novelMap.set(mapped.id, mapped);
@@ -284,7 +289,7 @@
       const active = saved.has(button.dataset.bookmarkId);
       button.setAttribute("aria-pressed", String(active));
       const label = q("[data-bookmark-label]", button);
-      if (label) label.textContent = active ? "찜됨" : (label.dataset.defaultLabel || label.textContent || "찜하기");
+      if (label) label.textContent = active ? t("viewer.bookmark_done") : (label.dataset.defaultLabel || label.textContent || t("viewer.bookmark_add"));
     });
   }
 
@@ -297,8 +302,8 @@
         : "<span class='muted-badge'>편당 고정가</span>";
     const secondaryBadge = novel.isTranslation
       ? "<span class='muted-badge'>" + esc(originLabel(novel.originCountry, true)) + "</span>"
-      : "<span class='muted-badge'>한국</span>";
-    const meta = (novel.tags[0] || originLabel(novel.originCountry, novel.isTranslation)) + " · " + (novel.tags[1] || (novel.status === "completed" ? "완결" : "연재중"));
+      : "<span class='muted-badge'>" + t("origin.korea") + "</span>";
+    const meta = (novel.tags[0] || originLabel(novel.originCountry, novel.isTranslation)) + " · " + (novel.tags[1] || (novel.status === "completed" ? t("status.completed") : t("status.serializing")));
     const bottom = mode === "free"
       ? "<span class='price-current'>평점 " + novel.reactionScore.toFixed(1) + "</span>"
       : priceMarkup(novel, sale);
@@ -333,14 +338,14 @@
       .slice(0, 4);
     const freeNovels = data.novels.filter(function (novel) { return novel.freeEpisodeCount > 0; }).slice(0, 4);
     const genreDefs = [
-      { label: "판타지", match: function (novel) { return novel.tags.join(" ").indexOf("판타지") !== -1 || novel.tags.join(" ").indexOf("아카데미") !== -1; } },
-      { label: "로맨스", match: function (novel) { return novel.tags.join(" ").indexOf("로맨스") !== -1; } },
-      { label: "회귀", match: function (novel) { return novel.tags.join(" ").indexOf("회귀") !== -1; } },
-      { label: "아카데미", match: function (novel) { return novel.tags.join(" ").indexOf("아카데미") !== -1; } },
-      { label: "번역작", match: function (novel) { return novel.isTranslation; } },
-      { label: "피폐", match: function (novel) { return novel.tags.join(" ").indexOf("피폐") !== -1; } },
-      { label: "가문물", match: function (novel) { return novel.tags.join(" ").indexOf("가문") !== -1; } },
-      { label: "다크 판타지", match: function (novel) { return novel.tags.join(" ").indexOf("다크") !== -1 || novel.tags.join(" ").indexOf("피폐") !== -1; } }
+      { label: t("genre.fantasy"), match: function (novel) { return novel.tags.join(" ").indexOf("판타지") !== -1 || novel.tags.join(" ").indexOf("아카데미") !== -1; } },
+      { label: t("genre.romance"), match: function (novel) { return novel.tags.join(" ").indexOf("로맨스") !== -1; } },
+      { label: t("genre.regression"), match: function (novel) { return novel.tags.join(" ").indexOf("회귀") !== -1; } },
+      { label: t("genre.academy"), match: function (novel) { return novel.tags.join(" ").indexOf("아카데미") !== -1; } },
+      { label: t("genre.translated"), match: function (novel) { return novel.isTranslation; } },
+      { label: t("genre.dark"), match: function (novel) { return novel.tags.join(" ").indexOf("피폐") !== -1; } },
+      { label: t("genre.family"), match: function (novel) { return novel.tags.join(" ").indexOf("가문") !== -1; } },
+      { label: t("genre.dark_fantasy"), match: function (novel) { return novel.tags.join(" ").indexOf("다크") !== -1 || novel.tags.join(" ").indexOf("피폐") !== -1; } }
     ];
 
     const heroSale = salePercent(featured);
@@ -349,11 +354,11 @@
       direction: q(".hero-direction-badge"),
       genre: q(".hero-genre-badge")
     };
-    if (heroBadges.sale) heroBadges.sale.textContent = heroSale ? "-" + heroSale + "% 세일" : "신규 추천";
+    if (heroBadges.sale) heroBadges.sale.textContent = heroSale ? "-" + heroSale + "% 세일" : t("common.new_recommend");
     if (heroBadges.direction) heroBadges.direction.textContent = translationDirection(featured);
-    if (heroBadges.genre) heroBadges.genre.textContent = featured.tags[0] || (featured.isTranslation ? "번역작" : "한국작");
+    if (heroBadges.genre) heroBadges.genre.textContent = featured.tags[0] || (featured.isTranslation ? t("store.translated_work") : t("store.korean_work"));
     if (q(".hero-title-main")) q(".hero-title-main").textContent = featured.title;
-    if (q(".hero-title-sub")) q(".hero-title-sub").textContent = featured.subtitle || "번역명 없이도 표지가 먼저 읽히는 작품";
+    if (q(".hero-title-sub")) q(".hero-title-sub").textContent = featured.subtitle || t("store.hero_subtitle");
     if (q(".hero-description")) q(".hero-description").textContent = summary(featured);
     if (q(".hero-cover")) {
       q(".hero-cover").src = cover(featured);
@@ -372,7 +377,7 @@
       if (eventLead) {
         bannerNode.innerHTML = "<div class='sale-banner-copy'><span class='sale-badge'>진행 중인 세일</span><h2 class='sale-banner-title'>" + esc(eventLead.event.title) + "</h2><div class='sale-banner-meta'><span>참여 작품 " + formatCount(saleItems.length) + "개</span><span>최대 " + formatCount(eventLead.discountPercent || salePercent(eventLead.novel)) + "% 할인</span><span>" + esc(countdownLabel(eventLead.event.endsAt)) + "</span></div></div><a class='button secondary' href='search_pc.html'>전체 보기</a>";
       } else {
-        bannerNode.innerHTML = "<div class='sale-banner-copy'><span class='muted-badge'>이벤트 준비 중</span><h2 class='sale-banner-title'>다음 세일이 곧 열립니다</h2><div class='sale-banner-meta'><span>편당 고정 단가 300원</span><span>무료 구간 작품은 계속 열람 가능</span></div></div><a class='button secondary' href='search_pc.html'>스토어 보기</a>";
+        bannerNode.innerHTML = "<div class='sale-banner-copy'><span class='muted-badge'>" + t("store.sale_banner_title") + "</span><h2 class='sale-banner-title'>" + t("store.sale_banner_subtitle") + "</h2><div class='sale-banner-meta'><span>" + t("store.sale_banner_price") + "</span><span>" + t("store.sale_banner_free") + "</span></div></div><a class='button secondary' href='search_pc.html'>스토어 보기</a>";
       }
     }
 
@@ -406,11 +411,11 @@
       return chip.dataset.state && chip.dataset.state !== "off";
     });
     if (!active.length) {
-      box.innerHTML = "<span class='muted-badge'>필터를 눌러 결과를 좁혀보세요</span>";
+      box.innerHTML = "<span class='muted-badge'>" + t("store.filter_empty") + "</span>";
       return;
     }
     box.innerHTML = active.map(function (chip) {
-      const state = chip.dataset.state === "exclude" ? "제외" : "포함";
+      const state = chip.dataset.state === "exclude" ? t("store.filter_exclude") : "포함";
       const tone = chip.dataset.state === "exclude" ? "muted-badge" : "chip active";
       const label = (chip.dataset.label || chip.textContent || "").replace(/\s*·\s*(포함|제외)\s*$/, "").trim();
       return "<span class='" + tone + "'>" + state + ": " + esc(label) + "</span>";
@@ -433,7 +438,7 @@
           chip.dataset.state = "include";
           chip.classList.add("is-active");
           chip.classList.remove("is-excluded");
-          chip.textContent = chip.dataset.label + " · 포함";
+          chip.textContent = chip.dataset.label + t("store.filter_chip_include");
         }
       });
     }
@@ -447,7 +452,7 @@
         novel.tags.join(" "),
         originLabel(novel.originCountry, novel.isTranslation),
         translationDirection(novel),
-        novel.status === "completed" ? "완결" : "연재중",
+        novel.status === "completed" ? t("status.completed") : t("status.serializing"),
         novel.freeEpisodeCount > 0 ? "무료" : "유료",
         salePercent(novel) ? "세일 할인" : "정가"
       ].join(" ").toLowerCase();
@@ -476,7 +481,7 @@
       if (novel.freeEpisodeCount > 0) badges.push("<span class='free-badge'>" + formatCount(novel.freeEpisodeCount) + "화 무료</span>");
       if (sale) badges.push("<span class='sale-badge'>-" + sale + "%</span>");
       badges.push("<span class='muted-badge'>" + esc(originLabel(novel.originCountry, novel.isTranslation)) + "</span>");
-      if (novel.status === "completed") badges.push("<span class='muted-badge'>완결</span>");
+      if (novel.status === "completed") badges.push("<span class='muted-badge'>" + t("status.completed") + "</span>");
       return "<article class='novel-row' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'>" +
         "<a class='novel-row-thumb' href='" + detailHref(novel.slug) + "'><img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + " 표지'></a>" +
         "<div class='novel-row-copy'>" +
@@ -504,7 +509,7 @@
       if (summaryNode) summaryNode.textContent = formatCount(visible.length) + "개 작품";
       results.innerHTML = visible.length
         ? visible.map(cardMarkup).join("")
-        : "<div class='browse-empty'><strong>조건에 맞는 작품이 없습니다</strong><p>검색어를 줄이거나 필터를 하나씩 해제해보세요.</p></div>";
+        : "<div class='browse-empty'><strong>" + t("store.no_results") + "</strong><p>" + t("store.no_results_hint") + "</p></div>";
       renderFilterSummary();
     }
 
@@ -569,7 +574,7 @@
 
     var metaNode = q("[data-detail-meta]");
     if (metaNode) {
-      metaNode.innerHTML = "<div class='detail-meta-item'><span class='detail-meta-label'>작가</span><span class='detail-meta-value'>" + esc(novel.authorName) + "</span></div><div class='detail-meta-item'><span class='detail-meta-label'>상태</span><span class='detail-meta-value'>" + (novel.status === "completed" ? "완결" : "연재중") + " · " + formatCount(novel.totalEpisodeCount) + "화</span></div><div class='detail-meta-item'><span class='detail-meta-label'>평점</span><span class='detail-meta-value'>★ " + novel.reactionScore.toFixed(1) + "</span></div><div class='detail-meta-item'><span class='detail-meta-label'>출처</span><span class='detail-meta-value'>" + esc(translationDirection(novel)) + "</span></div>";
+      metaNode.innerHTML = "<div class='detail-meta-item'><span class='detail-meta-label'>작가</span><span class='detail-meta-value'>" + esc(novel.authorName) + "</span></div><div class='detail-meta-item'><span class='detail-meta-label'>상태</span><span class='detail-meta-value'>" + (novel.status === "completed" ? t("status.completed") : t("status.serializing")) + " · " + formatCount(novel.totalEpisodeCount) + "화</span></div><div class='detail-meta-item'><span class='detail-meta-label'>평점</span><span class='detail-meta-value'>★ " + novel.reactionScore.toFixed(1) + "</span></div><div class='detail-meta-item'><span class='detail-meta-label'>출처</span><span class='detail-meta-value'>" + esc(translationDirection(novel)) + "</span></div>";
     }
 
     var tagsNode = q("[data-detail-tags]");
@@ -585,7 +590,7 @@
 
     var priceBox = q("[data-price-box]");
     if (priceBox) {
-      priceBox.innerHTML = "<div><p class='price-box-label'>편당 가격</p><div class='price-box-values'>" + priceMarkup(novel) + "</div><p class='price-box-note'>유료 " + formatCount(paid.length) + "화 · " + esc(sale ? countdownLabel(saleEvent && saleEvent.event ? saleEvent.event.endsAt : null) : "상시 판매") + "</p></div><a class='button sale' href='" + viewerHref(novel.slug, paid[0] ? paid[0].episodeNumber : 1) + "'>구매하기</a>";
+      priceBox.innerHTML = "<div><p class='price-box-label'>" + t("viewer.per_price") + "</p><div class='price-box-values'>" + priceMarkup(novel) + "</div><p class='price-box-note'>유료 " + formatCount(paid.length) + "화 · " + esc(sale ? countdownLabel(saleEvent && saleEvent.event ? saleEvent.event.endsAt : null) : t("viewer.regular_sale")) + "</p></div><a class='button sale' href='" + viewerHref(novel.slug, paid[0] ? paid[0].episodeNumber : 1) + "'>구매하기</a>";
     }
 
     var episodeListNode = q("[data-episode-list]");
@@ -601,7 +606,7 @@
           rows.push("<div class='episode-row'><div class='episode-row-left'><span class='episode-num'>" + String(episode.episodeNumber).padStart(2, "0") + "</span><a class='episode-title' href='" + viewerHref(novel.slug, episode.episodeNumber) + "'>" + esc(episode.title) + "</a></div>" + (saleEpisodePrice < EPISODE_PRICE ? "<span class='price-old'>" + formatWon(EPISODE_PRICE) + "</span><span class='price-sale'>" + formatWon(saleEpisodePrice) + "</span>" : "<span class='price-current'>" + formatWon(EPISODE_PRICE) + "</span>") + "</div>");
         });
       }
-      episodeListNode.innerHTML = rows.join("") || "<div class='episode-row'><span class='episode-num'>-</span><span class='episode-title'>표시할 회차가 없습니다</span></div>";
+      episodeListNode.innerHTML = rows.join("") || "<div class='episode-row'><span class='episode-num'>-</span><span class='episode-title'>" + t("viewer.no_episodes") + "</span></div>";
     }
 
     qa("[data-tab-target]").forEach(function (button) {
@@ -632,8 +637,8 @@
           return "<p>" + esc(paragraph).replace(/\n/g, "<br>") + "</p>";
         }).join(""))
       : (selected.accessType === "paid"
-        ? "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || "다음 회차 미리보기만 열려 있습니다.") + "</p>"
-        : "<p>본문이 아직 준비되지 않았습니다.</p>");
+        ? "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || t("viewer.teaser_fallback")) + "</p>"
+        : "<p>" + t("viewer.body_unavailable") + "</p>");
 
     document.title = "INKROAD | " + novel.title + " " + selected.episodeNumber + "화";
     var progress = Math.max(0, Math.min(100, Math.round((selected.episodeNumber / Math.max(novel.totalEpisodeCount || 1, 1)) * 100)));
@@ -643,7 +648,7 @@
     if (q("[data-reader-nav-episode]")) q("[data-reader-nav-episode]").textContent = selected.episodeNumber + "화";
     if (q("[data-chapter-volume]")) q("[data-chapter-volume]").textContent = translationDirection(novel);
     if (q("[data-chapter-title]")) q("[data-chapter-title]").textContent = selected.title;
-    if (q("[data-chapter-access]")) q("[data-chapter-access]").textContent = selected.accessType === "free" ? "무료 공개 회차" : "유료 회차";
+    if (q("[data-chapter-access]")) q("[data-chapter-access]").textContent = selected.accessType === "free" ? t("viewer.free_episode") : t("viewer.paid_episode");
     if (q("[data-reader-content]")) {
       q("[data-reader-content]").innerHTML = currentBody;
       q("[data-reader-content]").classList.add("reader-protected");
@@ -673,7 +678,7 @@
         if (paywallTitle) paywallTitle.textContent = next.title;
         if (paywallPrices) paywallPrices.innerHTML = priceMarkup(novel);
         if (paywallDetail) paywallDetail.href = detailHref(novel.slug);
-        if (paywallNote) paywallNote.textContent = "다음 화부터 유료입니다. 할인 중일 때 구매하면 저렴합니다.";
+        if (paywallNote) paywallNote.textContent = t("viewer.paywall_note");
       } else {
         paywall.style.display = "none";
       }
@@ -686,13 +691,13 @@
 
     if (prevNav) {
       prevNav.innerHTML = prev
-        ? "<a href='" + viewerHref(novel.slug, prev.episodeNumber) + "'>← 이전화</a>"
-        : "<span style='color:var(--text-muted);'>처음 화</span>";
+        ? "<a href='" + viewerHref(novel.slug, prev.episodeNumber) + "'>" + t("viewer.prev") + "</a>"
+        : "<span style='color:var(--text-muted);'>" + t("viewer.first_episode") + "</span>";
     }
     if (nextNav) {
       nextNav.innerHTML = next
-        ? "<a href='" + viewerHref(novel.slug, next.episodeNumber) + "'>" + (next.accessType === "free" ? "다음화 →" : "다음화 (유료) →") + "</a>"
-        : "<span style='color:var(--text-muted);'>마지막 화</span>";
+        ? "<a href='" + viewerHref(novel.slug, next.episodeNumber) + "'>" + (next.accessType === "free" ? t("viewer.next") : t("viewer.next_paid")) + "</a>"
+        : "<span style='color:var(--text-muted);'>" + t("viewer.last_episode") + "</span>";
     }
     if (positionNode) positionNode.textContent = selected.episodeNumber + " / " + formatCount(novel.totalEpisodeCount);
     if (tocBtn) {
@@ -730,11 +735,11 @@
         (isLoggedIn ? "<span class='muted-badge'>읽는 중 —</span><span class='muted-badge'>구매 —</span>" : "");
     }
 
-    var loginPrompt = "<div class='library-empty'><h3>로그인이 필요합니다</h3><p>읽기 진행 상황과 구매 내역은 로그인 후 확인할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
+    var loginPrompt = "<div class='library-empty'><h3>" + t("library.login_required") + "</h3><p>" + t("library.login_subtitle") + "</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
 
     if (readingList) {
       readingList.innerHTML = isLoggedIn
-        ? "<div class='library-empty'><h3>아직 읽은 작품이 없습니다</h3><p>스토어에서 작품을 골라 읽기를 시작해보세요.</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>"
+        ? "<div class='library-empty'><h3>" + t("library.no_reading") + "</h3><p>" + t("library.no_reading_hint") + "</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>"
         : loginPrompt;
     }
 
@@ -755,13 +760,13 @@
             "</article>";
         }).join("");
       } else {
-        wishlistList.innerHTML = "<div class='library-empty'><h3>찜한 작품이 없습니다</h3><p>작품 상세에서 ♥ 버튼을 눌러 찜해보세요.</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>";
+        wishlistList.innerHTML = "<div class='library-empty'><h3>" + t("library.no_bookmarks") + "</h3><p>" + t("library.no_bookmarks_hint") + "</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>";
       }
     }
 
     if (purchasedList) {
       purchasedList.innerHTML = isLoggedIn
-        ? "<div class='library-empty'><h3>구매한 작품이 없습니다</h3><p>유료 회차를 구매하면 여기에 표시됩니다.</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>"
+        ? "<div class='library-empty'><h3>" + t("library.no_purchases") + "</h3><p>" + t("library.no_purchases_hint") + "</p><a class='button primary' href='search_pc.html'>작품 탐색하기</a></div>"
         : loginPrompt;
     }
 
@@ -895,7 +900,7 @@
 
     if (!isLoggedIn) {
       if (q(".creator-main")) {
-        q(".creator-main").innerHTML = "<div class='creator-empty'><h3>로그인이 필요합니다</h3><p>작품 관리는 로그인 후 이용할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
+        q(".creator-main").innerHTML = "<div class='creator-empty'><h3>" + t("library.login_required") + "</h3><p>작품 관리는 로그인 후 이용할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
       }
       return;
     }
@@ -906,9 +911,9 @@
 
     if (statsNode) {
       statsNode.innerHTML =
-        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>auto_stories</span><div class='summary-card-value'>" + formatCount(novels.length) + "</div><div class='summary-card-label'>등록 작품</div></div>" +
-        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>list</span><div class='summary-card-value'>" + formatCount(totalEpisodes) + "</div><div class='summary-card-label'>총 회차</div></div>" +
-        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>visibility</span><div class='summary-card-value'>" + formatCount(totalViews) + "</div><div class='summary-card-label'>총 조회수</div></div>";
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>auto_stories</span><div class='summary-card-value'>" + formatCount(novels.length) + "</div><div class='summary-card-label'>" + t("dashboard.registered_works") + "</div></div>" +
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>list</span><div class='summary-card-value'>" + formatCount(totalEpisodes) + "</div><div class='summary-card-label'>" + t("dashboard.total_episodes") + "</div></div>" +
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>visibility</span><div class='summary-card-value'>" + formatCount(totalViews) + "</div><div class='summary-card-label'>" + t("dashboard.total_views") + "</div></div>";
     }
 
     if (!novels.length) {
@@ -921,10 +926,10 @@
     if (listNode) {
       listNode.innerHTML = novels.map(function (novel) {
         var statusBadge = novel.status === "completed"
-          ? "<span class='free-badge'>완결</span>"
+          ? "<span class='free-badge'>" + t("status.completed") + "</span>"
           : novel.status === "draft"
             ? "<span class='muted-badge' style='opacity:0.6;'>비공개</span>"
-            : "<span class='muted-badge'>연재중</span>";
+            : "<span class='muted-badge'>" + t("status.serializing") + "</span>";
         return "<article class='creator-work-row'>" +
           "<div class='creator-work-row-thumb'><img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'></div>" +
           "<div class='creator-work-row-copy'>" +
@@ -950,7 +955,7 @@
 
     if (!isLoggedIn) {
       if (q(".creator-main")) {
-        q(".creator-main").innerHTML = "<div class='creator-empty'><h3>로그인이 필요합니다</h3><p>통계는 로그인 후 확인할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
+        q(".creator-main").innerHTML = "<div class='creator-empty'><h3>" + t("library.login_required") + "</h3><p>통계는 로그인 후 확인할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
       }
       return;
     }
@@ -965,7 +970,7 @@
 
     if (kpiNode) {
       kpiNode.innerHTML =
-        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>visibility</span><div class='kpi-card-value'>" + formatCount(totalViews) + "</div><div class='kpi-card-label'>총 조회수</div></div>" +
+        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>visibility</span><div class='kpi-card-value'>" + formatCount(totalViews) + "</div><div class='kpi-card-label'>" + t("dashboard.total_views") + "</div></div>" +
         "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>favorite</span><div class='kpi-card-value'>" + formatCount(bookmarks.length) + "</div><div class='kpi-card-label'>총 찜 수</div></div>" +
         "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>chat_bubble</span><div class='kpi-card-value'>" + formatCount(totalComments) + "</div><div class='kpi-card-label'>총 댓글 수</div></div>" +
         "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>payments</span><div class='kpi-card-value'>" + formatWon(estimatedRevenue) + "</div><div class='kpi-card-label'>추정 수익</div></div>";
@@ -1067,7 +1072,7 @@
     }
     if (ctaNode) {
       ctaNode.innerHTML =
-        "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(featured.slug, 1) + "'>무료로 읽기</a>" +
+        "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(featured.slug, 1) + "'>" + t("store.read_free") + "</a>" +
         "<button class='button secondary' data-bookmark='" + esc(featured.slug) + "'>♥ 찜</button>";
     }
 
@@ -1147,7 +1152,7 @@
       btn.addEventListener("click", function () {
         var type = btn.dataset.filter;
         var options = type === "origin" ? ["", "한국", "영미"] : type === "status" ? ["", "ongoing", "completed"] : ["viewCount", "reactionScore", "updatedAt"];
-        var labels = type === "origin" ? ["출처 ▾", "한국", "영미"] : type === "status" ? ["상태 ▾", "연재중", "완결"] : ["정렬 ▾", "평점순", "최신순"];
+        var labels = type === "origin" ? [t("store.origin_filter"), t("store.korean_work"), t("store.translated_work")] : type === "status" ? [t("store.status_filter"), t("status.serializing"), t("status.completed")] : [t("store.sort_filter"), t("store.sort_rating"), t("store.sort_latest")];
         var current = type === "origin" ? filters.origin : type === "status" ? filters.status : "";
         var idx = options.indexOf(current);
         var next = (idx + 1) % options.length;
@@ -1197,20 +1202,20 @@
     }
 
     if (synopsisNode) {
-      synopsisNode.textContent = novel.description || novel.shortDescription || "소개글이 없습니다.";
+      synopsisNode.textContent = novel.description || novel.shortDescription || t("store.synopsis_empty");
     }
 
     if (moreBtn) {
       moreBtn.addEventListener("click", function () {
         if (synopsisNode) synopsisNode.classList.toggle("clamped");
-        moreBtn.textContent = synopsisNode.classList.contains("clamped") ? "더보기" : "접기";
+        moreBtn.textContent = synopsisNode.classList.contains("clamped") ? t("store.synopsis_more") : t("store.synopsis_less");
       });
     }
 
     if (ctaNode) {
       var freeEp = list.find(function (ep) { return ep.episodeNumber === 1; }) || list[0];
       ctaNode.innerHTML =
-        "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(novel.slug, freeEp ? freeEp.episodeNumber : 1) + "'>무료로 읽기</a>" +
+        "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(novel.slug, freeEp ? freeEp.episodeNumber : 1) + "'>" + t("store.read_free") + "</a>" +
         "<button class='button secondary' data-bookmark='" + esc(novel.slug) + "'>♥ 찜</button>";
     }
 
@@ -1326,11 +1331,11 @@
       statsNode.textContent = "찜 " + formatCount(bookmarkedNovels.length) + "개";
     }
 
-    var loginPrompt = "<div class='library-empty'><h3>로그인이 필요합니다</h3><p>로그인 후 확인할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
+    var loginPrompt = "<div class='library-empty'><h3>" + t("library.login_required") + "</h3><p>로그인 후 확인할 수 있습니다.</p><a class='button primary' href='auth_pc.html'>로그인</a></div>";
 
     if (readingList) {
       readingList.innerHTML = isLoggedIn
-        ? "<div class='library-empty'><h3>아직 읽은 작품이 없습니다</h3><p>스토어에서 작품을 골라 읽어보세요.</p><a class='button primary' href='search.html'>작품 탐색하기</a></div>"
+        ? "<div class='library-empty'><h3>" + t("library.no_reading") + "</h3><p>스토어에서 작품을 골라 읽어보세요.</p><a class='button primary' href='search.html'>작품 탐색하기</a></div>"
         : loginPrompt;
     }
 
@@ -1348,13 +1353,13 @@
             "</a>";
         }).join("");
       } else {
-        wishlistList.innerHTML = "<div class='library-empty'><h3>찜한 작품이 없습니다</h3><p>작품 상세에서 ♥ 버튼을 눌러 찜해보세요.</p><a class='button primary' href='search.html'>탐색하기</a></div>";
+        wishlistList.innerHTML = "<div class='library-empty'><h3>" + t("library.no_bookmarks") + "</h3><p>" + t("library.no_bookmarks_hint") + "</p><a class='button primary' href='search.html'>탐색하기</a></div>";
       }
     }
 
     if (purchasedList) {
       purchasedList.innerHTML = isLoggedIn
-        ? "<div class='library-empty'><h3>구매한 작품이 없습니다</h3><p>유료 회차를 구매하면 여기에 표시됩니다.</p><a class='button primary' href='search.html'>탐색하기</a></div>"
+        ? "<div class='library-empty'><h3>" + t("library.no_purchases") + "</h3><p>" + t("library.no_purchases_hint") + "</p><a class='button primary' href='search.html'>탐색하기</a></div>"
         : loginPrompt;
     }
 

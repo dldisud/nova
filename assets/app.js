@@ -40,7 +40,7 @@
 
       const labelNode = button.querySelector("[data-bookmark-label]");
       if (labelNode) {
-        labelNode.textContent = isSaved ? "찜됨" : "찜하기";
+        labelNode.textContent = isSaved ? t("viewer.bookmark_done") : t("viewer.bookmark_add");
       }
     });
   };
@@ -106,7 +106,7 @@
     if (!active.length) {
       const empty = document.createElement("span");
       empty.className = "muted-badge";
-      empty.textContent = "필터를 눌러 포함 / 제외 상태를 바꿔보세요";
+      empty.textContent = t("store.filter_instruction");
       activeFilterBox.appendChild(empty);
       return;
     }
@@ -114,7 +114,7 @@
     active.forEach((chip) => {
       const tag = document.createElement("span");
       tag.className = chip.state === "include" ? "status-pill active" : "sale-badge";
-      tag.textContent = chip.state === "include" ? `포함: ${chip.label}` : `제외: ${chip.label}`;
+      tag.textContent = chip.state === "include" ? t("store.filter_include_prefix") + chip.label : t("store.filter_exclude_prefix") + chip.label;
       activeFilterBox.appendChild(tag);
     });
   };
@@ -129,9 +129,9 @@
       chip.textContent = chip.dataset.label || chip.textContent.trim();
 
       if (next === "include") {
-        chip.textContent = `${chip.dataset.label} · 포함`;
+        chip.textContent = chip.dataset.label + t("store.filter_chip_include");
       } else if (next === "exclude") {
-        chip.textContent = `${chip.dataset.label} · 제외`;
+        chip.textContent = chip.dataset.label + t("store.filter_chip_exclude");
       }
 
       renderActiveFilters();
@@ -275,11 +275,11 @@
   }
 
   function money(value) {
-    return Number(value || 0).toLocaleString("ko-KR") + "원";
+    return Number(value || 0).toLocaleString(window.inkroadI18n.locale) + t("common.won");
   }
 
   function count(value) {
-    return Number(value || 0).toLocaleString("ko-KR");
+    return Number(value || 0).toLocaleString(window.inkroadI18n.locale);
   }
 
   function inFilter(values) {
@@ -320,7 +320,7 @@
       const active = saved.has(button.dataset.bookmarkId);
       button.setAttribute("aria-pressed", String(active));
       const label = q("[data-bookmark-label]", button);
-      if (label) label.textContent = active ? "찜됨" : "찜하기";
+      if (label) label.textContent = active ? t("viewer.bookmark_done") : t("viewer.bookmark_add");
     });
   }
 
@@ -434,7 +434,7 @@
         commentCount: Number(novel.comment_count || 0),
         bundleListPrice: novel.bundle_list_price !== null ? Number(novel.bundle_list_price) : null,
         bundleSalePrice: novel.bundle_sale_price !== null ? Number(novel.bundle_sale_price) : null,
-        authorName: novel.authors && novel.authors.pen_name ? novel.authors.pen_name : "작가 미상",
+        authorName: novel.authors && novel.authors.pen_name ? novel.authors.pen_name : t("common.unknown_author"),
         tags: tagMap.get(novel.id) || []
       };
       novelMap.set(mapped.id, mapped);
@@ -486,7 +486,7 @@
   }
 
   function summary(novel) {
-    return novel.shortDescription || novel.description || "작품 소개가 아직 준비되지 않았습니다.";
+    return novel.shortDescription || novel.description || t("common.no_description");
   }
 
   function cover(novel) {
@@ -530,7 +530,7 @@
       if (storyCopy) storyCopy.textContent = summary(featured);
       const storyMeta = q(".story-image-meta");
       if (storyMeta) {
-        storyMeta.innerHTML = "<span>무료 공개 " + featured.freeEpisodeCount + "화</span><span>반응 " + featured.reactionScore.toFixed(1) + "</span><span>" + esc(featured.tags[0] || (featured.isTranslation ? "번역작" : "한국작")) + "</span>";
+        storyMeta.innerHTML = "<span>무료 공개 " + featured.freeEpisodeCount + "화</span><span>반응 " + featured.reactionScore.toFixed(1) + "</span><span>" + esc(featured.tags[0] || (featured.isTranslation ? t("store.translated_work") : t("store.korean_work"))) + "</span>";
       }
       const board = q(".offer-board");
       if (board && offers.length) {
@@ -554,7 +554,7 @@
       if (focusCopy) focusCopy.textContent = summary(featured);
       const focusMeta = q(".mobile-focus-meta");
       if (focusMeta) {
-        focusMeta.innerHTML = "<span>무료 공개 " + featured.freeEpisodeCount + "화</span><span>반응 " + featured.reactionScore.toFixed(1) + "</span><span>" + esc(featured.tags[0] || (featured.isTranslation ? "번역작" : "한국작")) + "</span>";
+        focusMeta.innerHTML = "<span>무료 공개 " + featured.freeEpisodeCount + "화</span><span>반응 " + featured.reactionScore.toFixed(1) + "</span><span>" + esc(featured.tags[0] || (featured.isTranslation ? t("store.translated_work") : t("store.korean_work"))) + "</span>";
       }
       const focusButtons = qa(".mobile-focus-copy .button-row a");
       if (focusButtons[0]) focusButtons[0].href = detailHref(featured.slug);
@@ -592,7 +592,7 @@
       const results = q(".browse-results");
       if (results) {
         results.innerHTML = novels.map(function (novel) {
-          return "<article class='browse-result' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'><a class='browse-result-media' href='" + detailHref(novel.slug) + "'><img src='" + cover(novel) + "' alt='" + esc(novel.title) + " 표지'></a><div class='browse-result-main'><div class='detail-line'><span class='free-badge'>" + (novel.freeEpisodeCount > 0 ? "첫 " + novel.freeEpisodeCount + "화 무료" : novel.status === "completed" ? "완결" : "연재중") + "</span>" + (salePercent(novel) ? "<span class='sale-badge'>완결 번들 " + salePercent(novel) + "%</span>" : "") + "<span class='muted-badge'>" + (novel.isTranslation ? "번역작" : "한국작") + "</span></div><h2>" + esc(novel.title) + "</h2><p>" + esc(summary(novel)) + "</p><div class='detail-line'>" + (novel.tags || []).slice(0, 3).map(function (tag, index) { return "<span class='chip" + (index < 2 ? " active" : "") + "'>" + esc(tag) + "</span>"; }).join("") + "</div></div><div class='browse-result-side'><span class='meta-text'>반응 " + novel.reactionScore.toFixed(1) + "</span><a class='button small primary' href='" + detailHref(novel.slug) + "'>상세 보기</a></div></article>";
+          return "<article class='browse-result' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'><a class='browse-result-media' href='" + detailHref(novel.slug) + "'><img src='" + cover(novel) + "' alt='" + esc(novel.title) + " 표지'></a><div class='browse-result-main'><div class='detail-line'><span class='free-badge'>" + (novel.freeEpisodeCount > 0 ? "첫 " + novel.freeEpisodeCount + "화 무료" : novel.status === "completed" ? "완결" : "연재중") + "</span>" + (salePercent(novel) ? "<span class='sale-badge'>완결 번들 " + salePercent(novel) + "%</span>" : "") + "<span class='muted-badge'>" + (novel.isTranslation ? t("store.translated_work") : t("store.korean_work")) + "</span></div><h2>" + esc(novel.title) + "</h2><p>" + esc(summary(novel)) + "</p><div class='detail-line'>" + (novel.tags || []).slice(0, 3).map(function (tag, index) { return "<span class='chip" + (index < 2 ? " active" : "") + "'>" + esc(tag) + "</span>"; }).join("") + "</div></div><div class='browse-result-side'><span class='meta-text'>반응 " + novel.reactionScore.toFixed(1) + "</span><a class='button small primary' href='" + detailHref(novel.slug) + "'>상세 보기</a></div></article>";
         }).join("");
       }
     } else {
@@ -610,7 +610,7 @@
       const results = q(".mobile-result-list");
       if (results) {
         results.innerHTML = novels.map(function (novel) {
-          return "<article class='mobile-row' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'><a class='mobile-row-media' href='" + detailHref(novel.slug) + "'><img src='" + cover(novel) + "' alt='" + esc(novel.title) + " 표지'></a><div class='mobile-row-body'><div class='detail-line'><span class='free-badge'>" + (novel.freeEpisodeCount > 0 ? "첫 " + novel.freeEpisodeCount + "화 무료" : novel.status === "completed" ? "완결" : "연재중") + "</span>" + (salePercent(novel) ? "<span class='sale-badge'>완결 번들 " + salePercent(novel) + "%</span>" : "") + "<span class='muted-badge'>" + (novel.isTranslation ? "번역작" : "한국작") + "</span></div><h3 class='mobile-row-title'>" + esc(novel.title) + "</h3><p class='mobile-row-copy'>" + esc(summary(novel)) + "</p><div class='mobile-row-meta'><span>" + esc(novel.tags[0] || novel.authorName) + "</span><span>" + (novel.status === "completed" ? "완결 " + novel.totalEpisodeCount + "화" : "연재 " + novel.totalEpisodeCount + "화") + "</span><span>반응 " + novel.reactionScore.toFixed(1) + "</span></div></div></article>";
+          return "<article class='mobile-row' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'><a class='mobile-row-media' href='" + detailHref(novel.slug) + "'><img src='" + cover(novel) + "' alt='" + esc(novel.title) + " 표지'></a><div class='mobile-row-body'><div class='detail-line'><span class='free-badge'>" + (novel.freeEpisodeCount > 0 ? "첫 " + novel.freeEpisodeCount + "화 무료" : novel.status === "completed" ? "완결" : "연재중") + "</span>" + (salePercent(novel) ? "<span class='sale-badge'>완결 번들 " + salePercent(novel) + "%</span>" : "") + "<span class='muted-badge'>" + (novel.isTranslation ? t("store.translated_work") : t("store.korean_work")) + "</span></div><h3 class='mobile-row-title'>" + esc(novel.title) + "</h3><p class='mobile-row-copy'>" + esc(summary(novel)) + "</p><div class='mobile-row-meta'><span>" + esc(novel.tags[0] || novel.authorName) + "</span><span>" + (novel.status === "completed" ? "완결 " + novel.totalEpisodeCount + "화" : "연재 " + novel.totalEpisodeCount + "화") + "</span><span>반응 " + novel.reactionScore.toFixed(1) + "</span></div></div></article>";
         }).join("");
       }
     }
@@ -621,7 +621,7 @@
         if ((chip.dataset.label || "").toLowerCase() === tag.toLowerCase()) {
           chip.dataset.state = "include";
           chip.classList.add("is-active");
-          chip.textContent = chip.dataset.label + " · 포함";
+          chip.textContent = chip.dataset.label + t("store.filter_chip_include");
         }
       });
     }
