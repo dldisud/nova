@@ -3,88 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>잉크로드 | 심연의 사서와 금지된 장서관</title>
+  <title>INKROAD | 작품 상세</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body class="mobile-app">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="homepage.html"><span class="brand-mark material-symbols-outlined">auto_stories</span><span class="brand-copy"><strong class="brand-name">잉크로드</strong><span class="brand-sub">회차·구매 정보</span></span></a>
-      <nav class="nav">
-        <a class="nav-link" data-nav-link href="homepage.html">홈</a>
-        <a class="nav-link" data-nav-link href="search.html">탐색</a>
-        <a class="nav-link" data-nav-link href="novel_detail.html">작품 소개</a>
-        <a class="nav-link" data-nav-link href="my_library.html">내 서재</a>
-      </nav>
-      <div class="nav-actions"><a class="icon-button" href="search.html" aria-label="탐색으로 이동"><span class="material-symbols-outlined">search</span></a><button class="icon-button" type="button" data-bookmark-id="silent-archive" aria-label="작품 찜하기"><span class="material-symbols-outlined">bookmark</span></button><a class="nav-cta" href="novel_viewer.html">무료로 읽기</a></div>
-    </div>
+<body class="mobile-app store-light">
+  <header class="mobile-detail-header">
+    <a class="back-btn" href="homepage.html" data-back-btn><span class="material-symbols-outlined">arrow_back</span></a>
+    <span class="mobile-detail-header-title" data-detail-header-title>작품 상세</span>
   </header>
 
-  <main class="page">
-    <section class="mobile-detail-wrap">
-      <section class="mobile-detail-hero" style="--mobile-detail-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuARsfZ6qNEArTC8TYqvrAwxKQ3JVUflLbZbHdwpRGS2c0QhRvSVWiABlees50Tc2VNt3wbBSR-uLXrSLj76aJrBEnsGSndwJ9L1fNOXqOHPl8utOgrJTKG1IQSEX413AWYdH4A2sQYZxKMDtvGgMbwJtd4uuDUQtnkENMGReWj-6Ub5378s4fG2byOetpLyoo8mC1YJWceGql-kBLtrQn2RbH6bBDe8A6h1A6nDxrkEdSrxDF-LrifUE-A5nfwlc4uhZ0ozdU2OvBw');" data-reveal>
-        <div class="mobile-detail-inner">
-          <div class="mobile-detail-copy">
-            <div class="detail-line"><span class="muted-badge">번역작</span><span class="muted-badge">아카데미</span><span class="muted-badge">완결</span></div>
-            <h1 class="mobile-detail-title-display">심연의 사서와 금지된 장서관</h1>
-            <p class="mobile-detail-text">1~30화 무료 공개 후 31화부터 회차 구매, 완결 번들 소장으로 이어지는 작품입니다.</p>
-            <div class="button-row"><a class="button primary" href="novel_viewer.html">1화부터 무료로 읽기</a><button class="button ghost" type="button" data-bookmark-id="silent-archive-wide"><span class="material-symbols-outlined">bookmark_add</span><span data-bookmark-label>찜하기</span></button></div>
-          </div>
-        </div>
-      </section>
-    </section>
-
-    <div class="shell wide">
-      <section class="mobile-section" data-reveal>
-        <div class="mobile-fact-grid">
-          <div class="mobile-fact"><div class="mobile-fact-label">무료 구간</div><div class="mobile-fact-value">1~30화</div></div>
-          <div class="mobile-fact"><div class="mobile-fact-label">회차 구매</div><div class="mobile-fact-value">31화부터</div></div>
-          <div class="mobile-fact"><div class="mobile-fact-label">완결 번들</div><div class="mobile-fact-value">30% 할인</div></div>
-          <div class="mobile-fact"><div class="mobile-fact-label">평점</div><div class="mobile-fact-value">4.9</div></div>
-        </div>
-      </section>
-
-      <section class="mobile-section" data-reveal>
-        <div class="mobile-section-head"><h2 class="section-title">작품 소개</h2><p class="section-copy">줄거리와 결제 구조를 같은 화면에서 바로 확인할 수 있게 정리했습니다.</p></div>
-        <div class="mobile-list">
-          <article class="mobile-flow-step"><span class="mobile-step-index">작품 요약</span><p class="mobile-step-copy">마법이 금지된 제국. 황실 도서관의 말단 사서가 손대선 안 되는 금서의 봉인을 풀면서, 제국 전체가 감춘 진실이 깨어납니다.</p></article>
-          <article class="mobile-flow-step"><span class="mobile-step-index">수익 구조</span><p class="mobile-step-copy">초반 30화는 무료 연재로 열어 두고, 이후 회차 구매와 완결 번들을 분리해 전환시키는 구조입니다.</p></article>
-          <article class="mobile-flow-step"><div class="detail-line"><span class="chip active">연금술</span><span class="chip active">금서</span><span class="chip active">정치 미스터리</span><span class="chip">번역작</span></div></article>
-        </div>
-      </section>
-
-      <section class="mobile-section" data-reveal>
-        <div class="mobile-section-head"><h2 class="section-title">구매와 알림</h2><p class="section-copy">지금 구매할지, 할인 알림만 받아둘지를 같은 구간에서 결정합니다.</p></div>
-        <div class="mobile-offer-list"><article class="mobile-offer-row"><div class="detail-line"><span class="sale-badge">완결 번들 30%</span></div><h3 class="mobile-offer-title">13,300원</h3><p class="mobile-offer-copy">회차를 따라가던 독자와 완결 소장을 원하는 독자 모두를 받는 가격 구조입니다.</p><div class="button-row"><a class="button primary" href="my_library.html">번들 구매 후 서재로</a><button class="button secondary" type="button" data-bookmark-id="silent-archive-sale"><span class="material-symbols-outlined">notifications</span>할인 알림 받기</button></div></article></div>
-      </section>
-
-      <section class="mobile-section" id="chapters" data-reveal>
-        <div class="mobile-section-head"><h2 class="section-title">회차 목록</h2><p class="section-copy">무료와 유료 상태를 바로 읽을 수 있게 짧은 리스트로 정리했습니다.</p></div>
-        <div class="mobile-chapter-list">
-          <a class="mobile-chapter-row" href="novel_viewer.html"><span class="chapter-number">01</span><div class="mobile-chapter-copy"><span class="chapter-title">깊은 서고의 마지막 봉인</span><span class="free-badge">무료</span></div></a>
-          <a class="mobile-chapter-row" href="novel_viewer.html"><span class="chapter-number">02</span><div class="mobile-chapter-copy"><span class="chapter-title">금서에 새겨진 황금빛 잉크</span><span class="free-badge">무료</span></div></a>
-          <a class="mobile-chapter-row" href="novel_viewer.html"><span class="chapter-number">03</span><div class="mobile-chapter-copy"><span class="chapter-title">열리지 말아야 할 문이 열리는 밤</span><span class="free-badge">무료</span></div></a>
-          <div class="mobile-chapter-row"><span class="chapter-number">31</span><div class="mobile-chapter-copy"><span class="chapter-title">아카데미의 첫 번째 거짓말</span><span class="muted-badge">회차 구매</span></div></div>
-          <div class="mobile-chapter-row"><span class="chapter-number">245</span><div class="mobile-chapter-copy"><span class="chapter-title">금지된 장서관의 마지막 문장</span><span class="sale-badge">번들 포함</span></div></div>
-        </div>
-      </section>
-
-      <section class="mobile-section" data-reveal>
-        <div class="mobile-offer-list"><article class="mobile-offer-row"><div class="detail-line"><span class="muted-badge">추천 묶음</span></div><h3 class="mobile-offer-title">같이 뜨는 작품도 이어서 보기</h3><p class="mobile-offer-copy">이 작품을 본 독자는 “냉혹한 설산 학교의 문지기”도 함께 보는 흐름이 자주 나타납니다.</p><a class="button ghost" href="search.html">추천 묶음 보기</a></article></div>
-      </section>
-
-      <footer class="footer"><span>모바일 상세는 무료 회차, 결제, 알림을 순서대로 확인하게 정리한 작품 화면입니다.</span><span>© <span data-year></span> 잉크로드</span></footer>
-    </div>
+  <main class="mobile-content">
+    <div class="mobile-detail-cover" data-detail-cover></div>
+    <div class="mobile-detail-info" data-detail-info></div>
+    <div class="mobile-detail-stats" data-detail-stats></div>
+    <div class="mobile-detail-synopsis clamped" data-detail-synopsis></div>
+    <button class="mobile-detail-more" data-detail-more type="button">더보기</button>
+    <div class="mobile-detail-cta" data-detail-cta></div>
+    <div class="mobile-episode-list" data-detail-episodes></div>
   </main>
 
-  <nav class="mobile-nav" aria-label="모바일 이동"><a class="nav-pill" href="homepage.html"><span class="material-symbols-outlined">home</span>홈</a><a class="nav-pill" href="search.html"><span class="material-symbols-outlined">search</span>탐색</a><a class="nav-pill current" href="novel_detail.html"><span class="material-symbols-outlined">menu_book</span>상세</a></nav>
+  <nav class="mobile-tab-bar">
+    <a class="tab-item" href="homepage.html">
+      <span class="material-symbols-outlined">home</span>
+      <span class="tab-label">홈</span>
+    </a>
+    <a class="tab-item" href="search.html">
+      <span class="material-symbols-outlined">search</span>
+      <span class="tab-label">탐색</span>
+    </a>
+    <a class="tab-item" href="my_library.html">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <span class="tab-label">서재</span>
+    </a>
+    <a class="tab-item" href="auth_pc.html">
+      <span class="material-symbols-outlined">person</span>
+      <span class="tab-label">MY</span>
+    </a>
+  </nav>
+
   <script src="assets/supabase-config.js"></script>
   <script src="assets/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
 </body>
 </html>
