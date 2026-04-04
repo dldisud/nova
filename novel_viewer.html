@@ -3,114 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>잉크로드 | 1화 깨어난 연금술사</title>
+  <title>INKROAD | 뷰어</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body class="mobile-app">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="novel_detail.html">
-        <span class="brand-mark material-symbols-outlined">arrow_back</span>
-        <span class="brand-copy">
-          <strong class="brand-name">심연의 사서와 금지된 장서관</strong>
-          <span class="brand-sub">1화 · 읽기 모드</span>
-        </span>
-      </a>
+<body class="mobile-app store-light mobile-viewer">
+  <div class="mobile-reader-progress" data-reader-progress></div>
 
-      <div class="nav-actions">
-        <button class="icon-button" type="button" data-bookmark-id="reader-silent-archive" aria-label="북마크">
-          <span class="material-symbols-outlined">bookmark</span>
-        </button>
-        <a class="icon-button" href="novel_detail.html" aria-label="목차로 이동">
-          <span class="material-symbols-outlined">menu_book</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <div class="reader-progress" aria-hidden="true">
-    <div class="reader-progress-fill"></div>
+  <div class="mobile-reader-chrome mobile-reader-top" data-reader-top>
+    <a class="back-btn" href="homepage.html" data-back-btn><span class="material-symbols-outlined">arrow_back</span></a>
+    <span class="mobile-reader-title" data-reader-title>읽는 중</span>
+    <a class="mobile-header-icon" data-reader-list-btn><span class="material-symbols-outlined">list</span></a>
   </div>
 
-  <main class="page reader-page mobile-reader-page" data-reader-root>
-    <div class="mobile-reader-shell">
-      <div class="mobile-reader-top" data-reveal>
-        <div>
-          <h1>1화. 깨어난 연금술사</h1>
-          <span class="muted">무료 공개 구간 · 1 / 30</span>
-        </div>
-        <div class="mobile-reader-actions">
-          <a class="button small ghost" href="novel_detail.html">목차 보기</a>
-          <a class="button small secondary" href="my_library.html">서재에 저장</a>
-        </div>
-      </div>
-
-      <section class="reader-surface" data-reveal>
-        <header class="reader-header">
-          <p>제1권 · 금지된 서고</p>
-          <h2>깨어난 연금술사</h2>
-        </header>
-
-        <article class="reader-content">
-          <p>황실 도서관의 가장 깊은 구획은 지도에도 그려져 있지 않았다. 황제가 직접 봉인했다는 검은 계단 아래로 내려갈수록, 서고의 공기는 오래된 잉크와 차가운 금속 냄새로 짙어졌다. 엘리아스는 매일 이곳을 지나쳤지만, 오늘만큼은 계단 끝의 침묵이 유난히 또렷하게 들렸다. 마치 누군가 오래전부터 그의 발걸음을 기다리고 있었다는 듯이.</p>
-          <p>낡은 철문을 밀어 열자, 둥근 서고 한가운데에 한 권의 책이 홀로 놓여 있었다. 먼지는 쌓여 있었지만 책등의 금박은 아직도 방금 새긴 것처럼 빛났다. 다른 금서들이 사슬에 묶여 있는 것과 달리, 그 책만은 아무 장치 없이 대리석 받침 위에 올려져 있었다. 엘리아스는 그것이 더 위험하다는 사실을 본능적으로 알아차렸다.</p>
-          <p>그는 장갑을 낀 손으로 책 표지를 건드렸다. 순간 차갑던 표면이 미지근해지더니, 금빛 문양이 파도처럼 퍼져 나갔다. 고대 연금술식. 이미 제국에서는 금지된 언어였다. 황실 검열관들이라면 책을 불태우고도 남았을 문장이었지만, 엘리아스의 눈에는 그것이 선명하게 읽혔다. <em>선택된 기록자에게만 진실은 열린다.</em></p>
-          <p>"말도 안 돼."</p>
-          <p>속삭이는 순간, 책이 저절로 펼쳐졌다. 종이 사이에서는 불꽃 대신 푸른 가루가 흘러나왔고, 닿은 바닥마다 오래된 인장이 드러났다. 이 방 전체가 하나의 거대한 봉인진이었다. 엘리아스는 발끝 아래에서 미세하게 울리는 진동을 느꼈다. 누군가 밖에서 문을 두드리는 소리가 아니라, 수백 년 동안 잠들어 있던 무엇이 안쪽에서 깨어나는 진동이었다.</p>
-          <p>책장은 멈추지 않고 넘어갔다. 황실의 건국 기록, 신성한 성단의 계보, 마법을 금지해야 했던 대의명분. 제국이 학교와 사원을 세우며 퍼뜨린 모든 문장이 한 줄씩 뒤집혔다. 진실은 반대편에 있었다. 마법은 금지된 것이 아니라 빼앗긴 것이었고, 기록은 보존된 것이 아니라 의도적으로 뜯겨나간 것이었다.</p>
-          <p>엘리아스의 손등에 뜨거운 통증이 번졌다. 피부 아래로 황금빛 문양이 떠오르더니 손목을 감싸며 원형 인장을 이루었다. 서고 어딘가에서 낮고 느린 웃음소리가 울렸다. 사람의 웃음 같지 않았다. 오래된 문서 더미가 서로 비벼지는 듯한, 마른 종이의 웃음.</p>
-          <p>"드디어 기록자가 왔군."</p>
-          <p>목소리는 방 안 어디에도 없었고, 동시에 모든 서가 틈 사이에서 들려왔다. 엘리아스는 본능적으로 뒤를 돌아봤지만 아무도 없었다. 다만 가장 끝 선반의 그림자만이 조금 더 짙어졌을 뿐이다. 그림자는 천천히 사람의 형상을 취했고, 두 개의 붉은 눈동자가 서고의 어둠을 찢으며 떠올랐다.</p>
-          <p>"네가 책을 열었으니, 이제 선택해야 한다." 그림자는 한 걸음 앞으로 다가왔다. "진실을 읽고 살아남을지, 아니면 제국의 마지막 거짓말이 되어 사라질지."</p>
-          <p>엘리아스는 떨리는 숨을 삼켰다. 불안과 공포는 분명 있었지만, 그보다 더 크게 가슴을 치는 감정이 하나 있었다. 오래도록 이름 붙일 수 없었던 결핍. 그는 늘 이 도서관의 모든 책을 관리했지만, 정작 자신이 살아 있는 이유에 대해서는 단 한 줄도 읽은 적이 없었다. 그런데 지금, 금지된 책 한 권이 처음으로 그의 삶을 설명하려 하고 있었다.</p>
-          <p>그는 손등의 문양을 바라본 뒤 천천히 고개를 들었다. "읽겠다."</p>
-          <p>그 한마디가 떨어지자 서고 전체의 촛불이 동시에 꺼졌다. 어둠 한가운데서, 책의 첫 문장만이 별처럼 빛나기 시작했다.</p>
-        </article>
-      </section>
-
-      <section class="mobile-reader-settings-box" data-reveal>
-        <div class="mobile-reader-setting">
-          <span class="reader-toolbar-title">글자 크기</span>
-          <div class="mobile-reader-actions">
-            <button class="button small ghost" type="button" data-font-step="0.08">글자 크게</button>
-            <button class="button small ghost" type="button" data-font-step="-0.08">글자 작게</button>
-          </div>
-        </div>
-        <div class="mobile-reader-setting">
-          <span class="reader-toolbar-title">배경 테마</span>
-          <div class="theme-swatches">
-            <button class="theme-swatch is-active" type="button" data-theme="dark" style="background: #08131f;"></button>
-            <button class="theme-swatch" type="button" data-theme="sepia" style="background: #3a2b1f;"></button>
-            <button class="theme-swatch" type="button" data-theme="paper" style="background: #f0e5cf;"></button>
-          </div>
-        </div>
-      </section>
-    </div>
+  <main class="mobile-content">
+    <article class="mobile-reader-body" data-reader-body></article>
   </main>
 
-  <nav class="reader-footer-nav" aria-label="회차 이동">
-    <a class="nav-pill" href="novel_detail.html">
-      <span class="material-symbols-outlined">chevron_left</span>
-      작품 소개
+  <div class="mobile-reader-chrome mobile-reader-bottom" data-reader-bottom>
+    <a class="button small ghost" data-reader-prev>← 이전화</a>
+    <span style="font-size:12px;color:var(--text-muted);" data-reader-episode-num></span>
+    <a class="button small ghost" data-reader-next>다음화 →</a>
+  </div>
+
+  <nav class="mobile-tab-bar">
+    <a class="tab-item" href="homepage.html">
+      <span class="material-symbols-outlined">home</span>
+      <span class="tab-label">홈</span>
     </a>
-    <a class="nav-pill current" href="novel_viewer.html">
-      <span class="material-symbols-outlined">menu_book</span>
-      현재 화
+    <a class="tab-item" href="search.html">
+      <span class="material-symbols-outlined">search</span>
+      <span class="tab-label">탐색</span>
     </a>
-    <a class="nav-pill" href="novel_viewer.html">
-      다음 화
-      <span class="material-symbols-outlined">chevron_right</span>
+    <a class="tab-item" href="my_library.html">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <span class="tab-label">서재</span>
+    </a>
+    <a class="tab-item" href="auth_pc.html">
+      <span class="material-symbols-outlined">person</span>
+      <span class="tab-label">MY</span>
     </a>
   </nav>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="assets/supabase-config.js"></script>
   <script src="assets/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
 </body>
 </html>
-
