@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>잉크로드 PC | 크리에이터 업로드 스튜디오</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="assets/pc.css" />
+  <style>
+    /* Specific styles for upload studio */
+    .studio-page {
+      padding: 28px 0 64px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    
+    .studio-sidebar {
+      background: rgba(17, 30, 45, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 32px;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .studio-main {
+      background: rgba(17, 30, 45, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: calc(100vh - 160px);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .form-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .form-label span {
+      color: var(--accent);
+      margin-left: 4px;
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      padding: 16px;
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 200ms ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 197, 95, 0.2);
+    }
+
+    .cover-dropzone {
+      width: 100%;
+      padding: 20px;
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      height: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 250ms ease;
+      text-align: center;
+    }
+
+    .cover-dropzone:hover {
+      border-color: var(--accent);
+      background: rgba(255, 197, 95, 0.05);
+    }
+
+    .cover-dropzone svg {
+      width: 48px;
+      height: 48px;
+      color: var(--text-soft);
+      transition: color 250ms ease;
+    }
+    
+    .cover-dropzone:hover svg {
+      color: var(--accent);
+    }
+
+    .cover-dropzone[data-has-image="true"] {
+      padding: 0;
+      border-style: solid;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.45);
+    }
+
+    .cover-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .tag-bubble {
+      appearance: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-soft);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 200ms ease;
+    }
+    
+    .tag-bubble:hover, .tag-bubble.selected {
+      background: rgba(255, 197, 95, 0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tag-editor {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .tag-editor .form-input {
+      margin: 0;
+    }
+
+    .editor-toolbar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .toolbar-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-soft);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 200ms ease;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+    }
+
+    .editor-textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 1.25rem;
+      line-height: 2;
+      resize: none;
+    }
+    
+    .editor-textarea:focus {
+      outline: none;
+    }
+    
+    .editor-textarea::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .publish-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 18px;
+    }
+
+    .studio-status {
+      display: grid;
+      gap: 6px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-soft);
+    }
+
+    .studio-status[data-tone="success"] {
+      border-color: rgba(74, 222, 128, 0.3);
+      color: #d1fae5;
+      background: rgba(20, 83, 45, 0.3);
+    }
+
+    .studio-status[data-tone="error"] {
+      border-color: rgba(248, 113, 113, 0.32);
+      color: #fee2e2;
+      background: rgba(127, 29, 29, 0.28);
+    }
+
+    .studio-status[data-tone="info"] {
+      border-color: rgba(255, 197, 95, 0.28);
+      color: #fde68a;
+      background: rgba(120, 53, 15, 0.24);
+    }
+
+    .upload-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .upload-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-soft);
+      font-size: 0.95rem;
+    }
+
+    .upload-check input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .upload-preview {
+      display: grid;
+      gap: 20px;
+      padding: 8px 0 0;
+      color: var(--text);
+      line-height: 1.9;
+    }
+
+    .upload-preview p {
+      margin: 0;
+      font-size: 1.04rem;
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .studio-helper {
+      color: var(--text-faint);
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+
+    .nav-cta:disabled,
+    .button:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+      box-shadow: none;
+      filter: saturate(0.35);
+    }
+
+    .upload-preview .scene-break {
+      text-align: center;
+      letter-spacing: 0.5em;
+      color: var(--text-faint);
+    }
+
+    @media (max-width: 1100px) {
+      .studio-page {
+        grid-template-columns: 1fr;
+      }
+
+      .studio-sidebar {
+        position: static;
+      }
+
+      .upload-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="pc-desktop">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="homepage_pc.html">
+        <span class="brand-mark material-symbols-outlined">auto_stories</span>
+        <span class="brand-copy">
+          <strong class="brand-name">잉크로드 PC</strong>
+          <span class="brand-sub">크리에이터 업로드 스튜디오</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a class="nav-link" data-nav-link href="homepage_pc.html">홈</a>
+        <a class="nav-link" data-nav-link href="search_pc.html">탐색</a>
+        <a class="nav-link" data-nav-link href="novel_detail_pc.html">작품 상세</a>
+        <a class="nav-link" data-nav-link href="my_library_pc.html">내 서재</a>
+        <a class="nav-link" data-nav-link href="creator_dashboard_pc.html">내 작품</a>
+        <a class="nav-link" data-nav-link href="novel_upload_pc.html">업로드</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="icon-button" href="my_library_pc.html" aria-label="내 서재">
+          <span class="material-symbols-outlined">shelves</span>
+        </a>
+        <button class="nav-cta" type="submit" form="upload-form" data-upload-submit disabled>발행하기</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="pc-page workspace-page">
+    <div class="pc-shell">
+      <header class="workspace-head" data-reveal>
+        <div class="workspace-head-copy">
+          <span class="eyebrow">크리에이터 스튜디오</span>
+          <h1 class="workspace-title">작품 소개와 첫 회차를 바로 발행합니다</h1>
+          <p class="workspace-subtitle">작품 정보, 표지, 태그, 첫 화 본문을 한 번에 저장하고 곧바로 상세 페이지로 넘깁니다.</p>
+        </div>
+        <div class="workspace-meta">
+          <div class="workspace-stat">
+            <span class="stat-label">지금 필요한 것</span>
+            <strong>작품 정보</strong>
+          </div>
+          <div class="workspace-stat">
+            <span class="stat-label">발행 결과</span>
+            <strong>상세 페이지 생성</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="auth-shell" data-upload-auth></section>
+
+      <form class="studio-page" id="upload-form" data-upload-form hidden>
+        <aside class="studio-sidebar">
+          <div class="form-group">
+            <label class="form-label">작품 표지</label>
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-cover-input hidden>
+            <button class="cover-dropzone" type="button" data-cover-dropzone>
+              <img class="cover-preview" data-cover-preview hidden alt="선택한 표지 미리보기">
+              <svg data-cover-placeholder fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              <span data-cover-hint style="color: var(--text-soft); font-size: 0.9rem;">클릭 또는 드래그하여 업로드</span>
+              <span class="studio-helper">최대 2MB · JPG PNG WEBP GIF</span>
+            </button>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">작품 제목 <span>*</span></label>
+            <input type="text" class="form-input" data-upload-title placeholder="아카데미의 외팔 기사입니다만?" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">작품 소개 (시놉시스)</label>
+            <textarea class="form-input" rows="4" data-upload-summary placeholder="독자를 사로잡을 한 줄 로그라인부터 시작해보세요."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">기본 설정</label>
+            <div class="upload-meta-grid">
+              <label class="auth-label">
+                <span>연령 등급</span>
+                <select class="auth-input" data-upload-age-rating>
+                  <option value="12">12세</option>
+                  <option value="15" selected>15세</option>
+                  <option value="19">19세</option>
+                </select>
+              </label>
+              <label class="auth-label">
+                <span>원작 국가</span>
+                <input class="auth-input" type="text" maxlength="2" data-upload-origin-country value="KR" placeholder="KR">
+              </label>
+            </div>
+            <label class="upload-check">
+              <input type="checkbox" data-upload-is-translation>
+              <span>번역작으로 등록</span>
+            </label>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">상세 장르 / 태그 (DLsite 방식)</label>
+            <div class="tag-container" style="margin-top: 12px;" data-tag-container>
+              <button class="tag-bubble selected" type="button" data-tag-value="판타지">판타지</button>
+              <button class="tag-bubble" type="button" data-tag-value="로맨스 판타지">로맨스 판타지</button>
+              <button class="tag-bubble selected" type="button" data-tag-value="먼치킨">먼치킨</button>
+              <button class="tag-bubble" type="button" data-tag-value="아카데미물">아카데미물</button>
+              <button class="tag-bubble selected" type="button" data-tag-value="하드보일드">하드보일드</button>
+              <button class="tag-bubble selected" type="button" data-tag-value="군상극">군상극</button>
+            </div>
+            <div class="tag-editor">
+              <input class="form-input" type="text" data-custom-tag-input placeholder="직접 태그 추가">
+              <button class="button ghost" type="button" data-add-tag>추가</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="studio-main">
+          <div class="publish-header">
+            <input type="text" class="form-input" data-upload-episode-title placeholder="이번 회차 제목 (예: 제 1화. 몰락한 천재)" style="flex: 1; max-width: 600px; border-color: transparent; background: transparent; padding: 0; font-size: 1.8rem; font-weight: 700; color: #fff;" required />
+            <div class="button-row">
+              <button class="button secondary" type="button" data-upload-preview-toggle>미리보기</button>
+            </div>
+          </div>
+
+          <div class="studio-status" data-upload-status hidden></div>
+
+          <div class="editor-toolbar">
+            <button class="toolbar-btn" type="button" data-format-action="bold" title="굵게"><b>B</b></button>
+            <button class="toolbar-btn" type="button" data-format-action="italic" title="기울임"><i>I</i></button>
+            <button class="toolbar-btn" type="button" data-format-action="underline" title="밑줄"><u>U</u></button>
+            <div style="width: 1px; background: rgba(255,255,255,0.1); margin: 0 8px;"></div>
+            <button class="toolbar-btn" type="button" data-format-action="break" title="장면 전환"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+            <button class="toolbar-btn" type="button" data-upload-preview-toggle title="미리보기"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
+          </div>
+
+          <textarea class="editor-textarea" data-upload-body placeholder="여기에 당신의 위대한 이야기를 시작하세요..." required></textarea>
+          <article class="upload-preview" data-upload-preview hidden></article>
+        </section>
+      </form>
+    </div>
+  </main>
+
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/upload-studio.js"></script>
+</body>
+</html>
+
+
