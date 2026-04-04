@@ -271,6 +271,7 @@
       </nav>
 
       <div class="nav-actions">
+        <div data-lang-picker></div>
         <a class="icon-button" href="creator_dashboard_pc.html" aria-label="내 작품">
           <span class="material-symbols-outlined">list_alt</span>
         </a>
@@ -283,8 +284,8 @@
     <div class="pc-shell">
       <header class="workspace-head" data-reveal>
         <div class="workspace-head-copy">
-          <span class="eyebrow">회차 추가</span>
-          <h1 class="workspace-title">기존 작품에 다음 회차를 이어서 발행합니다</h1>
+          <span class="eyebrow" data-i18n="editor.add_episode">회차 추가</span>
+          <h1 class="workspace-title" data-i18n="editor.add_episode_title">기존 작품에 다음 회차를 이어서 발행합니다</h1>
           <p class="workspace-subtitle">작품을 고르면 다음 회차 번호가 자동으로 이어지고, 무료 공개인지 회차 구매인지까지 함께 저장됩니다.</p>
         </div>
         <div class="workspace-meta">
@@ -310,8 +311,8 @@
               <img src="https://placehold.co/320x440/111827/f3f4f6?text=InkRoad" alt="선택한 작품 표지" data-selected-work-image>
             </div>
             <div class="episode-work-copy">
-              <span class="eyebrow">선택한 작품</span>
-              <h2 data-selected-work-title>작품을 먼저 골라주세요</h2>
+              <span class="eyebrow" data-i18n="editor.selected_work">선택한 작품</span>
+              <h2 data-selected-work-title data-i18n="editor.select_prompt">작품을 먼저 골라주세요</h2>
               <p data-selected-work-summary>왼쪽 작품 정보는 로그인 후 내가 올린 작품 목록 기준으로 자동으로 채워집니다.</p>
               <div class="episode-meta-row" data-selected-work-meta>
                 <span class="episode-chip">작품 선택 대기</span>
@@ -323,7 +324,7 @@
           </div>
 
           <div class="episode-work-copy">
-            <span class="eyebrow">발행 안내</span>
+            <span class="eyebrow" data-i18n="editor.guide_title">발행 안내</span>
             <p class="episode-helper">무료 회차면 가격은 자동으로 0원이 되고, 유료 회차면 입력한 가격이 함께 저장됩니다.</p>
             <p class="episode-helper">발행이 끝나면 방금 쓴 회차의 읽기 화면으로 바로 이동합니다.</p>
           </div>
@@ -377,17 +378,18 @@
 
       <aside class="snapshot-panel" data-snapshot-panel>
         <div class="snapshot-panel-header">
-          <h3>버전 히스토리</h3>
+          <h3 data-i18n="editor.version_history">버전 히스토리</h3>
           <button class="snapshot-panel-close" type="button" data-snapshot-close>&times;</button>
         </div>
         <div class="diff-view" data-diff-view hidden></div>
         <div class="snapshot-list" data-snapshot-list>
-          <p class="snapshot-list-empty">저장된 스냅샷이 없습니다.</p>
+          <p class="snapshot-list-empty" data-i18n="editor.no_snapshots">저장된 스냅샷이 없습니다.</p>
         </div>
       </aside>
     </div>
   </main>
 
+  <script src="assets/i18n.js"></script>
   <script src="assets/supabase-config.js"></script>
   <script src="assets/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
