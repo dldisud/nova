@@ -17,8 +17,7 @@
   let cachedCatalog = null;
 
   window.addEventListener("inkroad-locale-change", function () {
-    var page = window.location.pathname.split("/").pop() || "";
-    if (typeof renderCurrentPage === "function") renderCurrentPage();
+    hydrate().catch(function (err) { console.error("[i18n] re-render failed:", err); });
   });
 
   function q(selector, root) {

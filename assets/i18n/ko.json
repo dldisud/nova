@@ -44,7 +44,9 @@
     "upload": "업로드",
     "store": "스토어",
     "sale": "세일",
-    "language": "언어"
+    "language": "언어",
+    "login": "로그인",
+    "logout": "로그아웃"
   },
   "auth": {
     "creator": "크리에이터",

@@ -54,9 +54,26 @@
 
   /* ── Load dictionary ── */
 
+  function loadDictSync(lang) {
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "assets/i18n/" + lang + ".json", false);
+      xhr.send();
+      if (xhr.status === 200) {
+        dict = JSON.parse(xhr.responseText);
+      } else {
+        console.error("[i18n] sync load failed for " + lang + ".json: HTTP " + xhr.status);
+        dict = {};
+      }
+    } catch (e) {
+      console.error("[i18n] sync load error for " + lang + ".json:", e);
+      dict = {};
+    }
+  }
+
   async function loadDict(lang) {
     try {
-      var resp = await fetch("assets/i18n/" + lang + ".json");
+      var resp = await fetch("assets/i18n/" + lang + ".json", { cache: "no-cache" });
       if (!resp.ok) throw new Error("HTTP " + resp.status);
       dict = await resp.json();
     } catch (e) {
@@ -139,14 +156,15 @@
     });
   }
 
-  /* ── Init ── */
+  /* ── Init (synchronous for first load) ── */
 
-  async function init() {
-    await loadDict(locale);
-    ready = true;
+  loadDictSync(locale);
+  ready = true;
+  if (readyResolve) readyResolve();
+
+  function initDOM() {
     applyDOM();
     renderPicker();
-    if (readyResolve) readyResolve();
   }
 
   /* ── Public API ── */
@@ -165,8 +183,8 @@
   window.t = t;
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () { init(); });
+    document.addEventListener("DOMContentLoaded", initDOM);
   } else {
-    init();
+    initDOM();
   }
 })();

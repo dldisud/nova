@@ -44,7 +44,9 @@
     "upload": "Upload",
     "store": "Store",
     "sale": "Sale",
-    "language": "Language"
+    "language": "Language",
+    "login": "Log in",
+    "logout": "Log out"
   },
   "auth": {
     "creator": "Creator",
