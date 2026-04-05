@@ -263,6 +263,7 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
 
     def test_schema_avoids_rowtype_multi_target_into_patterns(self):
         schema = self._schema()
+        block = schema
         self.assertNotIn("into novel_row, owner_user_id", schema)
         self.assertNotIn("into episode_row, episode_novel_slug", schema)
         self.assertNotIn("into episode_row, novel_slug_value", schema)
