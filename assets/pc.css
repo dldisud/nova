@@ -2662,7 +2662,8 @@ body.store-light .pc-page {
   }
 
   .genre-grid,
-  .store-light .novel-grid {
+  .store-light .novel-grid,
+  .store-light .browse-results {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3024,7 +3025,8 @@ body.store-light .pc-page {
 
 .store-light .browse-results {
   display: grid;
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 
 .store-light .browse-count {

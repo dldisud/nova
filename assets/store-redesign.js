@@ -551,25 +551,7 @@
     }
 
     function cardMarkup(novel) {
-      var sale = salePercent(novel);
-      var badges = [];
-      if (novel.freeEpisodeCount > 0) badges.push("<span class='free-badge'>" + formatCount(novel.freeEpisodeCount) + "화 무료</span>");
-      if (sale) badges.push("<span class='sale-badge'>-" + sale + "%</span>");
-      badges.push("<span class='muted-badge'>" + esc(originLabel(novel.originCountry, novel.isTranslation)) + "</span>");
-      if (novel.status === "completed") badges.push("<span class='muted-badge'>" + t("status.completed") + "</span>");
-      return "<article class='novel-row' data-search-card data-title='" + esc(novel.title) + "' data-author='" + esc(novel.authorName) + "' data-tags='" + esc(novel.tags.join(" ")) + "'>" +
-        "<a class='novel-row-thumb' href='" + detailHref(novel.slug) + "'><img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + " 표지'></a>" +
-        "<div class='novel-row-copy'>" +
-        "<h2 class='novel-row-title'>" + esc(novel.title) + "</h2>" +
-        "<p class='novel-row-meta'>" + esc(novel.authorName) + " · " + esc(novel.tags.slice(0, 2).join(", ")) + "</p>" +
-        "<p class='novel-row-desc'>" + esc(summary(novel)) + "</p>" +
-        "<div class='novel-row-tags'>" + badges.join("") + "</div>" +
-        "</div>" +
-        "<div class='novel-row-side'>" +
-        "<div>" + priceMarkup(novel) + "</div>" +
-        "<a class='button small primary' href='" + detailHref(novel.slug) + "'>상세 보기</a>" +
-        "</div>" +
-        "</article>";
+      return buildNovelCard(novel, salePercent(novel) ? "sale" : "free");
     }
 
     function applySearch() {
