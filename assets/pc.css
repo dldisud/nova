@@ -3629,6 +3629,107 @@ body.store-light .pc-page {
   cursor: pointer;
 }
 
+/* --- Creator Episode Upload Specifics --- */
+.store-light .creator-episode-workspace {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.store-light .creator-episode-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0; /* prevent blowout */
+}
+
+.store-light .creator-episode-panel-area {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+}
+
+.store-light .creator-panel-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.store-light .creator-panel-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+}
+
+.store-light .creator-panel-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.store-light .creator-panel-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.store-light .episode-work-thumb {
+  width: 80px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface-muted);
+}
+
+.store-light .episode-work-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.store-light .episode-work-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.store-light .episode-work-info h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.store-light .episode-work-info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 1120px) {
+  .store-light .creator-episode-workspace {
+    flex-direction: column;
+  }
+  .store-light .creator-episode-panel-area {
+    width: 100%;
+    position: static;
+  }
+}
+
 /* --- Recent activity --- */
 .store-light .activity-list {
   display: grid;
