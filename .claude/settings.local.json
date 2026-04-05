@@ -14,7 +14,15 @@
       "Bash(ls -la /d/nova/*.html)",
       "Bash(ls -1 /d/nova/*.html)",
       "Bash(xargs -I {} basename {})",
-      "Bash(bash \"C:\\\\Users\\\\rimur\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\superpowers\\\\5.0.7\\\\skills\\\\brainstorming\\\\scripts\\\\start-server.sh\" --project-dir D:/nova)"
+      "Bash(bash \"C:\\\\Users\\\\rimur\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\superpowers\\\\5.0.7\\\\skills\\\\brainstorming\\\\scripts\\\\start-server.sh\" --project-dir D:/nova)",
+      "mcp__467e801e-62ae-4f4b-a08e-1b4761d85205__apply_migration",
+      "Bash(wc -l assets/*.js)",
+      "Bash(ls /d/nova/*.html)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python -m pytest tests/ -v --tb=short)",
+      "Bash(python -m unittest discover -s tests -v)",
+      "mcp__467e801e-62ae-4f4b-a08e-1b4761d85205__execute_sql"
     ]
   }
 }
