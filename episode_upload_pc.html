@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>잉크로드 PC | 회차 추가</title>
+  <title>INKROAD | 회차 추가</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -11,389 +11,43 @@
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/pc.css">
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
-  <style>
-    .episode-studio {
-      display: grid;
-      grid-template-columns: 360px minmax(0, 1fr);
-      gap: 28px;
-      align-items: start;
-      padding-bottom: 56px;
-    }
-
-    .episode-aside,
-    .episode-main,
-    .episode-status,
-    .episode-empty {
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(13, 23, 35, 0.72);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
-    }
-
-    .episode-aside {
-      padding: 24px;
-      position: sticky;
-      top: 104px;
-      display: grid;
-      gap: 20px;
-    }
-
-    .episode-work-card {
-      display: grid;
-      gap: 18px;
-    }
-
-    .episode-work-thumb {
-      border-radius: 2px;
-      overflow: hidden;
-      aspect-ratio: 0.76;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .episode-work-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .episode-work-copy {
-      display: grid;
-      gap: 10px;
-    }
-
-    .episode-work-copy h2 {
-      margin: 0;
-      font-size: 1.42rem;
-      line-height: 1.3;
-      letter-spacing: -0.03em;
-    }
-
-    .episode-work-copy p,
-    .episode-helper,
-    .episode-empty p {
-      margin: 0;
-      color: var(--text-soft);
-      line-height: 1.8;
-    }
-
-    .episode-meta-row,
-    .episode-tag-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .episode-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 11px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-soft);
-      font-size: 0.84rem;
-    }
-
-    .episode-chip[data-tone="serializing"] {
-      color: #fde68a;
-      border-color: rgba(255, 197, 95, 0.28);
-      background: rgba(120, 53, 15, 0.22);
-    }
-
-    .episode-chip[data-tone="completed"] {
-      color: #bfdbfe;
-      border-color: rgba(96, 165, 250, 0.32);
-      background: rgba(30, 64, 175, 0.2);
-    }
-
-    .episode-main {
-      padding: 28px;
-      display: grid;
-      gap: 20px;
-      min-height: 640px;
-    }
-
-    .episode-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .episode-label {
-      display: grid;
-      gap: 10px;
-      font-size: 0.94rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .episode-label select,
-    .episode-label input,
-    .episode-label textarea {
-      width: 100%;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(0, 0, 0, 0.28);
-      color: var(--text);
-      padding: 14px 16px;
-      font: inherit;
-    }
-
-    .episode-label textarea {
-      min-height: 420px;
-      resize: vertical;
-      line-height: 1.95;
-    }
-
-    .episode-label select:focus,
-    .episode-label input:focus,
-    .episode-label textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 197, 95, 0.14);
-    }
-
-    .episode-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 12px 14px;
-      background: rgba(0, 0, 0, 0.32);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .episode-toolbar button {
-      width: 38px;
-      height: 38px;
-      border: 0;
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-soft);
-      cursor: pointer;
-    }
-
-    .episode-toolbar button:hover {
-      background: rgba(255, 197, 95, 0.08);
-      color: var(--text);
-    }
-
-    .episode-status {
-      display: grid;
-      gap: 6px;
-      padding: 14px 16px;
-      color: var(--text-soft);
-    }
-
-    .episode-status[data-tone="success"] {
-      color: #d1fae5;
-      border-color: rgba(74, 222, 128, 0.3);
-      background: rgba(20, 83, 45, 0.3);
-    }
-
-    .episode-status[data-tone="error"] {
-      color: #fee2e2;
-      border-color: rgba(248, 113, 113, 0.32);
-      background: rgba(127, 29, 29, 0.28);
-    }
-
-    .episode-status[data-tone="info"] {
-      color: #fde68a;
-      border-color: rgba(255, 197, 95, 0.28);
-      background: rgba(120, 53, 15, 0.24);
-    }
-
-    .episode-preview {
-      display: grid;
-      gap: 18px;
-      padding: 18px 4px 8px;
-      line-height: 1.9;
-      color: var(--text);
-    }
-
-    .episode-preview p {
-      margin: 0;
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    .episode-preview .scene-break {
-      text-align: center;
-      letter-spacing: 0.5em;
-      color: var(--text-faint);
-    }
-
-    .episode-empty {
-      padding: 42px;
-      text-align: center;
-      display: grid;
-      gap: 14px;
-    }
-
-    .episode-index-shell {
-      display: grid;
-      gap: 14px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .episode-index-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .episode-index-filters {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .episode-index-filters .button[data-active="true"] {
-      border-color: rgba(245, 158, 11, 0.36);
-      background: rgba(245, 158, 11, 0.14);
-      color: #fef3c7;
-    }
-
-    .episode-index-summary,
-    .episode-index-bulk-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .episode-index-bulk-actions[hidden] {
-      display: none;
-    }
-
-    .episode-index-bulk-actions .button {
-      flex: 1 1 140px;
-      justify-content: center;
-    }
-
-    .episode-index-count {
-      color: var(--text-soft);
-      font-size: 0.88rem;
-    }
-
-    .episode-index-list {
-      display: grid;
-      gap: 10px;
-      max-height: 420px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .episode-index-item {
-      display: grid;
-      gap: 10px;
-      padding: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    .episode-index-item.is-hidden {
-      border-color: rgba(255, 197, 95, 0.22);
-      background: rgba(120, 53, 15, 0.18);
-    }
-
-    .episode-index-item.is-trashed {
-      border-color: rgba(248, 113, 113, 0.24);
-      background: rgba(127, 29, 29, 0.18);
-    }
-
-    .episode-index-top,
-    .episode-index-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .episode-index-title {
-      margin: 0;
-      font-size: 0.98rem;
-      line-height: 1.45;
-      color: var(--text);
-    }
-
-    .episode-index-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .episode-index-empty {
-      margin: 0;
-      color: var(--text-soft);
-      line-height: 1.8;
-    }
-
-    .episode-index-note {
-      margin: 0;
-      color: var(--text-faint);
-      font-size: 0.84rem;
-      line-height: 1.6;
-    }
-
-    .nav-cta:disabled,
-    .button:disabled {
-      opacity: 0.52;
-      cursor: not-allowed;
-      box-shadow: none;
-      filter: saturate(0.35);
-    }
-
-    @media (max-width: 1120px) {
-      .episode-studio {
-        grid-template-columns: 1fr;
-      }
-
-      .episode-aside {
-        position: static;
-      }
-
-      .episode-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
 </head>
-<body class="pc-desktop">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="creator_dashboard_pc.html">
+<body class="pc-desktop store-light">
+  <div class="creator-layout">
+    <aside class="creator-sidebar">
+      <div class="creator-sidebar-brand">
         <span class="brand-mark material-symbols-outlined">auto_stories</span>
         <span class="brand-copy">
-          <strong class="brand-name">잉크로드 PC</strong>
-          <span class="brand-sub">회차 발행 스튜디오</span>
+          <strong class="brand-name">INKROAD</strong>
+          <span class="brand-sub">크리에이터</span>
         </span>
-      </a>
-
-      <nav class="nav">
-        <a class="nav-link" data-nav-link href="homepage_pc.html" data-i18n="nav.home">홈</a>
-        <a class="nav-link" data-nav-link href="search_pc.html" data-i18n="nav.search">탐색</a>
-        <a class="nav-link" data-nav-link href="creator_dashboard_pc.html" data-i18n="nav.my_works">내 작품</a>
-        <a class="nav-link" data-nav-link href="my_library_pc.html" data-i18n="nav.my_library">내 서재</a>
-        <a class="nav-link" data-nav-link href="novel_upload_pc.html" data-i18n="nav.upload">업로드</a>
-      </nav>
-
-      <div class="nav-actions">
-        <div data-lang-picker></div>
-        <a class="icon-button" href="creator_dashboard_pc.html" aria-label="내 작품">
-          <span class="material-symbols-outlined">list_alt</span>
-        </a>
-        <button class="nav-cta" type="submit" form="episode-form" data-episode-submit disabled>회차 발행</button>
       </div>
-    </div>
-  </header>
+      <nav class="creator-sidebar-nav">
+        <a class="creator-nav-link" href="creator_dashboard_pc.html">
+          <span class="material-symbols-outlined">auto_stories</span> 작품 관리
+        </a>
+        <a class="creator-nav-link" href="author_dashboard_pc.html">
+          <span class="material-symbols-outlined">bar_chart</span> 통계
+        </a>
+        <a class="creator-nav-link" href="novel_upload_pc.html">
+          <span class="material-symbols-outlined">add_circle</span> 작품 등록
+        </a>
+        <a class="creator-nav-link active" href="episode_upload_pc.html">
+          <span class="material-symbols-outlined">upload</span> 회차 발행
+        </a>
+      </nav>
+      <div class="creator-sidebar-footer">
+        <div data-lang-picker></div>
+        <a href="homepage_pc.html">← 스토어로 돌아가기</a>
+      </div>
+    </aside>
 
-  <main class="pc-page workspace-page">
-    <div class="pc-shell">
+    <main class="creator-main">
+      <div class="creator-main-head">
+        <h1 class="creator-main-title">회차 발행</h1>
+        <button class="button primary" type="submit" form="episode-form" data-episode-submit disabled>발행하기</button>
+      </div>
+
       <header class="workspace-head" data-reveal>
         <div class="workspace-head-copy">
           <span class="eyebrow">크리에이터 스튜디오</span>
@@ -417,127 +71,166 @@
 
       <section class="episode-empty" data-episode-empty hidden></section>
 
-      <form class="episode-studio" id="episode-form" data-episode-form hidden>
-        <aside class="episode-aside">
-          <div class="episode-work-card" data-selected-work>
-            <div class="episode-work-thumb">
-              <img src="https://placehold.co/320x440/111827/f3f4f6?text=InkRoad" alt="선택한 작품 표지" data-selected-work-image>
+      <form id="episode-form" data-episode-form hidden>
+        <div class="creator-episode-workspace">
+          <!-- 에디터 영역 (70%) -->
+          <div class="creator-episode-editor-area">
+            <div class="upload-meta-grid">
+              <label class="upload-field">
+                <span>작품 선택</span>
+                <select data-episode-novel required></select>
+              </label>
+              <label class="upload-field">
+                <span>공개 방식</span>
+                <select data-episode-access>
+                  <option value="free">무료 공개</option>
+                  <option value="paid">회차 구매</option>
+                </select>
+              </label>
             </div>
-            <div class="episode-work-copy">
-              <span class="eyebrow" data-i18n="editor.selected_work">선택한 작품</span>
-              <h2 data-selected-work-title data-i18n="editor.select_prompt">작품을 먼저 골라주세요</h2>
-              <p data-selected-work-summary>왼쪽 작품 정보는 로그인 후 내가 올린 작품 목록 기준으로 자동으로 채워집니다.</p>
-              <div class="episode-meta-row" data-selected-work-meta>
-                <span class="episode-chip">작품 선택 대기</span>
+
+            <div class="upload-meta-grid">
+              <label class="upload-field">
+                <span>다음 회차 제목</span>
+                <input type="text" data-episode-title placeholder="예: 제 2화. 금서가 움직이는 밤" required>
+              </label>
+              <label class="upload-field" data-episode-price-wrap hidden>
+                <span>회차 가격</span>
+                <input type="number" min="0" step="10" value="100" data-episode-price placeholder="100">
+              </label>
+            </div>
+
+            <div class="episode-edit-meta" data-episode-edit-meta hidden>
+              <div class="episode-edit-meta-title">수정 대상 회차 정보</div>
+              <div class="episode-edit-meta-row">
+                <span>회차 번호</span>
+                <strong data-episode-edit-number>-</strong>
               </div>
-              <div class="episode-tag-row" data-selected-work-tags>
-                <span class="episode-chip">태그 없음</span>
+            </div>
+
+            <!-- Toast UI Editor -->
+            <div class="episode-main">
+              <div class="editor-shell">
+                <div class="editor-toolbar-custom">
+                  <div class="editor-toolbar-left">
+                    <button class="button small ghost" type="button" data-mode-toggle="wysiwyg" data-active="true">위지윅</button>
+                    <button class="button small ghost" type="button" data-mode-toggle="markdown" data-active="false">마크다운</button>
+                  </div>
+                  <div class="editor-toolbar-right">
+                    <span class="editor-save-status" data-save-status>변경사항 없음</span>
+                    <button class="button small ghost" type="button" data-snapshot-toggle>버전 역사</button>
+                  </div>
+                </div>
+                <div class="editor-wrap" data-editor-wrap></div>
+                <input type="hidden" data-episode-content required>
+              </div>
+
+              <aside class="snapshot-panel" data-snapshot-panel hidden>
+                <div class="snapshot-panel-head">
+                  <span class="eyebrow">버전 역사</span>
+                  <button class="snapshot-panel-close" type="button" data-snapshot-close>&times;</button>
+                </div>
+                <div class="diff-view" data-diff-view hidden></div>
+                <div class="snapshot-list" data-snapshot-list>
+                  <p class="snapshot-list-empty" data-i18n="editor.no_snapshots">저장된 스냅샷이 없습니다.</p>
+                </div>
+              </aside>
+            </div>
+          </div>
+
+          <!-- 우측 설정 패널 (30%) -->
+          <div class="creator-episode-panel-area">
+            <div class="creator-panel-tabs">
+              <div class="creator-panel-tab active" data-tab-target="info">설정 및 정보</div>
+              <div class="creator-panel-tab" data-tab-target="list">회차 목록</div>
+            </div>
+
+            <!-- 탭 콘텐츠: 설정 및 정보 -->
+            <div class="creator-panel-content" id="tab-content-info">
+              <div class="episode-work-card" data-selected-work>
+                <div style="display: flex; gap: 16px;">
+                  <div class="episode-work-thumb">
+                    <img src="https://placehold.co/320x440/111827/f3f4f6?text=InkRoad" alt="선택한 작품 표지" data-selected-work-image>
+                  </div>
+                  <div class="episode-work-info">
+                    <span class="eyebrow" data-i18n="editor.selected_work">선택한 작품</span>
+                    <h3 data-selected-work-title data-i18n="editor.select_prompt">작품을 골라주세요</h3>
+                    <p data-selected-work-summary>작품 목록 기준으로 채워집니다.</p>
+                  </div>
+                </div>
+                <div class="episode-meta-row" data-selected-work-meta>
+                  <span class="episode-chip">작품 선택 대기</span>
+                </div>
+                <div class="episode-tag-row" data-selected-work-tags>
+                  <span class="episode-chip">태그 없음</span>
+                </div>
+              </div>
+
+              <div class="episode-work-copy" style="background: #f8f9fa; padding: 16px; border-radius: 6px;">
+                <span class="eyebrow" data-i18n="editor.guide_title">발행 안내</span>
+                <p class="episode-helper" style="font-size: 0.85rem; color: #6b7280; line-height: 1.5; margin: 8px 0 0;">
+                  무료 회차면 가격은 자동으로 0원이 되고, 유료 회차면 입력한 가격이 함께 저장됩니다.<br><br>
+                  발행이 끝나면 방금 쓴 회차의 읽기 화면으로 바로 이동합니다.
+                </p>
               </div>
             </div>
-          </div>
 
-          <div class="episode-work-copy">
-            <span class="eyebrow" data-i18n="editor.guide_title">발행 안내</span>
-            <p class="episode-helper">무료 회차면 가격은 자동으로 0원이 되고, 유료 회차면 입력한 가격이 함께 저장됩니다.</p>
-            <p class="episode-helper">발행이 끝나면 방금 쓴 회차의 읽기 화면으로 바로 이동합니다.</p>
-          </div>
-
-          <section class="episode-index-shell">
-            <div class="episode-index-head">
-              <span class="eyebrow">전체 회차 관리</span>
-              <strong class="episode-index-count" data-episode-index-count>0화</strong>
-            </div>
-            <div class="episode-index-filters" data-episode-filter-bar>
-              <button class="button ghost small" type="button" data-episode-filter="all" data-active="true" aria-pressed="true">전체</button>
-              <button class="button ghost small" type="button" data-episode-filter="published" data-active="false" aria-pressed="false">공개중</button>
-              <button class="button ghost small" type="button" data-episode-filter="hidden" data-active="false" aria-pressed="false">숨김</button>
-              <button class="button ghost small" type="button" data-episode-filter="trashed" data-active="false" aria-pressed="false">휴지통</button>
-            </div>
-            <div class="episode-index-summary" data-episode-summary-row>
-              <span class="episode-chip" data-episode-summary-published>공개중 0화</span>
-              <span class="episode-chip" data-episode-summary-hidden>숨김 0화</span>
-              <span class="episode-chip" data-episode-summary-trashed>휴지통 0화</span>
-            </div>
-            <div class="episode-index-bulk-actions" data-episode-bulk-actions hidden>
-              <button class="button secondary small" type="button" data-episode-restore-all>휴지통 전체 복원</button>
-              <button class="button ghost small" type="button" data-episode-purge>휴지통 비우기</button>
-            </div>
-            <div class="episode-index-list" data-episode-index-list></div>
-            <p class="episode-index-empty" data-episode-index-empty hidden>선택한 작품의 회차가 여기에 표시됩니다.</p>
-          </section>
-        </aside>
-
-        <section class="episode-main">
-          <div class="episode-grid">
-            <label class="episode-label">
-              <span>작품 선택</span>
-              <select data-episode-novel required></select>
-            </label>
-            <label class="episode-label">
-              <span>공개 방식</span>
-              <select data-episode-access>
-                <option value="free">무료 공개</option>
-                <option value="paid">회차 구매</option>
-              </select>
-            </label>
-          </div>
-
-          <div class="episode-grid">
-            <label class="episode-label">
-              <span>다음 회차 제목</span>
-              <input type="text" data-episode-title placeholder="예: 제 2화. 금서가 움직이는 밤" required>
-            </label>
-            <label class="episode-label" data-episode-price-wrap hidden>
-              <span>회차 가격</span>
-              <input type="number" min="0" step="10" value="100" data-episode-price placeholder="100">
-            </label>
-          </div>
-
-          <div class="episode-edit-meta" data-episode-edit-meta hidden>
-            <div class="episode-edit-meta-title">수정 대상 회차 정보</div>
-            <div class="episode-edit-meta-row">
-              <span>회차 번호</span>
-              <strong data-episode-edit-number>-</strong>
-            </div>
-            <div class="episode-edit-meta-row">
-              <span>마지막 수정</span>
-              <strong data-episode-edit-updated>-</strong>
+            <!-- 탭 콘텐츠: 회차 목록 -->
+            <div class="creator-panel-content" id="tab-content-list" style="display: none;">
+              <section class="episode-index-shell" style="border: none; background: transparent; box-shadow: none; padding: 0;">
+                <div class="episode-index-head">
+                  <span class="eyebrow">전체 회차 관리</span>
+                  <strong class="episode-index-count" data-episode-index-count>0화</strong>
+                </div>
+                <div class="episode-index-filters" data-episode-filter-bar style="flex-wrap: wrap; gap: 4px;">
+                  <button class="button ghost small" type="button" data-episode-filter="all" data-active="true" aria-pressed="true">전체</button>
+                  <button class="button ghost small" type="button" data-episode-filter="published" data-active="false" aria-pressed="false">공개중</button>
+                  <button class="button ghost small" type="button" data-episode-filter="hidden" data-active="false" aria-pressed="false">숨김</button>
+                  <button class="button ghost small" type="button" data-episode-filter="trashed" data-active="false" aria-pressed="false">휴지통</button>
+                </div>
+                <div class="episode-index-summary" data-episode-summary-row style="flex-wrap: wrap;">
+                  <span class="episode-chip" data-episode-summary-published>공개중 0화</span>
+                  <span class="episode-chip" data-episode-summary-hidden>숨김 0화</span>
+                  <span class="episode-chip" data-episode-summary-trashed>휴지통 0화</span>
+                </div>
+                <div class="episode-index-bulk-actions" data-episode-bulk-actions hidden>
+                  <button class="button secondary small" type="button" data-episode-restore-all>전체 복원</button>
+                  <button class="button ghost small" type="button" data-episode-purge>비우기</button>
+                </div>
+                <div class="episode-index-list" data-episode-index-list></div>
+                <p class="episode-index-empty" data-episode-index-empty hidden>선택한 작품의 회차가 표시됩니다.</p>
+              </section>
             </div>
           </div>
-
-          <div class="episode-status" data-episode-status hidden></div>
-
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-            <div class="editor-mode-toggle" data-editor-mode-toggle>
-              <button type="button" data-mode="wysiwyg" aria-pressed="true">WYSIWYG</button>
-              <button type="button" data-mode="text" aria-pressed="false">텍스트</button>
-            </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span class="editor-status" data-editor-status></span>
-              <button class="button ghost small" type="button" data-snapshot-toggle title="버전 히스토리">
-                <span class="material-symbols-outlined">history</span> 히스토리
-              </button>
-            </div>
-          </div>
-
-          <div class="editor-container" data-editor-container></div>
-          <textarea class="editor-textarea-fallback" data-episode-body placeholder="마크다운 문법으로 작성하세요. **굵게**, *기울임*, *** (장면 전환)" hidden></textarea>
-        </section>
+        </div>
       </form>
+    </main>
+  </div>
 
-      <aside class="snapshot-panel" data-snapshot-panel>
-        <div class="snapshot-panel-header">
-          <h3 data-i18n="editor.version_history">버전 히스토리</h3>
-          <button class="snapshot-panel-close" type="button" data-snapshot-close>&times;</button>
-        </div>
-        <div class="diff-view" data-diff-view hidden></div>
-        <div class="snapshot-list" data-snapshot-list>
-          <p class="snapshot-list-empty" data-i18n="editor.no_snapshots">저장된 스냅샷이 없습니다.</p>
-        </div>
-      </aside>
-    </div>
-  </main>
+  <script>
+    // Tab switching logic for the right panel
+    document.addEventListener("DOMContentLoaded", function() {
+      var tabs = document.querySelectorAll(".creator-panel-tab");
+      var infoContent = document.getElementById("tab-content-info");
+      var listContent = document.getElementById("tab-content-list");
 
+      tabs.forEach(function(tab) {
+        tab.addEventListener("click", function() {
+          tabs.forEach(function(t) { t.classList.remove("active"); });
+          this.classList.add("active");
+          
+          if (this.dataset.tabTarget === "info") {
+            infoContent.style.display = "flex";
+            listContent.style.display = "none";
+          } else {
+            infoContent.style.display = "none";
+            listContent.style.display = "flex";
+          }
+        });
+      });
+    });
+  </script>
+  
   <script src="assets/i18n.js"></script>
   <script src="assets/supabase-config.js"></script>
   <script src="assets/app.js"></script>
