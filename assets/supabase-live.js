@@ -6,6 +6,7 @@
   const page = window.location.pathname.split("/").pop() || "homepage.html";
   const query = new URLSearchParams(window.location.search);
   const isPc = page.includes("_pc");
+  const isAuthPage = page === "auth_pc.html";
   const isLibraryPage = page.indexOf("my_library") === 0;
   const isViewerPage = page.indexOf("novel_viewer") === 0;
   const links = {
@@ -19,11 +20,13 @@
     localBookmarks: "inkroad-bookmarks",
     localHistory: "inkroad-reading-history",
     migration: "inkroad-supabase-migrated",
-    session: "inkroad-supabase-auth"
+    session: "inkroad-supabase-auth",
+    accessToken: "inkroad-supabase-access-token"
   };
 
   let client = null;
   let bookmarkListenerBound = false;
+  let purchaseListenerBound = false;
   let libraryRefreshTimer = null;
   const cache = {
     novels: null,
@@ -169,10 +172,17 @@
     if (isPc) {
       const layout = q(".library-layout-refined");
       if (layout) layout.hidden = !visible;
-      return;
+    } else {
+      qa(".mobile-section").forEach(function (section) {
+        section.hidden = !visible;
+      });
     }
-    qa(".mobile-section").forEach(function (section) {
-      section.hidden = !visible;
+
+    qa("[data-tab-panel]").forEach(function (panel) {
+      panel.hidden = !visible;
+    });
+    qa(".library-tabs, .mobile-chip-scroll").forEach(function (node) {
+      node.hidden = !visible;
     });
   }
 
@@ -259,6 +269,32 @@
     if (result.error) throw result.error;
     return result.data;
   }
+
+  function syncSessionAccessToken(session) {
+    if (session && session.access_token) {
+      localStorage.setItem(storage.accessToken, session.access_token);
+    } else {
+      localStorage.removeItem(storage.accessToken);
+    }
+  }
+
+  function currentRelativePath() {
+    return page + (window.location.search || "");
+  }
+
+  function safeRedirectPath(value, fallback) {
+    const next = String(value || "").trim();
+    if (!next) return fallback || links.home;
+    if (/^(?:[a-z]+:)?\/\//i.test(next) || next.toLowerCase().indexOf("javascript:") === 0) {
+      return fallback || links.home;
+    }
+    return next.replace(/^\/+/, "");
+  }
+
+  function authRedirectHref(nextPath) {
+    return "auth_pc.html?next=" + encodeURIComponent(safeRedirectPath(nextPath, links.home));
+  }
+
   async function fetchNovels() {
     if (cache.novels) return cache.novels;
     const result = await client
@@ -435,6 +471,59 @@
     }, true);
   }
 
+  function setPurchaseBusy(button, busy) {
+    if (!button) return;
+    button.dataset.loading = busy ? "true" : "false";
+    if (button.tagName === "BUTTON") button.disabled = busy;
+    button.style.pointerEvents = busy ? "none" : "";
+    button.style.opacity = busy ? "0.65" : "";
+  }
+
+  async function purchaseEpisodeFromButton(button) {
+    if (!button || !client) return;
+    const episodeId = button.dataset.purchaseEpisodeId || "";
+    const redirectPath = safeRedirectPath(button.dataset.purchaseRedirect || button.getAttribute("href"), currentRelativePath());
+    if (!episodeId) {
+      window.location.href = redirectPath;
+      return;
+    }
+
+    const sessionResult = await client.auth.getSession();
+    const session = sessionResult.data.session;
+    syncSessionAccessToken(session);
+
+    if (!session) {
+      window.location.href = authRedirectHref(redirectPath);
+      return;
+    }
+
+    setPurchaseBusy(button, true);
+    try {
+      const rpcResult = await client.rpc("purchase_episode", { p_episode_id: episodeId });
+      if (rpcResult.error) throw rpcResult.error;
+      scheduleLibraryRefresh();
+      window.location.href = safeRedirectPath(redirectPath, currentRelativePath());
+    } finally {
+      setPurchaseBusy(button, false);
+    }
+  }
+
+  function bindPurchaseFlow() {
+    if (purchaseListenerBound) return;
+    purchaseListenerBound = true;
+    document.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-purchase-button]");
+      if (!button) return;
+      event.preventDefault();
+      window.setTimeout(function () {
+        purchaseEpisodeFromButton(button).catch(function (error) {
+          console.error("[InkRoad] purchase failed:", error);
+          window.alert(error.message || "구매 처리 중 오류가 발생했습니다.");
+        });
+      }, 0);
+    }, true);
+  }
+
   async function syncViewerProgress() {
     if (!isViewerPage) return;
     const sessionResult = await client.auth.getSession();
@@ -475,16 +564,17 @@
   }
 
   async function fetchLibraryData(userId) {
+    const novelFields = "id,slug,title,short_description,description,cover_url,banner_url,status,is_translation,free_episode_count,total_episode_count,reaction_score,view_count,bundle_list_price,bundle_sale_price";
     const profilePromise = client.from("profiles").select("display_name").eq("id", userId).maybeSingle();
     const libraryPromise = client
       .from("library_items")
-      .select("id,state,is_bookmarked,notifications_enabled,last_read_at,updated_at,last_read_episode_id,novel:novels(id,slug,title,short_description,description,cover_url,banner_url,status,is_translation,free_episode_count,total_episode_count,reaction_score,view_count,bundle_list_price,bundle_sale_price),episode:episodes(id,episode_number,title)")
+      .select("id,state,is_bookmarked,notifications_enabled,last_read_at,updated_at,last_read_episode_id,novel:novels(" + novelFields + "),episode:episodes(id,episode_number,title)")
       .eq("user_id", userId);
     const purchasePromise = client
       .from("purchases")
-      .select("id,purchase_type,amount_paid,purchased_at,novel:novels(id,slug,title,short_description,description,cover_url,banner_url,status,is_translation,free_episode_count,total_episode_count,reaction_score,view_count,bundle_list_price,bundle_sale_price)")
+      .select("id,purchase_type,amount_paid,purchased_at,novel:novels(" + novelFields + "),episode:episodes(id,episode_number,title,novel_id,novel:novels(" + novelFields + "))")
       .eq("user_id", userId)
-      .eq("purchase_type", "bundle");
+      .order("purchased_at", { ascending: false });
 
     const results = await Promise.all([profilePromise, libraryPromise, purchasePromise]);
     const profileResult = results[0];
@@ -510,19 +600,28 @@
     }).filter(function (item) { return item.novel; });
 
     const purchases = (purchaseResult.data || []).map(function (item) {
+      const directNovel = unwrapRelation(item.novel);
+      const episode = unwrapRelation(item.episode);
+      const episodeNovel = episode ? unwrapRelation(episode.novel) : null;
       return {
         id: item.id,
         purchase_type: item.purchase_type,
         amount_paid: item.amount_paid,
         purchased_at: item.purchased_at,
-        novel: unwrapRelation(item.novel)
+        novel: directNovel || episodeNovel,
+        episode: episode ? {
+          id: episode.id,
+          episode_number: episode.episode_number,
+          title: episode.title
+        } : null
       };
     }).filter(function (item) { return item.novel; });
 
     return {
       profile: profileResult.data || null,
       libraryItems: libraryItems,
-      purchases: purchases
+      purchases: purchases,
+      purchasedNovels: aggregatePurchasedNovels(purchases)
     };
   }
 
@@ -540,6 +639,96 @@
     if (!episodeNumber || !total) return 0;
     return Math.max(1, Math.min(100, Math.round((episodeNumber / total) * 100)));
   }
+
+  function aggregatePurchasedNovels(purchases) {
+    const byNovel = new Map();
+    purchases.forEach(function (item) {
+      if (!item.novel || !item.novel.id) return;
+      const key = item.novel.id;
+      const current = byNovel.get(key) || {
+        novel: item.novel,
+        purchase_type: item.purchase_type,
+        amount_paid: 0,
+        purchased_at: item.purchased_at,
+        episode_count: 0,
+        latest_episode: null,
+        bundle_owned: false
+      };
+      current.amount_paid += Number(item.amount_paid || 0);
+      current.bundle_owned = current.bundle_owned || item.purchase_type === "bundle";
+      if (item.purchase_type === "episode") {
+        current.episode_count += 1;
+      }
+      if (item.episode && (!current.latest_episode || Number(item.episode.episode_number || 0) >= Number(current.latest_episode.episode_number || 0))) {
+        current.latest_episode = item.episode;
+      }
+      if (new Date(item.purchased_at || 0).getTime() >= new Date(current.purchased_at || 0).getTime()) {
+        current.purchased_at = item.purchased_at;
+      }
+      current.purchase_type = current.bundle_owned ? "bundle" : "episode";
+      byNovel.set(key, current);
+    });
+    return Array.from(byNovel.values()).sort(function (a, b) {
+      return new Date(b.purchased_at || 0).getTime() - new Date(a.purchased_at || 0).getTime();
+    });
+  }
+
+  function simpleLibraryEmpty(title, copy, href, label) {
+    return "<div class='library-empty'><h3>" + esc(title) + "</h3><p>" + esc(copy) + "</p>" + (href ? "<a class='button primary' href='" + href + "'>" + esc(label || "이동") + "</a>" : "") + "</div>";
+  }
+
+  function renderSimpleLibraryLists(data, displayName, mobile) {
+    const reading = sortByRecent(data.libraryItems.filter(function (item) {
+      return item.state === "reading" || item.last_read_at;
+    }));
+    const saved = sortByRecent(data.libraryItems.filter(function (item) {
+      return item.is_bookmarked;
+    }));
+    const owned = sortByRecent(data.purchasedNovels || data.purchases || []);
+    const statsNode = q("[data-library-stats]");
+    const readingNode = q("[data-library-reading]");
+    const wishlistNode = q("[data-library-wishlist]");
+    const purchasedNode = q("[data-library-purchased]");
+
+    if (!readingNode || !wishlistNode || !purchasedNode) return false;
+
+    const titleNode = q(mobile ? ".mobile-section-title" : ".store-section-title");
+    if (titleNode) titleNode.textContent = displayName + "님의 서재";
+    if (statsNode) {
+      statsNode.textContent = "읽는 중 " + formatCount(reading.length) + " · 찜 " + formatCount(saved.length) + " · 구매 " + formatCount(owned.length);
+    }
+
+    readingNode.innerHTML = reading.length ? reading.map(function (item) {
+      const episodeNumber = item.episode && item.episode.episode_number ? item.episode.episode_number : 1;
+      const progress = readingProgress(item);
+      const href = viewerHref(item.novel.slug, episodeNumber);
+      return mobile
+        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + episodeNumber + "화 · 진행률 " + progress + "%</div></div></a>"
+        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + episodeNumber + "화 읽는 중 · 진행률 " + progress + "%</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>이어 읽기</a></div></article>";
+    }).join("") : simpleLibraryEmpty("아직 읽는 작품이 없습니다", "스토어에서 작품을 열면 여기에 자동으로 이어집니다.", links.search, "작품 탐색하기");
+
+    wishlistNode.innerHTML = saved.length ? saved.map(function (item) {
+      const href = detailHref(item.novel.slug);
+      const percent = salePercent(item.novel);
+      return mobile
+        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + (percent ? percent + "% 할인 중" : "찜한 작품") + "</div></div></a>"
+        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + (percent ? percent + "% 할인 중" : "알림 대기 중") + "</p></div><div class='library-row-side'><a class='button small ghost' href='" + href + "'>상세 보기</a></div></article>";
+    }).join("") : simpleLibraryEmpty("아직 찜한 작품이 없습니다", "작품 상세에서 찜하기를 누르면 이 탭에 바로 들어옵니다.", links.search, "작품 탐색하기");
+
+    purchasedNode.innerHTML = owned.length ? owned.map(function (item) {
+      const href = item.latest_episode ? viewerHref(item.novel.slug, item.latest_episode.episode_number) : detailHref(item.novel.slug);
+      const meta = item.bundle_owned
+        ? "번들 보유 · 누적 " + formatMoney(item.amount_paid)
+        : "구매한 회차 " + formatCount(item.episode_count) + "화 · 누적 " + formatMoney(item.amount_paid);
+      const action = item.latest_episode ? (item.latest_episode.episode_number + "화 열기") : "작품 상세";
+      return mobile
+        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + esc(meta) + "</div></div></a>"
+        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + esc(meta) + "</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>" + esc(action) + "</a></div></article>";
+    }).join("") : simpleLibraryEmpty("아직 구매한 작품이 없습니다", "유료 회차를 구매하면 여기서 다시 바로 열 수 있습니다.", links.search, "작품 탐색하기");
+
+    return true;
+  }
+
   function renderMobileLibrary(data, session, displayName) {
     const reading = sortByRecent(data.libraryItems.filter(function (item) {
       return item.state === "reading" || item.last_read_at;
@@ -547,7 +736,11 @@
     const saved = sortByRecent(data.libraryItems.filter(function (item) {
       return item.is_bookmarked;
     }));
-    const owned = sortByRecent(data.purchases);
+    if (renderSimpleLibraryLists(data, displayName, true)) {
+      return;
+    }
+
+    const owned = sortByRecent(data.purchasedNovels || data.purchases);
     const focus = reading[0] || saved[0] || owned[0] || null;
     const readingCount = data.libraryItems.filter(function (item) { return item.state === "reading"; }).length;
     const savedCount = saved.length;
@@ -609,7 +802,11 @@
     const saved = sortByRecent(data.libraryItems.filter(function (item) {
       return item.is_bookmarked;
     }));
-    const owned = sortByRecent(data.purchases);
+    if (renderSimpleLibraryLists(data, displayName, false)) {
+      return;
+    }
+
+    const owned = sortByRecent(data.purchasedNovels || data.purchases);
     const focus = reading[0] || saved[0] || owned[0] || null;
     const readingCount = data.libraryItems.filter(function (item) { return item.state === "reading"; }).length;
     const savedCount = saved.length;
@@ -720,10 +917,16 @@
     });
 
     bindBookmarkSync();
+    bindPurchaseFlow();
 
     client.auth.onAuthStateChange(function (_event, session) {
+      syncSessionAccessToken(session);
       if (!session) {
         if (isLibraryPage) renderAuthGate();
+        return;
+      }
+      if (isAuthPage) {
+        window.location.replace(safeRedirectPath(query.get("next"), links.library));
         return;
       }
       mergeRemoteBookmarksIntoLocal(session.user.id)
@@ -737,6 +940,14 @@
 
     const sessionResult = await client.auth.getSession();
     const session = sessionResult.data.session;
+    syncSessionAccessToken(session);
+
+    if (isAuthPage) {
+      if (session) {
+        window.location.replace(safeRedirectPath(query.get("next"), links.library));
+      }
+      return;
+    }
 
     if (isLibraryPage) {
       if (session) {

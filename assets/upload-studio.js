@@ -2,6 +2,9 @@
   const page = window.location.pathname.split("/").pop() || "";
   if (page !== "novel_upload_pc.html") return;
 
+  const search = new URLSearchParams(window.location.search);
+  const editParam = search.get("edit");
+
   const cfg = window.inkroadSupabaseConfig || {};
   const base = (cfg.url || "").replace(/\/$/, "");
   const key = cfg.publishableKey || cfg.anonKey || "";
@@ -13,6 +16,13 @@
   const state = {
     client: null,
     session: null,
+    mode: "create",
+    editingNovelId: null,
+    existingCoverUrl: "",
+    loadedNovel: null,
+    loadedForUserId: null,
+    editLoadRequestSeq: 0,
+    submitRequestSeq: 0,
     busy: false,
     previewMode: false,
     coverFile: null,
@@ -20,14 +30,23 @@
     tagMap: new Map()
   };
 
+  if (editParam && editParam.trim()) {
+    state.mode = "edit";
+    state.editingNovelId = editParam.trim();
+  }
+
   const refs = {
     authShell: document.querySelector("[data-upload-auth]"),
     form: document.querySelector("[data-upload-form]"),
+    modeBadge: document.querySelector("[data-upload-mode-badge]"),
+    pageTitle: document.querySelector("[data-upload-page-title]"),
+    pageSubtitle: document.querySelector("[data-upload-page-subtitle]"),
     title: document.querySelector("[data-upload-title]"),
     summary: document.querySelector("[data-upload-summary]"),
     ageRating: document.querySelector("[data-upload-age-rating]"),
     originCountry: document.querySelector("[data-upload-origin-country]"),
     isTranslation: document.querySelector("[data-upload-is-translation]"),
+    firstEpisodeSection: document.querySelector("[data-upload-first-episode-section]"),
     episodeTitle: document.querySelector("[data-upload-episode-title]"),
     body: document.querySelector("[data-upload-body]"),
     preview: document.querySelector("[data-upload-preview]"),
@@ -89,6 +108,74 @@
     refs.status.hidden = false;
     refs.status.setAttribute("data-tone", tone || "info");
     refs.status.innerHTML = "<strong>" + esc(message) + "</strong>";
+  }
+
+  function getModeText() {
+    if (state.mode === "edit") {
+      return {
+        badge: "작품 수정 모드",
+        title: "기존 작품 정보를 수정합니다",
+        subtitle: "작품 소개, 태그, 표지 정보를 수정해 저장합니다. 첫 회차 내용은 회차 편집 화면에서 수정하세요.",
+        submit: "수정 저장",
+        submitting: "수정 중..."
+      };
+    }
+    return {
+      badge: "새 작품 발행",
+      title: "작품 소개와 첫 회차를 바로 발행합니다",
+      subtitle: "작품 정보, 표지, 태그, 첫 화 본문을 한 번에 저장하고 곧바로 상세 페이지로 넘깁니다.",
+      submit: t("upload.publish_button"),
+      submitting: t("upload.publishing_button")
+    };
+  }
+
+  function applyModeUI() {
+    const modeText = getModeText();
+    if (refs.modeBadge) refs.modeBadge.textContent = modeText.badge;
+    if (refs.pageTitle) refs.pageTitle.textContent = modeText.title;
+    if (refs.pageSubtitle) refs.pageSubtitle.textContent = modeText.subtitle;
+    if (refs.firstEpisodeSection) {
+      refs.firstEpisodeSection.hidden = state.mode === "edit";
+    }
+    if (refs.episodeTitle) refs.episodeTitle.required = state.mode !== "edit";
+    if (refs.body) refs.body.required = state.mode !== "edit";
+  }
+
+  function cancelPendingEditLoadRequests() {
+    state.editLoadRequestSeq += 1;
+  }
+
+  function isActiveEditLoadRequest(requestToken) {
+    return Boolean(
+      requestToken &&
+      state.session &&
+      state.session.user &&
+      state.editLoadRequestSeq === requestToken.seq &&
+      state.session.user.id === requestToken.userId
+    );
+  }
+
+  function shouldCancelSubmitForAuthChange(previousSession, nextSession) {
+    const previousUserId = previousSession && previousSession.user ? previousSession.user.id : null;
+    const nextUserId = nextSession && nextSession.user ? nextSession.user.id : null;
+    return previousUserId !== nextUserId;
+  }
+
+  function cancelPendingSubmitRequests() {
+    state.submitRequestSeq += 1;
+    if (!state.busy) return;
+    state.busy = false;
+    setSubmitState(false);
+  }
+
+  function isActiveSubmitRequest(requestToken) {
+    return Boolean(
+      requestToken &&
+      state.session &&
+      state.session.user &&
+      state.submitRequestSeq === requestToken.seq &&
+      state.session.user.id === requestToken.userId
+    );
   }
 
   function setPreviewMode(enabled) {
@@ -204,24 +291,25 @@
 
   function setSubmitState(forceBusy) {
     const hasSession = Boolean(state.session);
-    const valid = Boolean(
-      refs.title &&
+    const hasTitle = Boolean(refs.title && refs.title.value.trim());
+    const hasEpisodeData = Boolean(
       refs.episodeTitle &&
       refs.body &&
-      refs.title.value.trim() &&
       refs.episodeTitle.value.trim() &&
       refs.body.value.trim()
     );
+    const valid = state.mode === "edit" ? hasTitle : Boolean(hasTitle && hasEpisodeData);
     const disabled = Boolean(forceBusy || state.busy || !hasSession || !valid);
+    const modeText = getModeText();
 
     refs.submitButtons.forEach(function (button) {
       button.disabled = disabled;
       if (state.busy) {
-        button.textContent = t("upload.publishing_button");
+        button.textContent = modeText.submitting;
       } else if (!hasSession) {
         button.textContent = t("upload.login_required_button");
       } else {
-        button.textContent = t("upload.publish_button");
+        button.textContent = modeText.submit;
       }
     });
   }
@@ -386,6 +474,145 @@
     return urlResult.data && urlResult.data.publicUrl ? urlResult.data.publicUrl : null;
   }
 
+  const initialSelectedTags = refs.tagContainer
+    ? Array.from(refs.tagContainer.querySelectorAll("[data-tag-value].selected")).map(function (button) {
+      return normalizeTag(button.dataset.tagValue || button.textContent);
+    }).filter(Boolean)
+    : [];
+
+  function applySelectedTags(tags) {
+    if (!refs.tagContainer) return;
+    Array.from(refs.tagContainer.querySelectorAll("[data-tag-value]")).forEach(function (button) {
+      button.classList.remove("selected");
+      if (button.dataset.customTag === "true") {
+        button.remove();
+      }
+    });
+
+    (tags || []).forEach(function (tagName) {
+      addTagBubble(tagName, true, true);
+    });
+
+    rebuildTagMap();
+  }
+
+  function clearLoadedEditState() {
+    state.loadedNovel = null;
+    state.loadedForUserId = null;
+    state.existingCoverUrl = "";
+    state.coverFile = null;
+
+    if (refs.coverInput) refs.coverInput.value = "";
+    if (refs.title) refs.title.value = "";
+    if (refs.summary) refs.summary.value = "";
+    if (refs.ageRating) refs.ageRating.value = "15";
+    if (refs.originCountry) refs.originCountry.value = "KR";
+    if (refs.isTranslation) refs.isTranslation.checked = false;
+    if (refs.episodeTitle) refs.episodeTitle.value = "";
+    if (refs.body) refs.body.value = "";
+
+    applySelectedTags(initialSelectedTags);
+    setCoverPreview(null);
+    renderPreview();
+  }
+
+  function setCoverPreviewUrl(url) {
+    if (!refs.coverDropzone || !refs.coverPreview || !refs.coverPlaceholder || !refs.coverHint) return;
+    if (!url) {
+      setCoverPreview(null);
+      return;
+    }
+
+    if (state.coverObjectUrl) {
+      URL.revokeObjectURL(state.coverObjectUrl);
+      state.coverObjectUrl = "";
+    }
+
+    refs.coverDropzone.dataset.hasImage = "true";
+    refs.coverPreview.hidden = false;
+    refs.coverPreview.src = url;
+    refs.coverPlaceholder.hidden = true;
+    refs.coverHint.textContent = "기존 표지를 유지합니다";
+  }
+
+  async function loadNovelForEdit(session) {
+    if (state.mode !== "edit") return;
+    if (!session || !session.user) {
+      clearLoadedEditState();
+      showForm(false);
+      throw new Error("로그인이 필요합니다.");
+    }
+    if (!state.editingNovelId) {
+      clearLoadedEditState();
+      showForm(false);
+      throw new Error("수정할 작품 ID가 없습니다.");
+    }
+    if (
+      state.loadedNovel &&
+      state.loadedNovel.id === state.editingNovelId &&
+      state.loadedForUserId === session.user.id
+    ) {
+      showForm(true);
+      return;
+    }
+
+    const requestToken = {
+      seq: ++state.editLoadRequestSeq,
+      userId: session.user.id
+    };
+
+    showForm(false);
+    clearLoadedEditState();
+    setStatus("작품 정보를 불러오는 중입니다...", "info");
+
+    try {
+      const preloadResult = await state.client.rpc("get_owned_novel_edit_payload_for_author", {
+        p_novel_id: state.editingNovelId
+      });
+
+      if (!isActiveEditLoadRequest(requestToken)) return;
+      if (preloadResult.error) throw preloadResult.error;
+
+      const data = Array.isArray(preloadResult.data) ? preloadResult.data[0] : preloadResult.data;
+      if (!data || !data.novel_id) {
+        throw new Error("작품 정보를 찾을 수 없습니다.");
+      }
+      if (!isActiveEditLoadRequest(requestToken)) return;
+
+      const loadedTags = Array.isArray(data.tags)
+        ? data.tags.map(function (tagName) {
+          return normalizeTag(tagName);
+        }).filter(Boolean)
+        : [];
+
+      state.loadedNovel = {
+        id: data.novel_id,
+        slug: data.novel_slug || ""
+      };
+      state.loadedForUserId = session.user.id;
+      state.existingCoverUrl = data.cover_url || "";
+      state.coverFile = null;
+
+      if (refs.title) refs.title.value = data.title || "";
+      if (refs.summary) refs.summary.value = data.short_description || data.description || "";
+      if (refs.ageRating) refs.ageRating.value = String(data.age_rating || 15);
+      if (refs.originCountry) refs.originCountry.value = (data.origin_country || "KR").toUpperCase().slice(0, 2);
+      if (refs.isTranslation) refs.isTranslation.checked = Boolean(data.is_translation);
+
+      if (!isActiveEditLoadRequest(requestToken)) return;
+      applySelectedTags(loadedTags);
+      setCoverPreviewUrl(state.existingCoverUrl);
+      showForm(true);
+      setStatus("작품 정보를 불러왔습니다.", "info");
+      setSubmitState(false);
+    } catch (error) {
+      if (!isActiveEditLoadRequest(requestToken)) return;
+      clearLoadedEditState();
+      showForm(false);
+      throw error;
+    }
+  }
+
   async function handlePublish(event) {
     event.preventDefault();
     if (state.busy) return;
@@ -397,6 +624,8 @@
       setStatus(t("auth.login_required_msg"), "error");
       return;
     }
+    state.session = session;
+    rememberAccessToken(session);
 
     const title = refs.title ? refs.title.value.trim() : "";
     const shortDescription = refs.summary ? refs.summary.value.trim() : "";
@@ -414,49 +643,111 @@
       refs.title.focus();
       return;
     }
-    if (!episodeTitle) {
-      setStatus(t("upload.episode_title_required"), "error");
-      refs.episodeTitle.focus();
+
+    if (state.mode !== "edit") {
+      if (!episodeTitle) {
+        setStatus(t("upload.episode_title_required"), "error");
+        refs.episodeTitle.focus();
+        return;
+      }
+      if (!body) {
+        setStatus(t("upload.body_required"), "error");
+        refs.body.focus();
+        return;
+      }
+    }
+
+    if (state.mode === "edit" && !state.editingNovelId) {
+      setStatus("수정할 작품 정보가 없습니다.", "error");
       return;
     }
-    if (!body) {
-      setStatus(t("upload.body_required"), "error");
-      refs.body.focus();
-      return;
-    }
+
+    const requestToken = {
+      seq: ++state.submitRequestSeq,
+      userId: session.user.id
+    };
 
     state.busy = true;
     setSubmitState(true);
-    setStatus(t("upload.publishing_message"), "info");
+    setStatus(
+      state.mode === "edit" ? "작품 정보를 저장하고 있습니다..." : t("upload.publishing_message"),
+      "info"
+    );
 
     try {
-      const coverUrl = await uploadCover(session);
-      const rpcResult = await state.client.rpc("create_novel_with_episode", {
-        p_title: title,
-        p_short_description: shortDescription || null,
-        p_description: shortDescription || null,
-        p_cover_url: coverUrl,
-        p_episode_title: episodeTitle,
-        p_episode_body: body,
-        p_tags: tags,
-        p_age_rating: ageRating,
-        p_is_translation: isTranslation,
-        p_origin_country: originCountry
-      });
+      let novelSlug = "";
 
-      if (rpcResult.error) throw rpcResult.error;
-      const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
-      if (!row || !row.novel_slug) throw new Error(t("upload.publish_address_error"));
+      if (state.mode === "edit") {
+        const uploadedCoverUrl = await uploadCover(session);
+        if (!isActiveSubmitRequest(requestToken)) return;
+        const coverUrl = uploadedCoverUrl || state.existingCoverUrl || null;
+        const rpcResult = await state.client.rpc("update_novel_for_author", {
+          p_novel_id: state.editingNovelId,
+          p_title: title,
+          p_subtitle: null,
+          p_short_description: shortDescription,
+          p_description: shortDescription,
+          p_cover_url: coverUrl,
+          p_banner_url: null,
+          p_status: null,
+          p_age_rating: ageRating,
+          p_is_translation: isTranslation,
+          p_origin_country: originCountry,
+          p_language_code: null,
+          p_tags: tags
+        });
 
-      setStatus(t("upload.publish_success"), "success");
+        if (!isActiveSubmitRequest(requestToken)) return;
+        if (rpcResult.error) throw rpcResult.error;
+        const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
+        if (!row || !row.novel_slug) {
+          throw new Error(t("upload.publish_address_error"));
+        }
+        novelSlug = row.novel_slug;
+        state.existingCoverUrl = coverUrl || "";
+      } else {
+        const coverUrl = await uploadCover(session);
+        if (!isActiveSubmitRequest(requestToken)) return;
+        const rpcResult = await state.client.rpc("create_novel_with_episode", {
+          p_title: title,
+          p_short_description: shortDescription || null,
+          p_description: shortDescription || null,
+          p_cover_url: coverUrl,
+          p_episode_title: episodeTitle,
+          p_episode_body: body,
+          p_tags: tags,
+          p_age_rating: ageRating,
+          p_is_translation: isTranslation,
+          p_origin_country: originCountry
+        });
+
+        if (!isActiveSubmitRequest(requestToken)) return;
+        if (rpcResult.error) throw rpcResult.error;
+        const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
+        if (!row || !row.novel_slug) {
+          throw new Error(t("upload.publish_address_error"));
+        }
+        novelSlug = row.novel_slug;
+      }
+
+      if (!isActiveSubmitRequest(requestToken)) return;
+      setStatus(
+        state.mode === "edit" ? "수정이 완료되었습니다. 상세 페이지로 이동합니다." : t("upload.publish_success"),
+        "success"
+      );
       refs.submitButtons.forEach(function (button) {
         button.textContent = t("upload.publish_moving");
       });
       window.setTimeout(function () {
-        window.location.href = "novel_detail_pc.html?slug=" + encodeURIComponent(row.novel_slug);
+        if (!isActiveSubmitRequest(requestToken)) return;
+        window.location.href = "novel_detail_pc.html?slug=" + encodeURIComponent(novelSlug);
       }, 700);
     } catch (error) {
-      setStatus(error.message || t("upload.publish_error"), "error");
+      if (!isActiveSubmitRequest(requestToken)) return;
+      setStatus(
+        error.message || (state.mode === "edit" ? "작품 수정 중 오류가 생겼습니다." : t("upload.publish_error")),
+        "error"
+      );
       state.busy = false;
       setSubmitState(false);
     }
@@ -541,13 +832,29 @@
 
   async function refreshSession() {
     const sessionResult = await state.client.auth.getSession();
-    state.session = sessionResult.data.session;
+    const previousSession = state.session;
+    const nextSession = sessionResult.data.session;
+    cancelPendingEditLoadRequests();
+    if (shouldCancelSubmitForAuthChange(previousSession, nextSession)) {
+      cancelPendingSubmitRequests();
+    }
+    state.session = nextSession;
     rememberAccessToken(state.session);
 
     if (state.session) {
       renderSignedIn(state.session);
-      setStatus("", "");
+      if (state.mode === "edit") {
+        showForm(false);
+        try {
+          await loadNovelForEdit(state.session);
+        } catch (error) {
+          setStatus(error.message || "작품 정보를 불러오지 못했습니다.", "error");
+        }
+      } else {
+        setStatus("", "");
+      }
     } else {
+      clearLoadedEditState();
       renderAuthGate();
     }
 
@@ -556,6 +863,7 @@
 
   async function boot() {
     if (!refs.form || !refs.authShell) return;
+    applyModeUI();
     renderPreview();
     setPreviewMode(false);
     setCoverPreview(null);
@@ -575,11 +883,25 @@
     });
 
     state.client.auth.onAuthStateChange(function (_event, session) {
+      const previousSession = state.session;
+      cancelPendingEditLoadRequests();
+      if (shouldCancelSubmitForAuthChange(previousSession, session)) {
+        cancelPendingSubmitRequests();
+      }
       state.session = session;
       rememberAccessToken(session);
       if (session) {
         renderSignedIn(session);
+        if (state.mode === "edit") {
+          showForm(false);
+          loadNovelForEdit(session).catch(function (error) {
+            clearLoadedEditState();
+            showForm(false);
+            setStatus(error.message || "작품 정보를 불러오지 못했습니다.", "error");
+          });
+        }
       } else {
+        clearLoadedEditState();
         renderAuthGate();
       }
       setSubmitState(false);
@@ -594,4 +916,3 @@
     renderAuthGate(t("auth.auth_boot_error"));
   });
 })();
-

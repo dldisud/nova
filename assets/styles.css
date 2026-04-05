@@ -2093,11 +2093,25 @@ body.store-light {
   --surface-muted: #f0eeeb;
   --text: #1a1a1a;
   --text-secondary: #444444;
+  --text-soft: rgba(0, 0, 0, 0.55);
+  --text-faint: rgba(0, 0, 0, 0.35);
   --text-muted: #999999;
   --border: #eeeeee;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.15);
+  --accent: #1a1a1a;
+  --accent-strong: #000000;
+  --accent-soft: rgba(0, 0, 0, 0.06);
+  --accent-glow: rgba(0, 0, 0, 0.1);
   --accent-sale: #e85d3a;
   --accent-free: #2d8a4e;
+  --panel: rgba(0, 0, 0, 0.03);
+  --panel-soft: rgba(0, 0, 0, 0.02);
+  --panel-strong: rgba(0, 0, 0, 0.05);
   --dark: #1a1a1a;
+  --sale: #e85d3a;
+  --sale-soft: rgba(232, 93, 58, 0.08);
+  --ink: #f7f5f2;
   background: var(--bg);
   color: var(--text);
   font-family: "Pretendard", "Inter", "Noto Sans KR", sans-serif;
@@ -2383,12 +2397,35 @@ body.store-light .pc-page {
 }
 
 .store-light .novel-card-badges {
+  display: none;
+}
+
+.store-light .novel-card-overlay {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 10px 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.store-light .novel-ep-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.store-light .novel-sale-mark {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--accent-sale);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .store-light .novel-card-copy {
@@ -2405,10 +2442,41 @@ body.store-light .pc-page {
   letter-spacing: -0.02em;
 }
 
+.store-light .novel-card-author {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
 .store-light .novel-card-meta {
   color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.store-light .novel-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.store-light .novel-rating {
   font-size: 0.78rem;
-  line-height: 1.6;
+  font-weight: 700;
+  color: #c47f00;
+}
+
+.store-light .novel-price {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.store-light .novel-price-sale {
+  font-size: 0.75rem;
+  color: var(--accent-sale);
+  font-weight: 700;
 }
 
 .store-light .novel-card-price {
@@ -2680,11 +2748,11 @@ body.store-light::before {
 .store-light .nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 16px;
 }
 
 .store-light .nav-link {
-  padding: 8px 14px;
+  padding: 8px 4px;
   border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 500;
@@ -3077,7 +3145,7 @@ body.store-light::before {
    ======================================== */
 
 /* Hide legacy supabase-live.js overlays on redesigned pages */
-.store-light .auth-shell {
+.store-light .auth-shell[data-auth-slot] {
   display: none !important;
 }
 
@@ -3137,6 +3205,7 @@ body.store-light::before {
   align-items: center;
   justify-content: center;
   padding: 48px;
+  position: relative;
 }
 
 .store-light .auth-form {
@@ -3225,6 +3294,21 @@ body.store-light::before {
 
 .store-light .auth-error.visible {
   display: block;
+}
+
+.store-light .auth-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.store-light .auth-card[data-tone="success"] {
+  border-color: #86efac;
+  background: #ecfdf5;
+}
+
+.store-light .auth-card[data-tone="warning"] {
+  border-color: #fcd34d;
 }
 
 .store-light .button.kakao {
@@ -4239,6 +4323,10 @@ body.store-light::before {
   z-index: 500;
   display: grid;
   overflow: hidden;
+}
+
+.lang-picker-dropdown[hidden] {
+  display: none;
 }
 
 .lang-picker-dropdown button {

@@ -21,8 +21,8 @@
     }
     
     .studio-sidebar {
-      background: rgba(17, 30, 45, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #fafafa;
+      border: 1px solid #e5e5e5;
       border-radius: 20px;
       padding: 32px;
       position: sticky;
@@ -30,8 +30,8 @@
     }
     
     .studio-main {
-      background: rgba(17, 30, 45, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: #fff;
+      border: 1px solid #e5e5e5;
       border-radius: 20px;
       padding: 48px;
       display: flex;
@@ -59,8 +59,8 @@
     }
 
     .form-input {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #f5f5f5;
+      border: 1px solid #ddd;
       border-radius: 2px;
       padding: 16px;
       color: var(--text);
@@ -70,14 +70,14 @@
 
     .form-input:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 197, 95, 0.2);
+      border-color: #111;
+      box-shadow: 0 0 0 2px rgba(17, 17, 17, 0.08);
     }
 
     .cover-dropzone {
       width: 100%;
       padding: 20px;
-      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border: 2px dashed #ccc;
       border-radius: 2px;
       height: 240px;
       display: flex;
@@ -85,15 +85,15 @@
       align-items: center;
       justify-content: center;
       gap: 16px;
-      background: rgba(0, 0, 0, 0.2);
+      background: #f8f8f8;
       cursor: pointer;
       transition: all 250ms ease;
       text-align: center;
     }
 
     .cover-dropzone:hover {
-      border-color: var(--accent);
-      background: rgba(255, 197, 95, 0.05);
+      border-color: #111;
+      background: #f0f0f0;
     }
 
     .cover-dropzone svg {
@@ -111,7 +111,7 @@
       padding: 0;
       border-style: solid;
       overflow: hidden;
-      background: rgba(0, 0, 0, 0.45);
+      background: #eee;
     }
 
     .cover-preview {
@@ -128,9 +128,9 @@
     
     .tag-bubble {
       appearance: none;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-soft);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #f5f5f5;
+      color: #666;
+      border: 1px solid #ddd;
       padding: 6px 14px;
       border-radius: 999px;
       font-size: 0.85rem;
@@ -139,9 +139,9 @@
     }
     
     .tag-bubble:hover, .tag-bubble.selected {
-      background: rgba(255, 197, 95, 0.1);
-      border-color: var(--accent);
-      color: var(--accent);
+      background: #111;
+      border-color: #111;
+      color: #fff;
     }
 
     .tag-editor {
@@ -158,9 +158,9 @@
       display: flex;
       gap: 8px;
       padding: 12px 16px;
-      background: rgba(0, 0, 0, 0.4);
+      background: #f5f5f5;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid #e5e5e5;
     }
 
     .toolbar-btn {
@@ -178,7 +178,7 @@
     }
 
     .toolbar-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: #eee;
       color: var(--text);
     }
 
@@ -198,7 +198,7 @@
     }
     
     .editor-textarea::placeholder {
-      color: rgba(255, 255, 255, 0.2);
+      color: rgba(0, 0, 0, 0.3);
     }
     
     .publish-header {
@@ -214,27 +214,27 @@
       gap: 6px;
       padding: 14px 16px;
       border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid #e5e5e5;
+      background: #fafafa;
       color: var(--text-soft);
     }
 
     .studio-status[data-tone="success"] {
-      border-color: rgba(74, 222, 128, 0.3);
-      color: #d1fae5;
-      background: rgba(20, 83, 45, 0.3);
+      border-color: #86efac;
+      color: #065f46;
+      background: #ecfdf5;
     }
 
     .studio-status[data-tone="error"] {
-      border-color: rgba(248, 113, 113, 0.32);
-      color: #fee2e2;
-      background: rgba(127, 29, 29, 0.28);
+      border-color: #fca5a5;
+      color: #991b1b;
+      background: #fef2f2;
     }
 
     .studio-status[data-tone="info"] {
-      border-color: rgba(255, 197, 95, 0.28);
-      color: #fde68a;
-      background: rgba(120, 53, 15, 0.24);
+      border-color: #fcd34d;
+      color: #92400e;
+      background: #fffbeb;
     }
 
     .upload-meta-grid {
@@ -268,7 +268,7 @@
     .upload-preview p {
       margin: 0;
       font-size: 1.04rem;
-      color: rgba(255, 255, 255, 0.88);
+      color: #333;
     }
 
     .studio-helper {
@@ -306,41 +306,47 @@
     }
   </style>
 </head>
-<body class="pc-desktop">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="homepage_pc.html">
+<body class="pc-desktop store-light">
+  <div class="creator-layout">
+    <aside class="creator-sidebar">
+      <div class="creator-sidebar-brand">
         <span class="brand-mark material-symbols-outlined">auto_stories</span>
         <span class="brand-copy">
-          <strong class="brand-name">잉크로드 PC</strong>
-          <span class="brand-sub">크리에이터 업로드 스튜디오</span>
+          <strong class="brand-name">INKROAD</strong>
+          <span class="brand-sub">크리에이터</span>
         </span>
-      </a>
-      <nav class="nav">
-        <a class="nav-link" data-nav-link href="homepage_pc.html" data-i18n="nav.home">홈</a>
-        <a class="nav-link" data-nav-link href="search_pc.html" data-i18n="nav.search">탐색</a>
-        <a class="nav-link" data-nav-link href="novel_detail_pc.html">작품 상세</a>
-        <a class="nav-link" data-nav-link href="my_library_pc.html" data-i18n="nav.my_library">내 서재</a>
-        <a class="nav-link" data-nav-link href="creator_dashboard_pc.html" data-i18n="nav.my_works">내 작품</a>
-        <a class="nav-link" data-nav-link href="novel_upload_pc.html" data-i18n="nav.upload">업로드</a>
-      </nav>
-      <div class="nav-actions">
-        <div data-lang-picker></div>
-        <a class="icon-button" href="my_library_pc.html" aria-label="내 서재">
-          <span class="material-symbols-outlined">shelves</span>
-        </a>
-        <button class="nav-cta" type="submit" form="upload-form" data-upload-submit disabled>발행하기</button>
       </div>
-    </div>
-  </header>
+      <nav class="creator-sidebar-nav">
+        <a class="creator-nav-link" href="creator_dashboard_pc.html">
+          <span class="material-symbols-outlined">auto_stories</span> 작품 관리
+        </a>
+        <a class="creator-nav-link" href="author_dashboard_pc.html">
+          <span class="material-symbols-outlined">bar_chart</span> 통계
+        </a>
+        <a class="creator-nav-link active" href="novel_upload_pc.html">
+          <span class="material-symbols-outlined">add_circle</span> 작품 등록
+        </a>
+        <a class="creator-nav-link" href="episode_upload_pc.html">
+          <span class="material-symbols-outlined">upload</span> 회차 업로드
+        </a>
+      </nav>
+      <div class="creator-sidebar-footer">
+        <div data-lang-picker></div>
+        <a href="homepage_pc.html">← 스토어로 돌아가기</a>
+      </div>
+    </aside>
+    <main class="creator-main">
+      <div class="creator-main-head">
+        <h1 class="creator-main-title">작품 등록</h1>
+        <button class="button primary" type="submit" form="upload-form" data-upload-submit disabled>발행하기</button>
+      </div>
 
-  <main class="pc-page workspace-page">
-    <div class="pc-shell">
       <header class="workspace-head" data-reveal>
         <div class="workspace-head-copy">
           <span class="eyebrow">크리에이터 스튜디오</span>
-          <h1 class="workspace-title">작품 소개와 첫 회차를 바로 발행합니다</h1>
-          <p class="workspace-subtitle">작품 정보, 표지, 태그, 첫 화 본문을 한 번에 저장하고 곧바로 상세 페이지로 넘깁니다.</p>
+          <span class="workspace-mode-badge" data-upload-mode-badge>새 작품 발행</span>
+          <h1 class="workspace-title" data-upload-page-title>작품 소개와 첫 회차를 바로 발행합니다</h1>
+          <p class="workspace-subtitle" data-upload-page-subtitle>작품 정보, 표지, 태그, 첫 화 본문을 한 번에 저장하고 곧바로 상세 페이지로 넘깁니다.</p>
         </div>
         <div class="workspace-meta">
           <div class="workspace-stat">
@@ -419,30 +425,32 @@
         </aside>
 
         <section class="studio-main">
-          <div class="publish-header">
-            <input type="text" class="form-input" data-upload-episode-title placeholder="이번 회차 제목 (예: 제 1화. 몰락한 천재)" style="flex: 1; max-width: 600px; border-color: transparent; background: transparent; padding: 0; font-size: 1.8rem; font-weight: 700; color: #fff;" required />
-            <div class="button-row">
-              <button class="button secondary" type="button" data-upload-preview-toggle>미리보기</button>
-            </div>
-          </div>
-
           <div class="studio-status" data-upload-status hidden></div>
 
-          <div class="editor-toolbar">
-            <button class="toolbar-btn" type="button" data-format-action="bold" title="굵게"><b>B</b></button>
-            <button class="toolbar-btn" type="button" data-format-action="italic" title="기울임"><i>I</i></button>
-            <button class="toolbar-btn" type="button" data-format-action="underline" title="밑줄"><u>U</u></button>
-            <div style="width: 1px; background: rgba(255,255,255,0.1); margin: 0 8px;"></div>
-            <button class="toolbar-btn" type="button" data-format-action="break" title="장면 전환"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
-            <button class="toolbar-btn" type="button" data-upload-preview-toggle title="미리보기"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
-          </div>
+          <section class="upload-first-episode-section" data-upload-first-episode-section>
+            <div class="publish-header">
+              <input type="text" class="form-input" data-upload-episode-title placeholder="이번 회차 제목 (예: 제 1화. 몰락한 천재)" style="flex: 1; max-width: 600px; border-color: transparent; background: transparent; padding: 0; font-size: 1.8rem; font-weight: 700; color: #111;" required />
+              <div class="button-row">
+                <button class="button secondary" type="button" data-upload-preview-toggle>미리보기</button>
+              </div>
+            </div>
 
-          <textarea class="editor-textarea" data-upload-body placeholder="여기에 당신의 위대한 이야기를 시작하세요..." required></textarea>
-          <article class="upload-preview" data-upload-preview hidden></article>
+            <div class="editor-toolbar">
+              <button class="toolbar-btn" type="button" data-format-action="bold" title="굵게"><b>B</b></button>
+              <button class="toolbar-btn" type="button" data-format-action="italic" title="기울임"><i>I</i></button>
+              <button class="toolbar-btn" type="button" data-format-action="underline" title="밑줄"><u>U</u></button>
+              <div style="width: 1px; background: #ddd; margin: 0 8px;"></div>
+              <button class="toolbar-btn" type="button" data-format-action="break" title="장면 전환"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+              <button class="toolbar-btn" type="button" data-upload-preview-toggle title="미리보기"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button>
+            </div>
+
+            <textarea class="editor-textarea" data-upload-body placeholder="여기에 당신의 위대한 이야기를 시작하세요..." required></textarea>
+            <article class="upload-preview" data-upload-preview hidden></article>
+          </section>
         </section>
       </form>
-    </div>
-  </main>
+    </main>
+  </div>
 
   <script src="assets/i18n.js"></script>
   <script src="assets/supabase-config.js"></script>

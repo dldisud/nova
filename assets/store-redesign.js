@@ -125,6 +125,25 @@
     return "novel_viewer_pc.html?slug=" + encodeURIComponent(slug) + "&episode=" + encodeURIComponent(episodeNumber || 1);
   }
 
+  function safeInternalPath(value, fallback) {
+    var next = String(value || "").trim();
+    if (!next) return fallback || "homepage_pc.html";
+    if (/^(?:[a-z]+:)?\/\//i.test(next) || next.toLowerCase().indexOf("javascript:") === 0) {
+      return fallback || "homepage_pc.html";
+    }
+    return next.replace(/^\/+/ , "");
+  }
+
+  function authHref(nextPath) {
+    var next = safeInternalPath(nextPath, "homepage_pc.html");
+    return "auth_pc.html?next=" + encodeURIComponent(next);
+  }
+
+  function purchaseButtonAttrs(episodeId, redirectHref) {
+    if (!episodeId) return "";
+    return " data-purchase-button='true' data-purchase-episode-id='" + esc(episodeId) + "' data-purchase-redirect='" + esc(safeInternalPath(redirectHref, "homepage_pc.html")) + "'";
+  }
+
   function accessToken() {
     return cfg.accessToken || localStorage.getItem(store.accessToken) || "";
   }
@@ -157,7 +176,7 @@
 
     const novels = await rest("novels", {
       select: "id,slug,title,subtitle,short_description,description,cover_url,banner_url,status,is_translation,origin_country,free_episode_count,total_episode_count,reaction_score,view_count,comment_count,bundle_list_price,bundle_sale_price,updated_at,authors(pen_name)",
-      status: "not.eq.draft",
+      status: "not.in.(draft,archived)",
       order: "reaction_score.desc,view_count.desc"
     });
 
@@ -268,6 +287,51 @@
     });
   }
 
+  function quotedList(values) {
+    return "(" + (values || []).map(function (value) { return '"' + String(value) + '"'; }).join(",") + ")";
+  }
+
+  async function ownershipForNovel(novelId, list) {
+    var token = accessToken();
+    var isLoggedIn = Boolean(token && token !== key);
+    var ownedEpisodeIds = new Set();
+    if (!isLoggedIn || !novelId) {
+      return { ownsBundle: false, ownedEpisodeIds: ownedEpisodeIds };
+    }
+
+    var episodeIds = (list || []).map(function (episode) { return episode.id; }).filter(Boolean);
+    var filters = ["novel_id.eq." + novelId];
+    if (episodeIds.length) {
+      filters.push("episode_id.in." + quotedList(episodeIds));
+    }
+
+    var rows = await rest("purchases", {
+      select: "purchase_type,novel_id,episode_id",
+      or: "(" + filters.join(",") + ")"
+    }).catch(function () {
+      return [];
+    });
+
+    var ownsBundle = rows.some(function (row) {
+      return row.purchase_type === "bundle" && row.novel_id === novelId;
+    });
+
+    rows.forEach(function (row) {
+      if (row.purchase_type === "episode" && row.episode_id) {
+        ownedEpisodeIds.add(row.episode_id);
+      }
+    });
+
+    return {
+      ownsBundle: ownsBundle,
+      ownedEpisodeIds: ownedEpisodeIds
+    };
+  }
+
+  function isOwnedEpisode(ownership, episodeId) {
+    return Boolean(ownership && (ownership.ownsBundle || (ownership.ownedEpisodeIds && ownership.ownedEpisodeIds.has(episodeId))));
+  }
+
   async function episodeBody(episodeId) {
     const rows = await rest("episode_contents", {
       select: "body",
@@ -294,27 +358,40 @@
 
   function buildNovelCard(novel, mode, percentOverride) {
     const sale = Number(percentOverride || salePercent(novel) || 0);
-    const primaryBadge = mode === "free"
-      ? "<span class='free-badge'>" + formatCount(novel.freeEpisodeCount) + "화 무료</span>"
-      : sale
-        ? "<span class='sale-badge'>-" + sale + "%</span>"
-        : "<span class='muted-badge'>편당 고정가</span>";
-    const secondaryBadge = novel.isTranslation
-      ? "<span class='muted-badge'>" + esc(originLabel(novel.originCountry, true)) + "</span>"
-      : "<span class='muted-badge'>" + t("origin.korea") + "</span>";
-    const meta = (novel.tags[0] || originLabel(novel.originCountry, novel.isTranslation)) + " · " + (novel.tags[1] || (novel.status === "completed" ? t("status.completed") : t("status.serializing")));
-    const bottom = mode === "free"
-      ? "<span class='price-current'>평점 " + novel.reactionScore.toFixed(1) + "</span>"
-      : priceMarkup(novel, sale);
+    const freeCount = novel.freeEpisodeCount || 0;
+    const epCount = novel.totalEpisodeCount || 0;
+    const statusLabel = novel.status === "completed" ? t("status.completed") : t("status.serializing");
+    const genre = esc(novel.tags[0] || originLabel(novel.originCountry, novel.isTranslation));
+
+    // Cover overlay: episode info at bottom, sale mark at top-right
+    const epLabel = freeCount > 0
+      ? formatCount(freeCount) + "화 무료"
+      : epCount > 0 ? "총 " + formatCount(epCount) + "화" : "";
+    const epBadge = epLabel ? "<span class='novel-ep-badge'>" + epLabel + "</span>" : "";
+    const saleMark = sale ? "<span class='novel-sale-mark'>-" + sale + "%</span>" : "";
+
+    // Bottom info: rating + price (price secondary)
+    const rating = novel.reactionScore ? "<span class='novel-rating'>★ " + novel.reactionScore.toFixed(1) + "</span>" : "";
+    let priceText = "";
+    if (mode !== "free") {
+      priceText = sale
+        ? "<span class='novel-price-sale'>편당 " + formatWon(discountedEpisodePrice(novel)) + "</span>"
+        : "<span class='novel-price'>편당 " + formatWon(EPISODE_PRICE) + "</span>";
+    }
+
     return "<article class='novel-card'>" +
       "<a class='novel-card-media' href='" + detailHref(novel.slug) + "'>" +
       "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + " 표지'>" +
-      "<div class='novel-card-badges'>" + primaryBadge + secondaryBadge + "</div>" +
+      "<div class='novel-card-overlay'>" +
+        "<span class='novel-card-overlay-left'>" + epBadge + "</span>" +
+        "<span class='novel-card-overlay-right'>" + saleMark + "</span>" +
+      "</div>" +
       "</a>" +
       "<div class='novel-card-copy'>" +
       "<h3 class='novel-card-title'>" + esc(novel.title) + "</h3>" +
-      "<p class='novel-card-meta'>" + esc(meta) + "</p>" +
-      "<div class='novel-card-price'>" + bottom + "</div>" +
+      "<p class='novel-card-author'>" + esc(novel.authorName) + "</p>" +
+      "<p class='novel-card-meta'>" + genre + " · " + statusLabel + "</p>" +
+      "<div class='novel-card-bottom'>" + rating + priceText + "</div>" +
       "</div>" +
       "</article>";
   }
@@ -395,8 +472,7 @@
     const genreGrid = q(".genre-grid");
     if (genreGrid) {
       genreGrid.innerHTML = genreDefs.slice(0, 8).map(function (genre) {
-        const count = data.novels.filter(genre.match).length;
-        return "<a class='genre-card' href='search_pc.html?tag=" + encodeURIComponent(genre.label) + "'><strong>" + esc(genre.label) + "</strong><span>" + formatCount(count) + "개 작품</span></a>";
+        return "<a class='genre-pill' href='search_pc.html?tag=" + encodeURIComponent(genre.label) + "'>" + esc(genre.label) + "</a>";
       }).join("");
     }
 
@@ -541,7 +617,7 @@
       .map(function (entry) { return entry.novel; });
   }
 
-  function renderDetail(data, novel, list) {
+  function renderDetail(data, novel, list, ownership) {
     var free = list.filter(function (episode) { return episode.accessType === "free"; });
     var paid = list.filter(function (episode) { return episode.accessType === "paid"; });
     var readButton = q("[data-detail-read]");
@@ -589,7 +665,16 @@
 
     var priceBox = q("[data-price-box]");
     if (priceBox) {
-      priceBox.innerHTML = "<div><p class='price-box-label'>" + t("viewer.per_price") + "</p><div class='price-box-values'>" + priceMarkup(novel) + "</div><p class='price-box-note'>유료 " + formatCount(paid.length) + "화 · " + esc(sale ? countdownLabel(saleEvent && saleEvent.event ? saleEvent.event.endsAt : null) : t("viewer.regular_sale")) + "</p></div><a class='button sale' href='" + viewerHref(novel.slug, paid[0] ? paid[0].episodeNumber : 1) + "'>구매하기</a>";
+      var firstOwnedPaidEpisode = paid.find(function (episode) { return isOwnedEpisode(ownership, episode.id); }) || null;
+      var firstLockedPaidEpisode = paid.find(function (episode) { return !isOwnedEpisode(ownership, episode.id); }) || null;
+      var ctaEpisode = firstLockedPaidEpisode || firstOwnedPaidEpisode || null;
+      var ctaHref = ctaEpisode ? viewerHref(novel.slug, ctaEpisode.episodeNumber) : viewerHref(novel.slug, 1);
+      var ctaMarkup = firstLockedPaidEpisode
+        ? "<a class='button sale' href='" + ctaHref + "'" + purchaseButtonAttrs(firstLockedPaidEpisode.id, ctaHref) + ">구매하기</a>"
+        : firstOwnedPaidEpisode
+          ? "<a class='button sale' href='" + ctaHref + "'>보유한 회차 열기</a>"
+          : "<a class='button sale' href='" + ctaHref + "'>무료로 읽기</a>";
+      priceBox.innerHTML = "<div><p class='price-box-label'>" + t("viewer.per_price") + "</p><div class='price-box-values'>" + priceMarkup(novel) + "</div><p class='price-box-note'>유료 " + formatCount(paid.length) + "화 · " + esc(sale ? countdownLabel(saleEvent && saleEvent.event ? saleEvent.event.endsAt : null) : t("viewer.regular_sale")) + "</p></div>" + ctaMarkup;
     }
 
     var episodeListNode = q("[data-episode-list]");
@@ -602,7 +687,11 @@
       }
       if (filter !== "free" && paid.length) {
         paid.forEach(function (episode) {
-          rows.push("<div class='episode-row'><div class='episode-row-left'><span class='episode-num'>" + String(episode.episodeNumber).padStart(2, "0") + "</span><a class='episode-title' href='" + viewerHref(novel.slug, episode.episodeNumber) + "'>" + esc(episode.title) + "</a></div>" + (saleEpisodePrice < EPISODE_PRICE ? "<span class='price-old'>" + formatWon(EPISODE_PRICE) + "</span><span class='price-sale'>" + formatWon(saleEpisodePrice) + "</span>" : "<span class='price-current'>" + formatWon(EPISODE_PRICE) + "</span>") + "</div>");
+          var owned = isOwnedEpisode(ownership, episode.id);
+          var sideMarkup = owned
+            ? "<span class='muted-badge'>보유함</span>"
+            : (saleEpisodePrice < EPISODE_PRICE ? "<span class='price-old'>" + formatWon(EPISODE_PRICE) + "</span><span class='price-sale'>" + formatWon(saleEpisodePrice) + "</span>" : "<span class='price-current'>" + formatWon(EPISODE_PRICE) + "</span>");
+          rows.push("<div class='episode-row" + (owned ? " is-owned" : "") + "'><div class='episode-row-left'><span class='episode-num'>" + String(episode.episodeNumber).padStart(2, "0") + "</span><a class='episode-title' href='" + viewerHref(novel.slug, episode.episodeNumber) + "'>" + esc(episode.title) + "</a></div>" + sideMarkup + "</div>");
         });
       }
       episodeListNode.innerHTML = rows.join("") || "<div class='episode-row'><span class='episode-num'>-</span><span class='episode-title'>" + t("viewer.no_episodes") + "</span></div>";
@@ -625,18 +714,22 @@
     refreshBookmarkButtons();
   }
 
-  function renderViewer(novel, list, selected, body) {
+  function renderViewer(novel, list, selected, body, ownership) {
     if (!selected) return;
     var currentIndex = list.findIndex(function (episode) { return episode.id === selected.id; });
     var prev = currentIndex > 0 ? list[currentIndex - 1] : null;
     var next = currentIndex >= 0 && currentIndex < list.length - 1 ? list[currentIndex + 1] : null;
     var sale = salePercent(novel);
+    var selectedOwned = isOwnedEpisode(ownership, selected.id);
+    var nextOwned = next ? isOwnedEpisode(ownership, next.id) : false;
     var currentBody = body
       ? (typeof marked !== "undefined" ? marked.parse(body) : body.split(/\n{2,}/).filter(Boolean).map(function (paragraph) {
           return "<p>" + esc(paragraph).replace(/\n/g, "<br>") + "</p>";
         }).join(""))
       : (selected.accessType === "paid"
-        ? "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || t("viewer.teaser_fallback")) + "</p>"
+        ? (selectedOwned
+          ? "<p>이미 구매한 회차입니다.</p><p>본문을 다시 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.</p>"
+          : "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || t("viewer.teaser_fallback")) + "</p>")
         : "<p>" + t("viewer.body_unavailable") + "</p>");
 
     document.title = "INKROAD | " + novel.title + " " + selected.episodeNumber + "화";
@@ -647,7 +740,7 @@
     if (q("[data-reader-nav-episode]")) q("[data-reader-nav-episode]").textContent = selected.episodeNumber + "화";
     if (q("[data-chapter-volume]")) q("[data-chapter-volume]").textContent = translationDirection(novel);
     if (q("[data-chapter-title]")) q("[data-chapter-title]").textContent = selected.title;
-    if (q("[data-chapter-access]")) q("[data-chapter-access]").textContent = selected.accessType === "free" ? t("viewer.free_episode") : t("viewer.paid_episode");
+    if (q("[data-chapter-access]")) q("[data-chapter-access]").textContent = selected.accessType === "free" ? t("viewer.free_episode") : (selectedOwned ? "보유한 유료 회차" : t("viewer.paid_episode"));
     if (q("[data-reader-content]")) {
       q("[data-reader-content]").innerHTML = currentBody;
       q("[data-reader-content]").classList.add("reader-protected");
@@ -666,20 +759,40 @@
     var paywallDetail = q("[data-paywall-detail]");
     var paywallNote = q("[data-paywall-note]");
     if (paywall) {
-      if (selected.accessType === "paid" && !body) {
+      var purchaseTarget = null;
+      if (selected.accessType === "paid" && !body && !selectedOwned) {
         paywall.style.display = "";
+        purchaseTarget = selected;
         if (paywallTitle) paywallTitle.textContent = selected.title;
         if (paywallPrices) paywallPrices.innerHTML = priceMarkup(novel);
         if (paywallDetail) paywallDetail.href = detailHref(novel.slug);
         if (paywallNote) paywallNote.textContent = sale ? countdownLabel(null) + " 할인 중" : "상시 판매 가격";
-      } else if (next && next.accessType === "paid") {
+      } else if (next && next.accessType === "paid" && !nextOwned) {
         paywall.style.display = "";
+        purchaseTarget = next;
         if (paywallTitle) paywallTitle.textContent = next.title;
         if (paywallPrices) paywallPrices.innerHTML = priceMarkup(novel);
         if (paywallDetail) paywallDetail.href = detailHref(novel.slug);
         if (paywallNote) paywallNote.textContent = t("viewer.paywall_note");
       } else {
         paywall.style.display = "none";
+      }
+
+      if (paywallBuy) {
+        if (purchaseTarget) {
+          var paywallHref = viewerHref(novel.slug, purchaseTarget.episodeNumber);
+          paywallBuy.href = paywallHref;
+          paywallBuy.setAttribute("data-purchase-button", "true");
+          paywallBuy.dataset.purchaseEpisodeId = purchaseTarget.id;
+          paywallBuy.dataset.purchaseRedirect = safeInternalPath(paywallHref, paywallHref);
+          paywallBuy.textContent = purchaseTarget.id === selected.id ? "이 화 구매하기" : "다음 화 구매하기";
+        } else {
+          paywallBuy.removeAttribute("data-purchase-button");
+          delete paywallBuy.dataset.purchaseEpisodeId;
+          delete paywallBuy.dataset.purchaseRedirect;
+          paywallBuy.href = detailHref(novel.slug);
+          paywallBuy.textContent = "작품 상세";
+        }
       }
     }
 
@@ -695,7 +808,7 @@
     }
     if (nextNav) {
       nextNav.innerHTML = next
-        ? "<a href='" + viewerHref(novel.slug, next.episodeNumber) + "'>" + (next.accessType === "free" ? t("viewer.next") : t("viewer.next_paid")) + "</a>"
+        ? "<a href='" + viewerHref(novel.slug, next.episodeNumber) + "'>" + ((next.accessType === "free" || nextOwned) ? t("viewer.next") : t("viewer.next_paid")) + "</a>"
         : "<span style='color:var(--text-muted);'>" + t("viewer.last_episode") + "</span>";
     }
     if (positionNode) positionNode.textContent = selected.episodeNumber + " / " + formatCount(novel.totalEpisodeCount);
@@ -785,6 +898,10 @@
   }
 
   function renderAuth() {
+    function postAuthDestination() {
+      return safeInternalPath(query.get("next"), "homepage_pc.html");
+    }
+
     var loginForm = q("[data-auth-login]");
     var signupForm = q("[data-auth-signup]");
     var errorLogin = q("[data-auth-error]");
@@ -820,7 +937,14 @@
     if (window.supabase && window.supabase.createClient) {
       supabaseClient = window.supabase.createClient(
         (cfg.url || "").replace(/\/$/, ""),
-        cfg.anonKey || cfg.publishableKey || ""
+        cfg.publishableKey || cfg.anonKey || "",
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            storageKey: "inkroad-supabase-auth"
+          }
+        }
       );
     }
 
@@ -838,7 +962,7 @@
           if (result.data && result.data.session) {
             localStorage.setItem(store.accessToken, result.data.session.access_token);
           }
-          window.location.href = "homepage_pc.html";
+          window.location.href = postAuthDestination();
         } catch (err) {
           showError(errorLogin, "로그인 중 오류가 발생했습니다.");
         }
@@ -862,7 +986,7 @@
           if (result.error) { showError(errorSignup, result.error.message); return; }
           if (result.data && result.data.session) {
             localStorage.setItem(store.accessToken, result.data.session.access_token);
-            window.location.href = "homepage_pc.html";
+            window.location.href = postAuthDestination();
           } else {
             showError(errorSignup, "가입 확인 이메일을 보냈습니다. 이메일을 확인해주세요.");
             errorSignup.style.color = "var(--accent-free)";
@@ -1430,9 +1554,10 @@
     const novel = data.novelsBySlug.get(slug) || data.novels[0];
     if (!novel) return;
     const list = await episodes(novel.id);
+    const ownership = (page === "novel_detail_pc.html" || page === "novel_viewer_pc.html") ? await ownershipForNovel(novel.id, list) : null;
 
     if (page === "novel_detail_pc.html") {
-      renderDetail(data, novel, list);
+      renderDetail(data, novel, list, ownership);
       return;
     }
 
@@ -1440,7 +1565,7 @@
       const episodeNumber = Number(query.get("episode") || 1);
       const selected = list.find(function (episode) { return episode.episodeNumber === episodeNumber; }) || list[0];
       const body = selected ? await episodeBody(selected.id).catch(function () { return ""; }) : "";
-      renderViewer(novel, list, selected, body);
+      renderViewer(novel, list, selected, body, ownership);
       return;
     }
 

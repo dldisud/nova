@@ -228,6 +228,118 @@
       gap: 14px;
     }
 
+    .episode-index-shell {
+      display: grid;
+      gap: 14px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .episode-index-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .episode-index-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .episode-index-filters .button[data-active="true"] {
+      border-color: rgba(245, 158, 11, 0.36);
+      background: rgba(245, 158, 11, 0.14);
+      color: #fef3c7;
+    }
+
+    .episode-index-summary,
+    .episode-index-bulk-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .episode-index-bulk-actions[hidden] {
+      display: none;
+    }
+
+    .episode-index-bulk-actions .button {
+      flex: 1 1 140px;
+      justify-content: center;
+    }
+
+    .episode-index-count {
+      color: var(--text-soft);
+      font-size: 0.88rem;
+    }
+
+    .episode-index-list {
+      display: grid;
+      gap: 10px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .episode-index-item {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .episode-index-item.is-hidden {
+      border-color: rgba(255, 197, 95, 0.22);
+      background: rgba(120, 53, 15, 0.18);
+    }
+
+    .episode-index-item.is-trashed {
+      border-color: rgba(248, 113, 113, 0.24);
+      background: rgba(127, 29, 29, 0.18);
+    }
+
+    .episode-index-top,
+    .episode-index-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .episode-index-title {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: var(--text);
+    }
+
+    .episode-index-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .episode-index-empty {
+      margin: 0;
+      color: var(--text-soft);
+      line-height: 1.8;
+    }
+
+    .episode-index-note {
+      margin: 0;
+      color: var(--text-faint);
+      font-size: 0.84rem;
+      line-height: 1.6;
+    }
+
     .nav-cta:disabled,
     .button:disabled {
       opacity: 0.52;
@@ -275,7 +387,7 @@
         <a class="icon-button" href="creator_dashboard_pc.html" aria-label="내 작품">
           <span class="material-symbols-outlined">list_alt</span>
         </a>
-        <button class="nav-cta" type="submit" form="episode-form" data-episode-submit disabled data-i18n="editor.publish">회차 발행</button>
+        <button class="nav-cta" type="submit" form="episode-form" data-episode-submit disabled>회차 발행</button>
       </div>
     </div>
   </header>
@@ -284,9 +396,10 @@
     <div class="pc-shell">
       <header class="workspace-head" data-reveal>
         <div class="workspace-head-copy">
-          <span class="eyebrow" data-i18n="editor.add_episode">회차 추가</span>
-          <h1 class="workspace-title" data-i18n="editor.add_episode_title">기존 작품에 다음 회차를 이어서 발행합니다</h1>
-          <p class="workspace-subtitle">작품을 고르면 다음 회차 번호가 자동으로 이어지고, 무료 공개인지 회차 구매인지까지 함께 저장됩니다.</p>
+          <span class="eyebrow">크리에이터 스튜디오</span>
+          <span class="workspace-mode-badge" data-episode-mode-badge>새 회차 발행</span>
+          <h1 class="workspace-title" data-episode-page-title>기존 작품에 다음 회차를 이어서 발행합니다</h1>
+          <p class="workspace-subtitle" data-episode-page-subtitle>작품을 고르면 다음 회차 번호가 자동으로 이어지고, 무료 공개인지 회차 구매인지까지 함께 저장됩니다.</p>
         </div>
         <div class="workspace-meta">
           <div class="workspace-stat">
@@ -328,6 +441,30 @@
             <p class="episode-helper">무료 회차면 가격은 자동으로 0원이 되고, 유료 회차면 입력한 가격이 함께 저장됩니다.</p>
             <p class="episode-helper">발행이 끝나면 방금 쓴 회차의 읽기 화면으로 바로 이동합니다.</p>
           </div>
+
+          <section class="episode-index-shell">
+            <div class="episode-index-head">
+              <span class="eyebrow">전체 회차 관리</span>
+              <strong class="episode-index-count" data-episode-index-count>0화</strong>
+            </div>
+            <div class="episode-index-filters" data-episode-filter-bar>
+              <button class="button ghost small" type="button" data-episode-filter="all" data-active="true" aria-pressed="true">전체</button>
+              <button class="button ghost small" type="button" data-episode-filter="published" data-active="false" aria-pressed="false">공개중</button>
+              <button class="button ghost small" type="button" data-episode-filter="hidden" data-active="false" aria-pressed="false">숨김</button>
+              <button class="button ghost small" type="button" data-episode-filter="trashed" data-active="false" aria-pressed="false">휴지통</button>
+            </div>
+            <div class="episode-index-summary" data-episode-summary-row>
+              <span class="episode-chip" data-episode-summary-published>공개중 0화</span>
+              <span class="episode-chip" data-episode-summary-hidden>숨김 0화</span>
+              <span class="episode-chip" data-episode-summary-trashed>휴지통 0화</span>
+            </div>
+            <div class="episode-index-bulk-actions" data-episode-bulk-actions hidden>
+              <button class="button secondary small" type="button" data-episode-restore-all>휴지통 전체 복원</button>
+              <button class="button ghost small" type="button" data-episode-purge>휴지통 비우기</button>
+            </div>
+            <div class="episode-index-list" data-episode-index-list></div>
+            <p class="episode-index-empty" data-episode-index-empty hidden>선택한 작품의 회차가 여기에 표시됩니다.</p>
+          </section>
         </aside>
 
         <section class="episode-main">
@@ -354,6 +491,18 @@
               <span>회차 가격</span>
               <input type="number" min="0" step="10" value="100" data-episode-price placeholder="100">
             </label>
+          </div>
+
+          <div class="episode-edit-meta" data-episode-edit-meta hidden>
+            <div class="episode-edit-meta-title">수정 대상 회차 정보</div>
+            <div class="episode-edit-meta-row">
+              <span>회차 번호</span>
+              <strong data-episode-edit-number>-</strong>
+            </div>
+            <div class="episode-edit-meta-row">
+              <span>마지막 수정</span>
+              <strong data-episode-edit-updated>-</strong>
+            </div>
           </div>
 
           <div class="episode-status" data-episode-status hidden></div>
