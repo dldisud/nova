@@ -2,67 +2,75 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>INKROAD | 내 서재</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/animations.css">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body class="mobile-app store-light">
-  <header class="mobile-header">
-    <a class="brand" href="homepage.html">
-      <span class="brand-mark material-symbols-outlined">auto_stories</span>
-      <strong class="brand-name">INKROAD</strong>
+<body class="store-dark" style="background:#000; color:#fff;">
+  <!-- Topbar -->
+  <header style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); position:fixed; top:0; left:0; right:0; z-index:100;">
+    <a href="homepage.html" style="font-size:18px; font-weight:800; color:#FFC55F; display:flex; align-items:center; gap:6px; text-decoration:none;">
+      <i class="bx bx-book-open"></i> INKROAD
     </a>
-    <div class="mobile-header-actions">
+    <div style="display:flex; gap:12px; align-items:center;">
       <div data-lang-picker></div>
-      <a href="search.html" class="mobile-header-icon"><span class="material-symbols-outlined">search</span></a>
-      <a href="auth_pc.html" class="mobile-header-icon" data-auth-link><span class="material-symbols-outlined">person</span></a>
+      <a href="search.html" style="width:36px; height:36px; border-radius:50%; background:#242424; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none;">
+        <i class="bx bx-search"></i>
+      </a>
+      <a href="auth_pc.html" style="width:36px; height:36px; border-radius:50%; background:#242424; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none;" data-auth-link>
+        <i class="bx bx-user"></i>
+      </a>
     </div>
   </header>
 
-  <main class="mobile-content" style="padding:16px 0 72px;">
-    <div style="padding:0 16px 12px;display:flex;justify-content:space-between;align-items:center;">
-      <h1 class="mobile-section-title">내 서재</h1>
-      <div data-library-stats style="font-size:12px;color:var(--text-muted);"></div>
+  <main style="padding: 72px 0 90px; background: #000; min-height: 100vh;">
+    <div style="padding:0 16px 12px; display:flex; justify-content:space-between; align-items:center;">
+      <h1 style="font-size:22px; font-weight:800; margin:0;">내 서재</h1>
+      <div data-library-stats style="font-size:12px; color:#b3b3b3;"></div>
     </div>
 
-    <div class="mobile-chip-scroll" style="padding-bottom:16px;">
-      <button class="filter-chip" type="button" data-tab-target="reading" data-state="include">읽는 중</button>
-      <button class="filter-chip" type="button" data-tab-target="wishlist">찜한 작품</button>
-      <button class="filter-chip" type="button" data-tab-target="purchased">구매한 작품</button>
+    <div class="category-pills">
+      <button class="pill active" type="button" data-tab-target="reading" data-state="include">읽는 중</button>
+      <button class="pill" type="button" data-tab-target="wishlist">찜한 작품</button>
+      <button class="pill" type="button" data-tab-target="purchased">구매한 작품</button>
     </div>
 
     <div data-tab-panel="reading">
-      <div data-library-reading></div>
+      <div class="masonry-grid" data-library-reading></div>
     </div>
     <div data-tab-panel="wishlist" style="display:none;">
-      <div data-library-wishlist></div>
+      <div class="masonry-grid" data-library-wishlist></div>
     </div>
     <div data-tab-panel="purchased" style="display:none;">
-      <div data-library-purchased></div>
+      <div class="masonry-grid" data-library-purchased></div>
     </div>
   </main>
 
-  <nav class="mobile-tab-bar">
-    <a class="tab-item" href="homepage.html">
-      <span class="material-symbols-outlined">home</span>
-      <span class="tab-label" data-i18n="nav.home">홈</span>
+  <!-- Bottom Navigation -->
+  <nav style="display:flex; justify-content:space-around; align-items:center; padding:12px 20px 24px; background:rgba(18,18,18,0.9); backdrop-filter:blur(10px); position:fixed; bottom:0; left:0; right:0; border-top:1px solid #282828; z-index:100;">
+    <a href="homepage.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-home-alt" style="font-size:24px;"></i>
+      <span>홈</span>
     </a>
-    <a class="tab-item" href="search.html">
-      <span class="material-symbols-outlined">search</span>
-      <span class="tab-label" data-i18n="nav.search">탐색</span>
+    <a href="search.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-search" style="font-size:24px;"></i>
+      <span>탐색</span>
     </a>
-    <a class="tab-item active" href="my_library.html">
-      <span class="material-symbols-outlined">auto_stories</span>
-      <span class="tab-label" data-i18n="nav.my_library">서재</span>
+    <a href="my_library.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#FFC55F; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bxs-book" style="font-size:24px;"></i>
+      <span>서재</span>
     </a>
-    <a class="tab-item" href="auth_pc.html">
-      <span class="material-symbols-outlined">person</span>
-      <span class="tab-label">MY</span>
+    <a href="auth_pc.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-user" style="font-size:24px;"></i>
+      <span>MY</span>
     </a>
   </nav>
 
