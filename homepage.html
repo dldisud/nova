@@ -2,83 +2,94 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>INKROAD | 글로벌 웹소설 스토어</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/animations.css">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body class="mobile-app store-light">
-  <header class="mobile-header">
-    <a class="brand" href="homepage.html">
-      <span class="brand-mark material-symbols-outlined">auto_stories</span>
-      <strong class="brand-name">INKROAD</strong>
+<body class="store-dark" style="background:#000; color:#fff;">
+  <!-- Topbar -->
+  <header style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); position:fixed; top:0; left:0; right:0; z-index:100;">
+    <a href="homepage.html" style="font-size:18px; font-weight:800; color:#FFC55F; display:flex; align-items:center; gap:6px; text-decoration:none;">
+      <i class="bx bx-book-open"></i> INKROAD
     </a>
-    <div class="mobile-header-actions">
+    <div style="display:flex; gap:12px; align-items:center;">
       <div data-lang-picker></div>
-      <a href="search.html" class="mobile-header-icon"><span class="material-symbols-outlined">search</span></a>
-      <a href="auth_pc.html" class="mobile-header-icon" data-auth-link><span class="material-symbols-outlined">person</span></a>
+      <a href="search.html" style="width:36px; height:36px; border-radius:50%; background:#242424; display:flex; align-items:center; justify-content:center; color:#fff; text-decoration:none;">
+        <i class="bx bx-search"></i>
+      </a>
     </div>
   </header>
 
-  <main class="mobile-content">
-    <div class="mobile-hero" data-mobile-hero></div>
-    <div class="mobile-hero-cta" data-mobile-hero-cta></div>
-
-    <div class="mobile-sale-banner" data-mobile-sale-banner style="display:none;"></div>
-
-    <section class="mobile-section" data-mobile-section-sale style="display:none;">
-      <div class="mobile-section-head">
-        <h2 class="mobile-section-title">지금 할인 중</h2>
-        <a class="mobile-section-link" href="search.html">전체 보기 →</a>
-      </div>
-      <div class="mobile-scroll-row" data-mobile-sale-list></div>
-    </section>
-
-    <section class="mobile-section">
-      <div class="mobile-section-head">
-        <h2 class="mobile-section-title">인기 작품</h2>
-        <a class="mobile-section-link" href="search.html">전체 보기 →</a>
-      </div>
-      <div class="mobile-scroll-row" data-mobile-popular-list></div>
-    </section>
-
-    <section class="mobile-section">
-      <div class="mobile-section-head">
-        <h2 class="mobile-section-title">최근 업데이트</h2>
-      </div>
-      <div data-mobile-recent-list></div>
-    </section>
-
-    <footer class="mobile-footer">
-      <span>© <span data-year></span> INKROAD</span>
-      <div style="margin-top:6px;">
-        <a href="#">이용약관</a>
-        <a href="#">개인정보</a>
-        <a href="#">고객센터</a>
-      </div>
-    </footer>
+  <main style="padding: 72px 0 90px; background: #000; min-height: 100vh;">
+    <!-- Category Filter -->
+    <div class="category-pills">
+      <button class="pill active">추천</button>
+      <button class="pill">판타지</button>
+      <button class="pill">로맨스</button>
+      <button class="pill">무협</button>
+      <button class="pill">세일 중</button>
+    </div>
+    
+    <!-- Masonry Grid -->
+    <div class="masonry-grid">
+      <a href="novel_viewer.html" class="masonry-item tall" style="text-decoration:none; display:block;">
+        <div class="red-badge-masonry">-45%</div>
+        <img class="masonry-cover" src="https://placehold.co/300x500/1a1a1a/E50914?text=Novel+1" alt="Cover">
+        <div class="masonry-info">
+          <div class="masonry-title">전지적 독자 시점</div>
+          <div class="masonry-author">싱숑</div>
+        </div>
+      </a>
+      <a href="novel_viewer.html" class="masonry-item short" style="text-decoration:none; display:block;">
+        <img class="masonry-cover" src="https://placehold.co/300x375/1a1a1a/FFC55F?text=Novel+2" alt="Cover">
+        <div class="masonry-info">
+          <div class="masonry-title">재벌집 막내아들</div>
+          <div class="masonry-author">산경</div>
+        </div>
+      </a>
+      <a href="novel_viewer.html" class="masonry-item medium" style="text-decoration:none; display:block;">
+        <img class="masonry-cover" src="https://placehold.co/300x428/1a1a1a/FFC55F?text=Novel+3" alt="Cover">
+        <div class="masonry-info">
+          <div class="masonry-title">나 혼자만 레벨업</div>
+          <div class="masonry-author">추공</div>
+        </div>
+      </a>
+      <a href="novel_viewer.html" class="masonry-item tall" style="text-decoration:none; display:block;">
+        <div class="red-badge-masonry">-30%</div>
+        <img class="masonry-cover" src="https://placehold.co/300x500/1a1a1a/E50914?text=Novel+4" alt="Cover">
+        <div class="masonry-info">
+          <div class="masonry-title">화산귀환</div>
+          <div class="masonry-author">비가</div>
+        </div>
+      </a>
+    </div>
   </main>
 
-  <nav class="mobile-tab-bar">
-    <a class="tab-item active" href="homepage.html">
-      <span class="material-symbols-outlined">home</span>
-      <span class="tab-label" data-i18n="nav.home">홈</span>
+  <!-- Bottom Navigation -->
+  <nav style="display:flex; justify-content:space-around; align-items:center; padding:12px 20px 24px; background:rgba(18,18,18,0.9); backdrop-filter:blur(10px); position:fixed; bottom:0; left:0; right:0; border-top:1px solid #282828; z-index:100;">
+    <a href="homepage.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#FFC55F; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bxs-home" style="font-size:24px;"></i>
+      <span>홈</span>
     </a>
-    <a class="tab-item" href="search.html">
-      <span class="material-symbols-outlined">search</span>
-      <span class="tab-label" data-i18n="nav.search">탐색</span>
+    <a href="search.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-search" style="font-size:24px;"></i>
+      <span>탐색</span>
     </a>
-    <a class="tab-item" href="my_library.html">
-      <span class="material-symbols-outlined">auto_stories</span>
-      <span class="tab-label" data-i18n="nav.my_library">서재</span>
+    <a href="my_library.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-book" style="font-size:24px;"></i>
+      <span>서재</span>
     </a>
-    <a class="tab-item" href="auth_pc.html">
-      <span class="material-symbols-outlined">person</span>
-      <span class="tab-label">MY</span>
+    <a href="auth_pc.html" style="display:flex; flex-direction:column; align-items:center; gap:4px; color:#888; font-size:10px; font-weight:700; text-decoration:none;">
+      <i class="bx bx-user" style="font-size:24px;"></i>
+      <span>MY</span>
     </a>
   </nav>
 
