@@ -125,7 +125,7 @@
         container.innerHTML =
           "<div class='lang-picker'>" +
             "<button class='lang-picker-toggle' type='button'>" +
-              "<i class='bx bx-globe'></i> " +
+              "<span class='material-symbols-outlined'>language</span> " +
               "<span data-lang-current>" + locale.toUpperCase() + "</span>" +
             "</button>" +
             "<div class='lang-picker-dropdown' hidden>" +

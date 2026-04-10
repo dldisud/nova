@@ -1,0 +1,5 @@
+.superpowers/
+_recovery_snapshots/
+test-results/
+.netlify-static/
+tests/_tmp-*.spec.js

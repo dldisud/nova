@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "test:visual": "playwright test tests/pinterest-visual-verification.spec.js --reporter=line"
+  },
   "dependencies": {
     "@boxicons/core": "^1.0.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
   }
 }

@@ -3,10 +3,10 @@
   const projectRef = cfg.projectRef || "qtouztmyuemwxxtmaqjm";
   const base = (cfg.url || (projectRef ? "https://" + projectRef + ".supabase.co" : "")).replace(/\/$/, "");
   const key = cfg.publishableKey || cfg.anonKey || "";
-  const page = window.location.pathname.split("/").pop() || "homepage.html";
+  const page = (window.location.pathname.split("/").pop() || "homepage").replace(/\.html$/, "");
   const query = new URLSearchParams(window.location.search);
   const isPc = page.includes("_pc");
-  const isAuthPage = page === "auth_pc.html";
+  const isAuthPage = page === "auth_pc";
   const isLibraryPage = page.indexOf("my_library") === 0;
   const isViewerPage = page.indexOf("novel_viewer") === 0;
   const links = {

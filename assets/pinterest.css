@@ -1,0 +1,684 @@
+/* =======================================================
+   INKROAD Pinterest-Style Design System
+   Masonry grid • Pin cards • Hover overlays • Slim banner
+   Color palette preserved from store-light theme
+   ======================================================= */
+
+/* --- Masonry Grid --- */
+.pin-masonry {
+  columns: 5;
+  column-gap: 16px;
+}
+
+.pin-masonry > * {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  display: inline-block;
+  width: 100%;
+}
+
+/* --- Pin Card (Novel Card) --- */
+.pin-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface, #fff);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+  cursor: pointer;
+}
+
+.pin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Card image wrapper */
+.pin-card-media {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.pin-card-media img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 400ms cubic-bezier(0.25, 1, 0.33, 1);
+}
+
+.pin-card:hover .pin-card-media img {
+  transform: scale(1.03);
+}
+
+/* Sale mark — always visible top-right corner */
+.pin-card-sale {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent-sale, #e85d3a);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  z-index: 3;
+  letter-spacing: 0.01em;
+}
+
+/* Free badge — always visible top-left corner */
+.pin-card-free {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--accent-free, #2d8a4e);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  z-index: 3;
+}
+
+/* Hover info overlay — slides up from bottom */
+.pin-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 56px 14px 14px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.4) 55%,
+    transparent 100%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 300ms cubic-bezier(0.25, 1, 0.33, 1),
+              opacity 250ms ease;
+  z-index: 2;
+}
+
+.pin-card:hover .pin-card-overlay {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.pin-card-overlay-rating {
+  color: #ffc55f;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.pin-card-overlay-genre {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.74rem;
+}
+
+.pin-card-overlay-free {
+  color: #8fe0c3;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.pin-card-overlay-price {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pin-card-overlay-price .old {
+  text-decoration: line-through;
+  opacity: 0.6;
+  font-weight: 400;
+  margin-right: 6px;
+}
+
+/* Text below image — always visible */
+.pin-card-copy {
+  padding: 12px 14px 14px;
+}
+
+.pin-card-title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--text, #1a1a1a);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pin-card-author {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted, #999);
+}
+
+
+/* =============================================================
+   Slim Promo Banner
+   ============================================================= */
+.pin-promo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px;
+  margin: 0 0 28px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #eee);
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.pin-promo-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.pin-promo-left .sale-badge {
+  border-radius: 12px;
+  font-size: 0.72rem;
+}
+
+.pin-promo-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.pin-promo-meta {
+  display: flex;
+  gap: 14px;
+  color: var(--text-muted, #999);
+  font-size: 0.82rem;
+}
+
+.pin-promo-meta span::before {
+  content: "·";
+  margin-right: 14px;
+  opacity: 0.4;
+}
+
+.pin-promo-meta span:first-child::before {
+  display: none;
+}
+
+
+/* =============================================================
+   Genre Pills
+   ============================================================= */
+.pin-genre-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.pin-genre-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 24px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #eee);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary, #444);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  text-decoration: none;
+}
+
+.pin-genre-pill:hover {
+  background: var(--dark, #1a1a1a);
+  color: #fff;
+  border-color: var(--dark, #1a1a1a);
+  transform: translateY(-1px);
+}
+
+
+/* =============================================================
+   Section Titles
+   ============================================================= */
+.pin-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pin-section-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.pin-section-sub {
+  margin: 2px 0 0;
+  font-size: 0.86rem;
+  color: var(--text-muted, #999);
+  line-height: 1.6;
+}
+
+
+/* =============================================================
+   Search Page — Full Width Search + Inline Filters
+   ============================================================= */
+.pin-search-section {
+  margin-bottom: 8px;
+}
+
+.pin-search-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #eee);
+  border-radius: 28px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.pin-search-bar:focus-within {
+  border-color: var(--dark, #1a1a1a);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pin-search-bar input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--text, #1a1a1a);
+  font: inherit;
+  outline: none;
+}
+
+.pin-search-bar .material-symbols-outlined {
+  color: var(--text-muted, #999);
+  font-size: 1.25rem;
+}
+
+.pin-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0 8px;
+}
+
+.pin-filter-bar .filter-chip {
+  border-radius: 20px;
+  min-height: 36px;
+  padding: 0 16px;
+  font-size: 0.82rem;
+}
+
+.pin-filter-bar .sort-group {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.pin-filter-bar .sort-option {
+  border-radius: 20px;
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--surface-muted, #f0eeeb);
+  border: 1px solid transparent;
+  color: var(--text-secondary, #444);
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.pin-filter-bar .sort-option.active {
+  background: var(--dark, #1a1a1a);
+  color: #fff;
+}
+
+.pin-count {
+  color: var(--text-muted, #999);
+  font-size: 0.84rem;
+  margin-bottom: 16px;
+}
+
+
+/* =============================================================
+   Detail Page — Centered Card
+   ============================================================= */
+.pin-detail-card {
+  max-width: 920px;
+  margin: 0 auto 48px;
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 32px;
+  padding: 28px;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #eee);
+  border-radius: 24px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+}
+
+.pin-detail-cover {
+  border-radius: 16px;
+  overflow: hidden;
+  align-self: start;
+}
+
+.pin-detail-cover img {
+  width: 100%;
+  aspect-ratio: 0.72;
+  object-fit: cover;
+  display: block;
+}
+
+.pin-detail-info {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.pin-detail-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.pin-detail-subtitle {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-muted, #999);
+}
+
+.pin-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pin-detail-meta-item {
+  display: grid;
+  gap: 4px;
+}
+
+.pin-detail-meta-item .label {
+  color: var(--text-muted, #999);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.pin-detail-meta-item .value {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.pin-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pin-detail-synopsis {
+  margin: 0;
+  color: var(--text-secondary, #444);
+  font-size: 0.93rem;
+  line-height: 1.85;
+}
+
+.pin-detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pin-price-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  background: var(--surface-muted, #f0eeeb);
+  border-radius: 14px;
+}
+
+.pin-price-box-left {
+  display: grid;
+  gap: 4px;
+}
+
+.pin-price-label {
+  font-size: 0.78rem;
+  color: var(--text-muted, #999);
+}
+
+.pin-price-values {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pin-price-note {
+  font-size: 0.78rem;
+  color: var(--text-muted, #999);
+}
+
+
+/* =============================================================
+   Library — Board Style
+   ============================================================= */
+.pin-board-section {
+  margin-bottom: 40px;
+}
+
+.pin-board-title {
+  margin: 0 0 18px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pin-board-title .count {
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--text-muted, #999);
+}
+
+.pin-library-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted, #999);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.pin-library-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 0.88rem;
+  color: var(--text-secondary, #444);
+}
+
+
+/* =============================================================
+   Staggered Load Animation
+   ============================================================= */
+@keyframes pinFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pin-card {
+  animation: pinFadeUp 400ms ease both;
+}
+
+.pin-masonry .pin-card:nth-child(1)  { animation-delay: 0ms; }
+.pin-masonry .pin-card:nth-child(2)  { animation-delay: 50ms; }
+.pin-masonry .pin-card:nth-child(3)  { animation-delay: 100ms; }
+.pin-masonry .pin-card:nth-child(4)  { animation-delay: 150ms; }
+.pin-masonry .pin-card:nth-child(5)  { animation-delay: 200ms; }
+.pin-masonry .pin-card:nth-child(6)  { animation-delay: 250ms; }
+.pin-masonry .pin-card:nth-child(7)  { animation-delay: 300ms; }
+.pin-masonry .pin-card:nth-child(8)  { animation-delay: 350ms; }
+.pin-masonry .pin-card:nth-child(9)  { animation-delay: 400ms; }
+.pin-masonry .pin-card:nth-child(10) { animation-delay: 450ms; }
+.pin-masonry .pin-card:nth-child(n+11) { animation-delay: 500ms; }
+
+
+/* =============================================================
+   Browse Results as Cards (search page — override old grid)
+   ============================================================= */
+.store-light .browse-results.pin-masonry {
+  display: block;
+  columns: 5;
+  column-gap: 16px;
+}
+
+.store-light .browse-results.pin-masonry .pin-card {
+  margin-bottom: 16px;
+}
+
+
+/* =============================================================
+   Override old novel-grid to masonry when pin-masonry is applied
+   ============================================================= */
+.store-light .pin-masonry.novel-grid,
+.store-light .pin-masonry.free-grid,
+.store-light .pin-masonry.sale-grid {
+  display: block;
+  columns: 5;
+  column-gap: 16px;
+  grid-template-columns: none;
+}
+
+
+/* =============================================================
+   Responsive Breakpoints
+   ============================================================= */
+@media (max-width: 1440px) {
+  .pin-masonry,
+  .store-light .browse-results.pin-masonry,
+  .store-light .pin-masonry.novel-grid,
+  .store-light .pin-masonry.free-grid,
+  .store-light .pin-masonry.sale-grid {
+    columns: 4;
+  }
+}
+
+@media (max-width: 1080px) {
+  .pin-masonry,
+  .store-light .browse-results.pin-masonry,
+  .store-light .pin-masonry.novel-grid,
+  .store-light .pin-masonry.free-grid,
+  .store-light .pin-masonry.sale-grid {
+    columns: 3;
+  }
+
+  .pin-detail-card {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 24px;
+    padding: 20px;
+  }
+
+  .pin-detail-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .pin-masonry,
+  .store-light .browse-results.pin-masonry,
+  .store-light .pin-masonry.novel-grid,
+  .store-light .pin-masonry.free-grid,
+  .store-light .pin-masonry.sale-grid {
+    columns: 2;
+  }
+
+  .pin-detail-card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .pin-detail-cover {
+    max-width: 240px;
+  }
+
+  .pin-promo-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pin-filter-bar .sort-group {
+    margin-left: 0;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .pin-masonry,
+  .store-light .browse-results.pin-masonry,
+  .store-light .pin-masonry.novel-grid,
+  .store-light .pin-masonry.free-grid,
+  .store-light .pin-masonry.sale-grid {
+    columns: 2;
+    column-gap: 10px;
+  }
+
+  .pin-masonry > * {
+    margin-bottom: 10px;
+  }
+
+  .pin-card-copy {
+    padding: 10px 12px 12px;
+  }
+
+  .pin-card-title {
+    font-size: 0.84rem;
+  }
+
+  .pin-search-bar {
+    padding: 12px 16px;
+    border-radius: 20px;
+  }
+
+  .pin-genre-bar {
+    gap: 8px;
+  }
+
+  .pin-genre-pill {
+    min-height: 36px;
+    padding: 0 14px;
+    font-size: 0.82rem;
+  }
+}
