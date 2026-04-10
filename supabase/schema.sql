@@ -629,7 +629,6 @@ as $$
 declare
   current_user_id uuid := auth.uid();
   has_ownership boolean := false;
-  invalid_tag_count integer := 0;
   updated_novel_slug text;
   updated_novel_at timestamptz;
 begin
@@ -672,19 +671,19 @@ begin
   end if;
 
   if p_tags is not null then
-    select count(*)
-    into invalid_tag_count
+    insert into public.tags (slug, name, category)
+    select
+      regexp_replace(lower(normalized_tags.tag_name), '[^a-z0-9]+', '-', 'g') as slug,
+      normalized_tags.tag_name,
+      'theme'
     from (
       select distinct nullif(trim(input_tag.tag_name), '') as tag_name
       from unnest(p_tags) as input_tag(tag_name)
     ) normalized_tags
-    left join public.tags t on lower(t.name) = lower(normalized_tags.tag_name)
     where normalized_tags.tag_name is not null
-      and t.id is null;
-
-    if invalid_tag_count > 0 then
-      raise exception '태그 정보를 다시 확인해 주세요.';
-    end if;
+      and normalized_tags.tag_name <> ''
+    on conflict (slug) do update
+    set name = excluded.name;
 
     delete from public.novel_tags
     where novel_id = p_novel_id;

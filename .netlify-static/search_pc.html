@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INKROAD | 탐색</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/animations.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/pc.css">
+</head>
+<body class="pc-desktop store-dark">
+  <div class="spotify-shell top-nav-shell">
+    <header class="top-nav-header">
+      <a class="spotify-logo" href="homepage_pc.html">
+        <i class="bx bx-book-open"></i> INKROAD
+      </a>
+      <nav class="top-nav-menu">
+        <a class="spotify-nav-item" href="homepage_pc.html" data-i18n="nav.store">홈</a>
+        <a class="spotify-nav-item active" href="search_pc.html" data-i18n="nav.search">탐색</a>
+        <a class="spotify-nav-item" href="my_library_pc.html" data-i18n="nav.my_library">내 서재</a>
+      </nav>
+      <div style="flex:1;"></div>
+      <form action="search_pc.html" style="position:relative;">
+        <input type="text" class="top-search" name="q" placeholder="작품, 작가 검색..." data-search-input>
+      </form>
+      <div data-lang-picker></div>
+      <a class="login-btn" href="my_library_pc.html" data-i18n="nav.login">로그인</a>
+    </header>
+
+    <main class="top-nav-main">
+      <section class="spotify-section">
+        <div style="display:flex; gap:24px; align-items:flex-start;">
+          <aside style="width: 240px; flex-shrink: 0; display:flex; flex-direction:column; gap:24px;" data-reveal>
+            <div>
+              <h2 style="font-size:12px; letter-spacing:1px; color:#b3b3b3; margin-bottom:12px; text-transform:uppercase;">장르</h2>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <button class="filter-chip" type="button" data-filter-chip data-label="판타지">판타지</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="로맨스">로맨스</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="회귀">회귀</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="아카데미">아카데미</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="하렘">하렘</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="피폐">피폐</button>
+              </div>
+            </div>
+            <div>
+              <h2 style="font-size:12px; letter-spacing:1px; color:#b3b3b3; margin-bottom:12px; text-transform:uppercase;">출처</h2>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <button class="filter-chip" type="button" data-filter-chip data-label="한국">한국</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="일본">일본</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="중국">중국</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="영미">영미</button>
+              </div>
+            </div>
+            <div>
+              <h2 style="font-size:12px; letter-spacing:1px; color:#b3b3b3; margin-bottom:12px; text-transform:uppercase;">상태</h2>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <button class="filter-chip" type="button" data-filter-chip data-label="연재중">연재중</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="완결">완결</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="무료 구간 있음">무료 구간 있음</button>
+                <button class="filter-chip" type="button" data-filter-chip data-label="할인 중">할인 중</button>
+              </div>
+            </div>
+            <div>
+              <h2 style="font-size:12px; letter-spacing:1px; color:#b3b3b3; margin-bottom:12px; text-transform:uppercase;">정렬</h2>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;" data-sort-group>
+                <button class="sort-option active filter-chip" type="button" data-sort="popular">인기순</button>
+                <button class="sort-option filter-chip" type="button" data-sort="recent">최신순</button>
+                <button class="sort-option filter-chip" type="button" data-sort="rating">평점순</button>
+                <button class="sort-option filter-chip" type="button" data-sort="discount">할인율순</button>
+              </div>
+            </div>
+          </aside>
+
+          <div style="flex:1;">
+            <p style="color:#b3b3b3; margin-bottom:16px;" data-browse-count></p>
+            <div class="spotify-grid" data-browse-results></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="store-footer" style="max-width:1440px; margin: 40px auto 0; border-top: 1px solid #282828; padding-top: 24px; color: #b3b3b3; display: flex; justify-content: space-between;">
+        <span>© <span data-year></span> INKROAD</span>
+        <div style="display:flex; gap:16px;">
+          <a href="#" style="color:#b3b3b3; text-decoration:none;">이용약관</a>
+          <a href="#" style="color:#b3b3b3; text-decoration:none;">개인정보</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="assets/i18n.js"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
+</body>
+</html>

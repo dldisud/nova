@@ -30,6 +30,12 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
     def _store_redesign_js(self) -> str:
         return (ROOT / "assets" / "store-redesign.js").read_text(encoding="utf-8")
 
+    def _styles_css(self) -> str:
+        return (ROOT / "assets" / "styles.css").read_text(encoding="utf-8")
+
+    def _pc_css(self) -> str:
+        return (ROOT / "assets" / "pc.css").read_text(encoding="utf-8")
+
     def _function_block(self, fn_name: str) -> str:
         schema = self._schema()
         start = schema.index(f"create or replace function public.{fn_name}")
@@ -114,6 +120,12 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
         self.assertIn("'novel_slug', updated_novel_slug", schema)
         self.assertIn("'updated_at', updated_novel_at", schema)
 
+    def test_update_novel_auto_creates_missing_tags(self):
+        block = self._function_block("update_novel_for_author(")
+        self.assertIn("insert into public.tags", block)
+        self.assertIn("regexp_replace(lower(normalized_tags.tag_name)", block)
+        self.assertNotIn("raise exception '태그 정보를 다시 확인해 주세요.'", block)
+
     def test_update_episode_return_markers(self):
         schema = self._schema()
         self.assertIn("'episode_id', p_episode_id", schema)
@@ -193,6 +205,72 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
         self.assertNotIn("cancelPendingEditLoadRequests();\n    cancelPendingSubmitRequests();", js)
         self.assertNotIn("cancelPendingEditLoadRequests();\n      cancelPendingSubmitRequests();", js)
 
+
+    def test_upload_page_supports_markdown_workspace_and_expanded_tags(self):
+        html = self._upload_html()
+        self.assertIn("marked.min.js", html)
+        self.assertIn("Markdown 지원", html)
+        self.assertIn('data-format-action="heading"', html)
+        self.assertIn('data-format-action="list"', html)
+        self.assertIn('data-format-action="quote"', html)
+        self.assertIn('data-format-action="code"', html)
+        self.assertNotIn('data-format-action="underline"', html)
+        self.assertIn("다크 판타지", html)
+        self.assertIn("회귀", html)
+        self.assertIn("여성향", html)
+
+    def test_upload_script_uses_redirect_auth_gate_and_marked_preview(self):
+        js = self._upload_js()
+        self.assertIn("function currentRelativePath()", js)
+        self.assertIn("function authHref(mode)", js)
+        self.assertIn("function redirectToAuth(mode)", js)
+        self.assertIn("window.location.replace(authHref(mode))", js)
+        self.assertIn("auth_pc.html?next=", js)
+        self.assertIn('typeof marked !== "undefined"', js)
+        self.assertIn('marked.parse(source)', js)
+        self.assertIn('typeof parsed.then === "function"', js)
+        self.assertIn("미리보기를 불러오는 중...", js)
+        self.assertIn("fallbackPreviewHtml(source)", js)
+        self.assertNotIn("data-upload-auth-form", js)
+        self.assertNotIn("signInWithPassword", js)
+        self.assertNotIn("signUp({", js)
+        self.assertNotIn("로그인하고 계속", js)
+        self.assertNotIn("회원가입", js)
+        self.assertNotIn("function renderAuthGate(", js)
+
+    def test_upload_page_preview_styles_markdown_emphasis(self):
+        html = self._upload_html()
+        self.assertIn(".upload-preview strong", html)
+        self.assertIn("font-weight: 800", html)
+        self.assertIn(".upload-preview em", html)
+        self.assertIn("font-style: italic", html)
+
+    def test_auth_page_can_open_signup_mode_from_query(self):
+        js = self._store_redesign_js()
+        self.assertIn('var requestedMode = query.get("mode")', js)
+        self.assertIn('requestedMode === "signup"', js)
+        self.assertIn('if (loginForm) loginForm.style.display = "none";', js)
+        self.assertIn('if (signupForm) signupForm.style.display = "";', js)
+
+    def test_viewer_markdown_renderer_and_protection_contract_markers(self):
+        js = self._store_redesign_js()
+        self.assertIn("function renderMarkdownForViewer(source)", js)
+        self.assertIn("marked.setOptions", js)
+        self.assertIn("scene-break", js)
+        self.assertIn("function attachReaderProtection(node)", js)
+        self.assertIn("dataset.readerProtected", js)
+        self.assertIn("renderMarkdownForViewer(body)", js)
+
+    def test_viewer_markdown_styles_exist_for_pc_and_mobile(self):
+        styles = self._styles_css()
+        pc = self._pc_css()
+        self.assertIn(".store-light .reader-content strong", styles)
+        self.assertIn(".store-light .reader-content blockquote", styles)
+        self.assertIn(".store-light .mobile-reader-body h1", styles)
+        self.assertIn(".store-light .reader-content .scene-break", styles)
+        self.assertIn(".store-light .reader-content h1", pc)
+        self.assertIn("text-indent: 0;", pc)
+
     def test_episode_upload_page_has_edit_mode_hooks(self):
         html = self._episode_upload_html()
         self.assertIn("data-episode-mode-badge", html)
@@ -201,6 +279,14 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
         self.assertIn("data-episode-edit-meta", html)
         self.assertIn("data-episode-edit-number", html)
         self.assertIn("data-episode-edit-updated", html)
+
+    def test_episode_upload_page_matches_editor_runtime_selectors(self):
+        html = self._episode_upload_html()
+        self.assertIn("data-editor-mode-toggle", html)
+        self.assertIn("data-editor-container", html)
+        self.assertIn("data-editor-status", html)
+        self.assertIn("data-episode-body", html)
+        self.assertIn("data-episode-status", html)
 
     def test_episode_upload_script_has_edit_mode_contract_markers(self):
         js = self._episode_upload_js()
@@ -217,6 +303,14 @@ class CreatorEditSaleFlowTests(unittest.TestCase):
         self.assertIn("refs.novelSelect.disabled = state.mode === \"edit\";", js)
         self.assertIn('state.client.rpc("update_episode_for_author"', js)
         self.assertIn('state.client.rpc("create_episode_for_author_novel"', js)
+
+    def test_episode_upload_script_redirects_to_auth_page_instead_of_inline_login_form(self):
+        js = self._episode_upload_js()
+        self.assertIn("function authHref(mode)", js)
+        self.assertIn('return "auth_pc.html?next=" + encodeURIComponent(currentRelativePath())', js)
+        self.assertIn("function redirectToAuth(mode)", js)
+        self.assertIn("window.location.replace(authHref(mode));", js)
+        self.assertNotIn("data-episode-auth-form", js)
 
     def test_episode_upload_script_edit_mode_ownership_gate_contract_markers(self):
         js = self._episode_upload_js()

@@ -3,10 +3,10 @@
   const projectRef = cfg.projectRef || "qtouztmyuemwxxtmaqjm";
   const base = (cfg.url || (projectRef ? "https://" + projectRef + ".supabase.co" : "")).replace(/\/$/, "");
   const key = cfg.publishableKey || cfg.anonKey || "";
-  const page = window.location.pathname.split("/").pop() || "homepage.html";
+  const page = (window.location.pathname.split("/").pop() || "homepage").replace(/\.html$/, "");
   const query = new URLSearchParams(window.location.search);
   const isPc = page.includes("_pc");
-  const isAuthPage = page === "auth_pc.html";
+  const isAuthPage = page === "auth_pc";
   const isLibraryPage = page.indexOf("my_library") === 0;
   const isViewerPage = page.indexOf("novel_viewer") === 0;
   const links = {
@@ -697,34 +697,47 @@
     if (statsNode) {
       statsNode.textContent = "읽는 중 " + formatCount(reading.length) + " · 찜 " + formatCount(saved.length) + " · 구매 " + formatCount(owned.length);
     }
+    
+    function pcItem(href, item, title, meta) {
+      return "<a href='" + href + "' class='spotify-card'><div class='spotify-card-img-wrap'><img class='spotify-card-cover' src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></div><div class='spotify-card-title'>" + esc(title) + "</div><div class='spotify-card-sub'>" + esc(meta) + "</div></a>";
+    }
+    function mItem(href, item, title, meta, index) {
+      var shapes = ["tall", "short", "medium"];
+      var shape = shapes[index % 3];
+      return "<a class='masonry-item " + shape + "' href='" + href + "' style='text-decoration:none; display:block;'><img class='masonry-cover' src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='masonry-info'><div class='masonry-title'>" + esc(title) + "</div><div class='masonry-author'>" + esc(meta) + "</div></div></a>";
+    }
+    function emptyHtml(mobile, title, subtitle) {
+      return mobile 
+        ? "<div style='text-align:center; padding:48px 24px; color:#b3b3b3;'><h3 style='font-size:1rem; color:#fff; margin:0 0 8px;'>" + title + "</h3><p style='margin:0 0 16px; font-size:0.85rem;'>" + subtitle + "</p></div>"
+        : "<div style='text-align:center; padding:48px 24px; color:#b3b3b3; grid-column:1/-1;'><h3 style='font-size:1rem; color:#fff; margin:0 0 8px;'>" + title + "</h3><p style='margin:0 0 16px; font-size:0.85rem;'>" + subtitle + "</p></div>";
+    }
 
-    readingNode.innerHTML = reading.length ? reading.map(function (item) {
+    readingNode.innerHTML = reading.length ? reading.map(function (item, index) {
       const episodeNumber = item.episode && item.episode.episode_number ? item.episode.episode_number : 1;
       const progress = readingProgress(item);
       const href = viewerHref(item.novel.slug, episodeNumber);
       return mobile
-        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + episodeNumber + "화 · 진행률 " + progress + "%</div></div></a>"
-        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + episodeNumber + "화 읽는 중 · 진행률 " + progress + "%</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>이어 읽기</a></div></article>";
-    }).join("") : simpleLibraryEmpty("아직 읽는 작품이 없습니다", "스토어에서 작품을 열면 여기에 자동으로 이어집니다.", links.search, "작품 탐색하기");
+        ? mItem(href, item, item.novel.title, episodeNumber + "화 · 진행률 " + progress + "%", index)
+        : pcItem(href, item, item.novel.title, episodeNumber + "화 읽는 중 · 진행률 " + progress + "%");
+    }).join("") : emptyHtml(mobile, "아직 읽는 작품이 없습니다", "스토어에서 작품을 열면 여기에 자동으로 이어집니다.");
 
-    wishlistNode.innerHTML = saved.length ? saved.map(function (item) {
+    wishlistNode.innerHTML = saved.length ? saved.map(function (item, index) {
       const href = detailHref(item.novel.slug);
       const percent = salePercent(item.novel);
       return mobile
-        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + (percent ? percent + "% 할인 중" : "찜한 작품") + "</div></div></a>"
-        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + (percent ? percent + "% 할인 중" : "알림 대기 중") + "</p></div><div class='library-row-side'><a class='button small ghost' href='" + href + "'>상세 보기</a></div></article>";
-    }).join("") : simpleLibraryEmpty("아직 찜한 작품이 없습니다", "작품 상세에서 찜하기를 누르면 이 탭에 바로 들어옵니다.", links.search, "작품 탐색하기");
+        ? mItem(href, item, item.novel.title, percent ? percent + "% 할인 중" : "찜한 작품", index)
+        : pcItem(href, item, item.novel.title, percent ? percent + "% 할인 중" : "알림 대기 중");
+    }).join("") : emptyHtml(mobile, "아직 찜한 작품이 없습니다", "작품 상세에서 찜하기를 누르면 이 탭에 바로 들어옵니다.");
 
-    purchasedNode.innerHTML = owned.length ? owned.map(function (item) {
+    purchasedNode.innerHTML = owned.length ? owned.map(function (item, index) {
       const href = item.latest_episode ? viewerHref(item.novel.slug, item.latest_episode.episode_number) : detailHref(item.novel.slug);
       const meta = item.bundle_owned
         ? "번들 보유 · 누적 " + formatMoney(item.amount_paid)
         : "구매한 회차 " + formatCount(item.episode_count) + "화 · 누적 " + formatMoney(item.amount_paid);
-      const action = item.latest_episode ? (item.latest_episode.episode_number + "화 열기") : "작품 상세";
       return mobile
-        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + esc(meta) + "</div></div></a>"
-        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + esc(meta) + "</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>" + esc(action) + "</a></div></article>";
-    }).join("") : simpleLibraryEmpty("아직 구매한 작품이 없습니다", "유료 회차를 구매하면 여기서 다시 바로 열 수 있습니다.", links.search, "작품 탐색하기");
+        ? mItem(href, item, item.novel.title, meta, index)
+        : pcItem(href, item, item.novel.title, meta);
+    }).join("") : emptyHtml(mobile, "아직 구매한 작품이 없습니다", "유료 회차를 구매하면 여기서 다시 바로 열 수 있습니다.");
 
     return true;
   }

@@ -5023,7 +5023,7 @@ body.store-light .pc-page {
 .spotify-shell {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 72px);
+  min-height: 100vh;
   background: #000000;
   color: #fff;
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INKROAD | 글로벌 웹소설 스토어</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/animations.css">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/pc.css">
+</head>
+<body class="pc-desktop store-dark">
+  <div class="spotify-shell top-nav-shell">
+    <header class="top-nav-header">
+      <a class="spotify-logo" href="homepage_pc.html">
+        <i class="bx bx-book-open"></i> INKROAD
+      </a>
+      <nav class="top-nav-menu">
+        <a class="spotify-nav-item active" href="homepage_pc.html" data-i18n="nav.store">홈</a>
+        <a class="spotify-nav-item" href="search_pc.html" data-i18n="nav.search">탐색</a>
+        <a class="spotify-nav-item" href="my_library_pc.html" data-i18n="nav.my_library">내 서재</a>
+      </nav>
+      <div style="flex:1;"></div>
+      <form action="search_pc.html" style="position:relative;">
+        <input type="text" class="top-search" name="q" placeholder="작품, 작가 검색...">
+      </form>
+      <div data-lang-picker></div>
+      <a class="login-btn" href="my_library_pc.html" data-i18n="nav.login">로그인</a>
+    </header>
+
+    <main class="top-nav-main">
+      <section class="spotify-section">
+        <h2 class="spotify-section-title">이번 주 세일 추천</h2>
+        <div class="spotify-grid">
+          <a href="novel_viewer_pc.html" class="spotify-card">
+            <div class="spotify-card-img-wrap">
+              <div class="red-badge">-45% 세일</div>
+              <img class="spotify-card-cover" src="https://placehold.co/200x280/1a1a1a/E50914?text=Sale+1" alt="Cover">
+            </div>
+            <div class="spotify-card-title">전지적 독자 시점</div>
+            <div class="spotify-card-sub">현대판타지 · 할인 진행 중</div>
+          </a>
+          <a href="novel_viewer_pc.html" class="spotify-card">
+            <div class="spotify-card-img-wrap">
+              <div class="red-badge">-30% 세일</div>
+              <img class="spotify-card-cover" src="https://placehold.co/200x280/1a1a1a/E50914?text=Sale+2" alt="Cover">
+            </div>
+            <div class="spotify-card-title">화산귀환</div>
+            <div class="spotify-card-sub">무협 · 특가 세일</div>
+          </a>
+          <a href="novel_viewer_pc.html" class="spotify-card">
+            <div class="spotify-card-img-wrap">
+              <img class="spotify-card-cover" src="https://placehold.co/200x280/1a1a1a/FFC55F?text=Novel+3" alt="Cover">
+            </div>
+            <div class="spotify-card-title">재벌집 막내아들</div>
+            <div class="spotify-card-sub">현대물 · 인기작</div>
+          </a>
+          <a href="novel_viewer_pc.html" class="spotify-card">
+            <div class="spotify-card-img-wrap">
+              <img class="spotify-card-cover" src="https://placehold.co/200x280/1a1a1a/FFC55F?text=Novel+4" alt="Cover">
+            </div>
+            <div class="spotify-card-title">백작가의 망나니가 되었다</div>
+            <div class="spotify-card-sub">판타지 · 추천작</div>
+          </a>
+        </div>
+      </section>
+      
+      <!-- Footer -->
+      <footer class="store-footer" style="max-width:1440px; margin: 40px auto 0; border-top: 1px solid #282828; padding-top: 24px; color: #b3b3b3; display: flex; justify-content: space-between;">
+        <span>© <span data-year></span> INKROAD</span>
+        <div style="display:flex; gap:16px;">
+          <a href="#" style="color:#b3b3b3; text-decoration:none;">이용약관</a>
+          <a href="#" style="color:#b3b3b3; text-decoration:none;">개인정보</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="assets/i18n.js"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
+</body>
+</html>
+
