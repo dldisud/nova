@@ -1,6 +1,6 @@
 (function () {
-  const page = (window.location.pathname.split("/").pop() || "homepage_pc").replace(/\.html$/, "");
-  const supported = ["homepage_pc", "search_pc", "novel_detail_pc", "novel_viewer_pc", "my_library_pc", "auth_pc", "creator_dashboard_pc", "author_dashboard_pc", "homepage", "search", "novel_detail", "novel_viewer", "my_library"];
+  const page = window.location.pathname.split("/").pop() || "homepage_pc.html";
+  const supported = ["homepage_pc.html", "search_pc.html", "novel_detail_pc.html", "novel_viewer_pc.html", "my_library_pc.html", "auth_pc.html", "creator_dashboard_pc.html", "author_dashboard_pc.html", "homepage.html", "search.html", "novel_detail.html", "novel_viewer.html", "my_library.html"];
   if (supported.indexOf(page) === -1) return;
 
   const cfg = window.inkroadSupabaseConfig || {};
@@ -35,37 +35,6 @@
       .replace(/>/g, "&gt;")
       .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#39;");
-  }
-
-  function renderMarkdownForViewer(source) {
-    var body = String(source || "").trim();
-    if (!body) return "";
-
-    if (typeof marked !== "undefined") {
-      if (!renderMarkdownForViewer.configured && typeof marked.setOptions === "function") {
-        marked.setOptions({
-          gfm: true,
-          breaks: true,
-          headerIds: false,
-          mangle: false
-        });
-        renderMarkdownForViewer.configured = true;
-      }
-      return marked.parse(body).replace(/<hr\s*\/?>/gi, "<div class='scene-break' aria-hidden='true'>* * *</div>");
-    }
-
-    return body.split(/\n{2,}/).filter(Boolean).map(function (paragraph) {
-      return "<p>" + esc(paragraph).replace(/\n/g, "<br>") + "</p>";
-    }).join("");
-  }
-
-  function attachReaderProtection(node) {
-    if (!node || node.dataset.readerProtected === "true") return;
-    node.classList.add("reader-protected");
-    node.addEventListener("contextmenu", function (e) { e.preventDefault(); });
-    node.addEventListener("dragstart", function (e) { e.preventDefault(); });
-    node.addEventListener("selectstart", function (e) { e.preventDefault(); });
-    node.dataset.readerProtected = "true";
   }
 
   function unwrapRelation(value) {
@@ -736,7 +705,9 @@
     var selectedOwned = isOwnedEpisode(ownership, selected.id);
     var nextOwned = next ? isOwnedEpisode(ownership, next.id) : false;
     var currentBody = body
-      ? renderMarkdownForViewer(body)
+      ? (typeof marked !== "undefined" ? marked.parse(body) : body.split(/\n{2,}/).filter(Boolean).map(function (paragraph) {
+          return "<p>" + esc(paragraph).replace(/\n/g, "<br>") + "</p>";
+        }).join(""))
       : (selected.accessType === "paid"
         ? (selectedOwned
           ? "<p>이미 구매한 회차입니다.</p><p>본문을 다시 불러오지 못했습니다. 새로고침 후 다시 시도해주세요.</p>"
@@ -754,7 +725,10 @@
     if (q("[data-chapter-access]")) q("[data-chapter-access]").textContent = selected.accessType === "free" ? t("viewer.free_episode") : (selectedOwned ? "보유한 유료 회차" : t("viewer.paid_episode"));
     if (q("[data-reader-content]")) {
       q("[data-reader-content]").innerHTML = currentBody;
-      attachReaderProtection(q("[data-reader-content]"));
+      q("[data-reader-content]").classList.add("reader-protected");
+      q("[data-reader-content]").addEventListener("contextmenu", function (e) { e.preventDefault(); });
+      q("[data-reader-content]").addEventListener("dragstart", function (e) { e.preventDefault(); });
+      q("[data-reader-content]").addEventListener("selectstart", function (e) { e.preventDefault(); });
     }
 
     var bookmark = q("[data-bookmark-id='reader-bookmark']");
@@ -925,31 +899,21 @@
       node.classList.remove("visible");
     }
 
-    function switchAuthMode(mode) {
-      if (mode === "signup") {
-        if (loginForm) loginForm.style.display = "none";
-        if (signupForm) signupForm.style.display = "";
-      } else {
-        if (signupForm) signupForm.style.display = "none";
-        if (loginForm) loginForm.style.display = "";
-      }
-      hideError(errorLogin);
-      hideError(errorSignup);
-    }
-
     qa("[data-auth-toggle]").forEach(function (link) {
       link.addEventListener("click", function (e) {
         e.preventDefault();
-        switchAuthMode(link.dataset.authToggle);
+        var mode = link.dataset.authToggle;
+        if (mode === "signup") {
+          if (loginForm) loginForm.style.display = "none";
+          if (signupForm) signupForm.style.display = "";
+        } else {
+          if (signupForm) signupForm.style.display = "none";
+          if (loginForm) loginForm.style.display = "";
+        }
+        hideError(errorLogin);
+        hideError(errorSignup);
       });
     });
-
-    var requestedMode = query.get("mode");
-    if (requestedMode === "signup") {
-      switchAuthMode("signup");
-    } else {
-      switchAuthMode("login");
-    }
 
     var supabaseClient = null;
     if (window.supabase && window.supabase.createClient) {
@@ -1052,9 +1016,9 @@
 
     if (statsNode) {
       statsNode.innerHTML =
-        "<div class='summary-card'><i class='bx bx-book-open summary-card-icon'></i><div class='summary-card-value'>" + formatCount(novels.length) + "</div><div class='summary-card-label'>" + t("dashboard.registered_works") + "</div></div>" +
-        "<div class='summary-card'><i class='bx bx-list-ul summary-card-icon'></i><div class='summary-card-value'>" + formatCount(totalEpisodes) + "</div><div class='summary-card-label'>" + t("dashboard.total_episodes") + "</div></div>" +
-        "<div class='summary-card'><i class='bx bx-show summary-card-icon'></i><div class='summary-card-value'>" + formatCount(totalViews) + "</div><div class='summary-card-label'>" + t("dashboard.total_views") + "</div></div>";
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>auto_stories</span><div class='summary-card-value'>" + formatCount(novels.length) + "</div><div class='summary-card-label'>" + t("dashboard.registered_works") + "</div></div>" +
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>list</span><div class='summary-card-value'>" + formatCount(totalEpisodes) + "</div><div class='summary-card-label'>" + t("dashboard.total_episodes") + "</div></div>" +
+        "<div class='summary-card'><span class='material-symbols-outlined summary-card-icon'>visibility</span><div class='summary-card-value'>" + formatCount(totalViews) + "</div><div class='summary-card-label'>" + t("dashboard.total_views") + "</div></div>";
     }
 
     if (!novels.length) {
@@ -1111,10 +1075,10 @@
 
     if (kpiNode) {
       kpiNode.innerHTML =
-        "<div class='kpi-card'><i class='bx bx-show kpi-card-icon'></i><div class='kpi-card-value'>" + formatCount(totalViews) + "</div><div class='kpi-card-label'>" + t("dashboard.total_views") + "</div></div>" +
-        "<div class='kpi-card'><i class='bx bx-heart kpi-card-icon'></i><div class='kpi-card-value'>" + formatCount(bookmarks.length) + "</div><div class='kpi-card-label'>총 찜 수</div></div>" +
-        "<div class='kpi-card'><i class='bx bx-message-square-detail kpi-card-icon'></i><div class='kpi-card-value'>" + formatCount(totalComments) + "</div><div class='kpi-card-label'>총 댓글 수</div></div>" +
-        "<div class='kpi-card'><i class='bx bx-money kpi-card-icon'></i><div class='kpi-card-value'>" + formatWon(estimatedRevenue) + "</div><div class='kpi-card-label'>추정 수익</div></div>";
+        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>visibility</span><div class='kpi-card-value'>" + formatCount(totalViews) + "</div><div class='kpi-card-label'>" + t("dashboard.total_views") + "</div></div>" +
+        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>favorite</span><div class='kpi-card-value'>" + formatCount(bookmarks.length) + "</div><div class='kpi-card-label'>총 찜 수</div></div>" +
+        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>chat_bubble</span><div class='kpi-card-value'>" + formatCount(totalComments) + "</div><div class='kpi-card-label'>총 댓글 수</div></div>" +
+        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>payments</span><div class='kpi-card-value'>" + formatWon(estimatedRevenue) + "</div><div class='kpi-card-label'>추정 수익</div></div>";
     }
 
     if (tableBody) {
@@ -1136,11 +1100,11 @@
 
     if (activityNode) {
       var activities = novels.slice(0, 5).map(function (novel) {
-        return "<div class='activity-item'><i class='bx bx-message-square-detail'></i><span>" + esc(novel.title) + "에 새로운 반응이 있습니다</span><span class='activity-time'>최근</span></div>";
+        return "<div class='activity-item'><span class='material-symbols-outlined'>chat_bubble</span><span>" + esc(novel.title) + "에 새로운 반응이 있습니다</span><span class='activity-time'>최근</span></div>";
       });
       activityNode.innerHTML = activities.length
         ? activities.join("")
-        : "<div class='activity-item'><i class='bx bx-info-circle'></i><span>최근 활동이 없습니다</span></div>";
+        : "<div class='activity-item'><span class='material-symbols-outlined'>info</span><span>최근 활동이 없습니다</span></div>";
     }
 
     var periodBtns = qa("[data-period]");
@@ -1200,34 +1164,21 @@
       if (featured.isTranslation) tags.push("<span class='muted-badge'>한국 → 영어</span>");
       if ((featured.genres || [])[0]) tags.push("<span class='muted-badge'>" + esc(featured.genres[0]) + "</span>");
       var priceHtml = sale
-        ? "편당 <span class='mobile-hero-price-strike'>" + formatWon(EPISODE_PRICE) + "</span> <strong>" + formatWon(discountedEpisodePrice(featured)) + "</strong>"
-        : "편당 <strong>" + formatWon(EPISODE_PRICE) + "</strong>";
-      var banner = featured.bannerUrl || cover(featured);
-      heroNode.style.setProperty('--mobile-hero-image', "url('" + esc(banner) + "')");
+        ? "편당 <span style='text-decoration:line-through;'>" + formatWon(EPISODE_PRICE) + "</span> <span style='color:var(--accent-sale);font-weight:700;'>" + formatWon(discountedEpisodePrice(featured)) + "</span>"
+        : "편당 " + formatWon(EPISODE_PRICE);
       heroNode.innerHTML =
-        "<div class='mobile-hero-promo'>" +
-          "<div class='mobile-hero-copy'>" +
-            "<p class='mobile-hero-kicker'>이번 주 대표 프로모션</p>" +
-            "<div class='mobile-hero-badges'>" + tags.join(" ") + "</div>" +
-            "<h2 class='mobile-hero-title'>" + esc(featured.title) + "</h2>" +
-            "<p class='mobile-hero-hook'>무료 진입과 세일 전환이 한 번에 이어지는 대표 작품입니다.</p>" +
-            "<div class='mobile-hero-meta-row'>" +
-              "<span>" + esc(featured.authorName) + "</span>" +
-              "<span>총 " + featured.totalEpisodeCount + "화</span>" +
-              "<span>평점 " + featured.reactionScore.toFixed(1) + "</span>" +
-            "</div>" +
-          "</div>" +
-          "<a class='mobile-hero-art' href='" + mobileDetailHref(featured.slug) + "'><img src='" + esc(cover(featured)) + "' alt='" + esc(featured.title) + "'></a>" +
-          "<div class='mobile-hero-price-band'>" +
-            "<div class='mobile-hero-price-copy'>" + priceHtml + " · 무료 " + featured.freeEpisodeCount + "화</div>" +
-            "<a class='mobile-hero-detail' href='" + mobileDetailHref(featured.slug) + "'>상세 보기</a>" +
-          "</div>" +
+        "<a class='mobile-hero-cover' href='" + mobileDetailHref(featured.slug) + "'><img src='" + esc(cover(featured)) + "' alt='" + esc(featured.title) + "'></a>" +
+        "<div class='mobile-hero-info'>" +
+        "<div>" + tags.join(" ") + "</div>" +
+        "<h2 class='mobile-hero-title'>" + esc(featured.title) + "</h2>" +
+        "<p class='mobile-hero-meta'>" + esc(featured.authorName) + " · 총 " + featured.totalEpisodeCount + "화 · 평점 " + featured.reactionScore.toFixed(1) + "</p>" +
+        "<p class='mobile-hero-price'>" + priceHtml + " · 무료 " + featured.freeEpisodeCount + "화</p>" +
         "</div>";
     }
     if (ctaNode) {
       ctaNode.innerHTML =
-        "<a class='button primary mobile-hero-primary' href='" + mobileViewerHref(featured.slug, 1) + "'>" + t("store.read_free") + "</a>" +
-        "<button class='button secondary mobile-hero-secondary' data-bookmark='" + esc(featured.slug) + "'>♥ 찜</button>";
+        "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(featured.slug, 1) + "'>" + t("store.read_free") + "</a>" +
+        "<button class='button secondary' data-bookmark='" + esc(featured.slug) + "'>♥ 찜</button>";
     }
 
     var saleBanner = q("[data-mobile-sale-banner]");
@@ -1407,11 +1358,14 @@
 
     if (titleNode) titleNode.textContent = esc(novel.title) + " · " + (selected ? selected.episodeNumber : 1) + "화";
     var renderedBody = body
-      ? renderMarkdownForViewer(body)
+      ? (typeof marked !== "undefined" ? marked.parse(body) : body)
       : "<p style='text-align:center;color:var(--text-muted);padding:48px 0;'>본문을 불러올 수 없습니다.</p>";
     if (bodyNode) {
       bodyNode.innerHTML = renderedBody;
-      attachReaderProtection(bodyNode);
+      bodyNode.classList.add("reader-protected");
+      bodyNode.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+      bodyNode.addEventListener("dragstart", function (e) { e.preventDefault(); });
+      bodyNode.addEventListener("selectstart", function (e) { e.preventDefault(); });
     }
     if (epNumNode) epNumNode.textContent = (selected ? selected.episodeNumber : 1) + " / " + list.length + "화";
 
@@ -1530,7 +1484,7 @@
   }
 
   async function hydrate() {
-    if (page === "auth_pc") {
+    if (page === "auth_pc.html") {
       renderAuth();
       return;
     }
@@ -1538,42 +1492,42 @@
     const data = await catalog();
     if (!data.novels.length) return;
 
-    if (page === "homepage_pc") {
+    if (page === "homepage_pc.html") {
       renderHome(data);
       return;
     }
 
-    if (page === "search_pc") {
+    if (page === "search_pc.html") {
       renderSearch(data);
       return;
     }
 
-    if (page === "my_library_pc") {
+    if (page === "my_library_pc.html") {
       renderLibrary(data);
       return;
     }
 
-    if (page === "creator_dashboard_pc") {
+    if (page === "creator_dashboard_pc.html") {
       renderCreatorDashboard(data);
       return;
     }
 
-    if (page === "author_dashboard_pc") {
+    if (page === "author_dashboard_pc.html") {
       renderAuthorDashboard(data);
       return;
     }
 
-    if (page === "homepage") {
+    if (page === "homepage.html") {
       renderMobileHome(data);
       return;
     }
 
-    if (page === "search") {
+    if (page === "search.html") {
       renderMobileSearch(data);
       return;
     }
 
-    if (page === "my_library") {
+    if (page === "my_library.html") {
       renderMobileLibrary(data);
       return;
     }
@@ -1582,14 +1536,14 @@
     const novel = data.novelsBySlug.get(slug) || data.novels[0];
     if (!novel) return;
     const list = await episodes(novel.id);
-    const ownership = (page === "novel_detail_pc" || page === "novel_viewer_pc") ? await ownershipForNovel(novel.id, list) : null;
+    const ownership = (page === "novel_detail_pc.html" || page === "novel_viewer_pc.html") ? await ownershipForNovel(novel.id, list) : null;
 
-    if (page === "novel_detail_pc") {
+    if (page === "novel_detail_pc.html") {
       renderDetail(data, novel, list, ownership);
       return;
     }
 
-    if (page === "novel_viewer_pc") {
+    if (page === "novel_viewer_pc.html") {
       const episodeNumber = Number(query.get("episode") || 1);
       const selected = list.find(function (episode) { return episode.episodeNumber === episodeNumber; }) || list[0];
       const body = selected ? await episodeBody(selected.id).catch(function () { return ""; }) : "";
@@ -1597,12 +1551,12 @@
       return;
     }
 
-    if (page === "novel_detail") {
+    if (page === "novel_detail.html") {
       renderMobileDetail(data, novel, list);
       return;
     }
 
-    if (page === "novel_viewer") {
+    if (page === "novel_viewer.html") {
       const episodeNumber = Number(query.get("episode") || 1);
       const selected = list.find(function (episode) { return episode.episodeNumber === episodeNumber; }) || list[0];
       const body = selected ? await episodeBody(selected.id).catch(function () { return ""; }) : "";
