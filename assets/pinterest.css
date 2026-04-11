@@ -1,18 +1,62 @@
 /* =======================================================
-   INKROAD Pinterest-Style Design System
+   INKROAD Pinterest-Style Design System  (모바일 전용)
    Masonry grid • Pin cards • Hover overlays • Slim banner
    Color palette preserved from store-light theme
+   적용 범위: max-width 767px (모바일 전용)
    ======================================================= */
+
+@media (max-width: 767px) {
+
+/* ===== 흰 패널 컨테이너 제거 — 카드가 배경에 그대로 뜨도록 ===== */
+.store-light .mobile-store-panel:not(.mobile-home-board),
+.store-light.mobile-search-page .mobile-search-panel,
+.store-light.mobile-search-page .mobile-search-results {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.store-light .mobile-store-panel:not(.mobile-home-board) .mobile-store-panel-head {
+  border-bottom: 0 !important;
+  padding: 0 4px 8px !important;
+}
+
+/* 작품 목록 타이틀 숨기기 — 핑터케스트 스타일에서는 섹션 타이틀 불필요 */
+.store-light.mobile-search-page .mobile-store-panel-title {
+  display: none;
+}
+
+/* 결과 카운트 패딩 */
+.store-light.mobile-search-page .mobile-result-count {
+  padding: 0 4px 8px;
+}
+
+.store-light.mobile-home-page .mobile-home-board {
+  background: var(--surface, #fff) !important;
+  border: 1px solid var(--border, #eee) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 12px 30px rgba(17, 17, 17, 0.06) !important;
+  overflow: hidden !important;
+}
+
+.store-light.mobile-home-page .mobile-home-board .mobile-store-panel-head {
+  border-bottom: 1px solid rgba(17, 17, 17, 0.06) !important;
+  padding: 18px 18px 14px !important;
+}
 
 /* --- Masonry Grid --- */
 .pin-masonry {
-  columns: 5;
-  column-gap: 16px;
+  columns: 2;
+  column-gap: 10px;
 }
 
 .pin-masonry > * {
   break-inside: avoid;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   display: inline-block;
   width: 100%;
 }
@@ -20,7 +64,7 @@
 /* --- Pin Card (Novel Card) --- */
 .pin-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   background: var(--surface, #fff);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -29,8 +73,8 @@
 }
 
 .pin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
 /* Card image wrapper */
@@ -54,14 +98,14 @@
 /* Sale mark — always visible top-right corner */
 .pin-card-sale {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   background: var(--accent-sale, #e85d3a);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 3px 8px;
+  border-radius: 16px;
   z-index: 3;
   letter-spacing: 0.01em;
 }
@@ -69,14 +113,14 @@
 /* Free badge — always visible top-left corner */
 .pin-card-free {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   background: var(--accent-free, #2d8a4e);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 3px 8px;
+  border-radius: 16px;
   z-index: 3;
 }
 
@@ -86,7 +130,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 56px 14px 14px;
+  padding: 40px 10px 10px;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.78) 0%,
@@ -95,7 +139,7 @@
   );
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   transform: translateY(100%);
   opacity: 0;
   transition: transform 300ms cubic-bezier(0.25, 1, 0.33, 1),
@@ -103,31 +147,32 @@
   z-index: 2;
 }
 
-.pin-card:hover .pin-card-overlay {
+.pin-card:hover .pin-card-overlay,
+.pin-card:active .pin-card-overlay {
   transform: translateY(0);
   opacity: 1;
 }
 
 .pin-card-overlay-rating {
   color: #ffc55f;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
 .pin-card-overlay-genre {
   color: rgba(255, 255, 255, 0.88);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
 }
 
 .pin-card-overlay-free {
   color: #8fe0c3;
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 700;
 }
 
 .pin-card-overlay-price {
   color: rgba(255, 255, 255, 0.92);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
 }
 
@@ -135,19 +180,19 @@
   text-decoration: line-through;
   opacity: 0.6;
   font-weight: 400;
-  margin-right: 6px;
+  margin-right: 4px;
 }
 
 /* Text below image — always visible */
 .pin-card-copy {
-  padding: 12px 14px 14px;
+  padding: 8px 10px 10px;
 }
 
 .pin-card-title {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: -0.02em;
   color: var(--text, #1a1a1a);
   display: -webkit-box;
@@ -157,8 +202,8 @@
 }
 
 .pin-card-author {
-  margin: 4px 0 0;
-  font-size: 0.75rem;
+  margin: 3px 0 0;
+  font-size: 0.7rem;
   color: var(--text-muted, #999);
 }
 
@@ -168,27 +213,26 @@
    ============================================================= */
 .pin-promo-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 22px;
-  margin: 0 0 28px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
   background: var(--surface, #fff);
   border: 1px solid var(--border, #eee);
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .pin-promo-left {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .pin-promo-left .sale-badge {
-  border-radius: 12px;
-  font-size: 0.72rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
 }
 
 .pin-promo-title {
@@ -200,14 +244,15 @@
 
 .pin-promo-meta {
   display: flex;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
   color: var(--text-muted, #999);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 }
 
 .pin-promo-meta span::before {
   content: "·";
-  margin-right: 14px;
+  margin-right: 8px;
   opacity: 0.4;
 }
 
@@ -221,32 +266,36 @@
    ============================================================= */
 .pin-genre-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 32px;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
 }
 
 .pin-genre-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 20px;
-  border-radius: 24px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 20px;
   background: var(--surface, #fff);
   border: 1px solid var(--border, #eee);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary, #444);
-  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.pin-genre-pill:hover {
+.pin-genre-pill:active {
   background: var(--dark, #1a1a1a);
   color: #fff;
   border-color: var(--dark, #1a1a1a);
-  transform: translateY(-1px);
 }
 
 
@@ -257,20 +306,20 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .pin-section-title {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: -0.03em;
 }
 
 .pin-section-sub {
   margin: 2px 0 0;
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   color: var(--text-muted, #999);
   line-height: 1.6;
 }
@@ -287,13 +336,14 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: 10px;
+  padding: 12px 16px;
   background: var(--surface, #fff);
   border: 1px solid var(--border, #eee);
-  border-radius: 28px;
+  border-radius: 24px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   transition: box-shadow 200ms ease, border-color 200ms ease;
+  box-sizing: border-box;
 }
 
 .pin-search-bar:focus-within {
@@ -308,79 +358,60 @@
   color: var(--text, #1a1a1a);
   font: inherit;
   outline: none;
+  font-size: 0.9rem;
 }
 
 .pin-search-bar .material-symbols-outlined {
   color: var(--text-muted, #999);
-  font-size: 1.25rem;
+  font-size: 1.15rem;
 }
 
 .pin-filter-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 10px;
-  padding: 16px 0 8px;
+  gap: 8px;
+  padding: 12px 0 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pin-filter-bar .filter-chip {
-  border-radius: 20px;
-  min-height: 36px;
-  padding: 0 16px;
-  font-size: 0.82rem;
-}
-
-.pin-filter-bar .sort-group {
-  margin-left: auto;
-  display: flex;
-  gap: 6px;
-}
-
-.pin-filter-bar .sort-option {
-  border-radius: 20px;
-  min-height: 36px;
+  border-radius: 18px;
+  min-height: 34px;
   padding: 0 14px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  background: var(--surface-muted, #f0eeeb);
-  border: 1px solid transparent;
-  color: var(--text-secondary, #444);
-  cursor: pointer;
-  transition: background 160ms ease, color 160ms ease;
-}
-
-.pin-filter-bar .sort-option.active {
-  background: var(--dark, #1a1a1a);
-  color: #fff;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .pin-count {
   color: var(--text-muted, #999);
-  font-size: 0.84rem;
-  margin-bottom: 16px;
+  font-size: 0.8rem;
+  margin-bottom: 12px;
 }
 
 
 /* =============================================================
-   Detail Page — Centered Card
+   Detail Page — Single column
    ============================================================= */
 .pin-detail-card {
-  max-width: 920px;
-  margin: 0 auto 48px;
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  gap: 32px;
-  padding: 28px;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 16px;
   background: var(--surface, #fff);
   border: 1px solid var(--border, #eee);
-  border-radius: 24px;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
 .pin-detail-cover {
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
-  align-self: start;
+  max-width: 200px;
+  align-self: center;
 }
 
 .pin-detail-cover img {
@@ -391,14 +422,14 @@
 }
 
 .pin-detail-info {
-  display: grid;
-  gap: 14px;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .pin-detail-title {
   margin: 0;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -406,49 +437,32 @@
 
 .pin-detail-subtitle {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   color: var(--text-muted, #999);
 }
 
 .pin-detail-meta {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.pin-detail-meta-item {
-  display: grid;
-  gap: 4px;
-}
-
-.pin-detail-meta-item .label {
-  color: var(--text-muted, #999);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.pin-detail-meta-item .value {
-  font-size: 0.94rem;
-  font-weight: 700;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .pin-detail-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .pin-detail-synopsis {
   margin: 0;
   color: var(--text-secondary, #444);
-  font-size: 0.93rem;
+  font-size: 0.88rem;
   line-height: 1.85;
 }
 
 .pin-detail-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -456,31 +470,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 14px 16px;
   background: var(--surface-muted, #f0eeeb);
-  border-radius: 14px;
-}
-
-.pin-price-box-left {
-  display: grid;
-  gap: 4px;
-}
-
-.pin-price-label {
-  font-size: 0.78rem;
-  color: var(--text-muted, #999);
-}
-
-.pin-price-values {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.pin-price-note {
-  font-size: 0.78rem;
-  color: var(--text-muted, #999);
+  border-radius: 12px;
 }
 
 
@@ -488,37 +481,13 @@
    Library — Board Style
    ============================================================= */
 .pin-board-section {
-  margin-bottom: 40px;
-}
-
-.pin-board-title {
-  margin: 0 0 18px;
-  font-size: 1.15rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pin-board-title .count {
-  font-weight: 500;
-  font-size: 0.88rem;
-  color: var(--text-muted, #999);
-}
-
-.pin-library-empty {
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-muted, #999);
-  font-size: 0.92rem;
-  line-height: 1.7;
+  margin-bottom: 28px;
 }
 
 .pin-library-stats {
   display: flex;
-  gap: 20px;
-  font-size: 0.88rem;
+  gap: 14px;
+  font-size: 0.82rem;
   color: var(--text-secondary, #444);
 }
 
@@ -529,7 +498,7 @@
 @keyframes pinFadeUp {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -538,147 +507,28 @@
 }
 
 .pin-card {
-  animation: pinFadeUp 400ms ease both;
+  animation: pinFadeUp 350ms ease both;
 }
 
 .pin-masonry .pin-card:nth-child(1)  { animation-delay: 0ms; }
-.pin-masonry .pin-card:nth-child(2)  { animation-delay: 50ms; }
-.pin-masonry .pin-card:nth-child(3)  { animation-delay: 100ms; }
-.pin-masonry .pin-card:nth-child(4)  { animation-delay: 150ms; }
-.pin-masonry .pin-card:nth-child(5)  { animation-delay: 200ms; }
-.pin-masonry .pin-card:nth-child(6)  { animation-delay: 250ms; }
-.pin-masonry .pin-card:nth-child(7)  { animation-delay: 300ms; }
-.pin-masonry .pin-card:nth-child(8)  { animation-delay: 350ms; }
-.pin-masonry .pin-card:nth-child(9)  { animation-delay: 400ms; }
-.pin-masonry .pin-card:nth-child(10) { animation-delay: 450ms; }
-.pin-masonry .pin-card:nth-child(n+11) { animation-delay: 500ms; }
+.pin-masonry .pin-card:nth-child(2)  { animation-delay: 40ms; }
+.pin-masonry .pin-card:nth-child(3)  { animation-delay: 80ms; }
+.pin-masonry .pin-card:nth-child(4)  { animation-delay: 120ms; }
+.pin-masonry .pin-card:nth-child(5)  { animation-delay: 160ms; }
+.pin-masonry .pin-card:nth-child(6)  { animation-delay: 200ms; }
+.pin-masonry .pin-card:nth-child(7)  { animation-delay: 240ms; }
+.pin-masonry .pin-card:nth-child(8)  { animation-delay: 280ms; }
+.pin-masonry .pin-card:nth-child(n+9) { animation-delay: 320ms; }
 
-
-/* =============================================================
-   Browse Results as Cards (search page — override old grid)
-   ============================================================= */
-.store-light .browse-results.pin-masonry {
+/* Browse results as masonry on mobile */
+.browse-results.pin-masonry {
   display: block;
-  columns: 5;
-  column-gap: 16px;
+  columns: 2;
+  column-gap: 10px;
 }
 
-.store-light .browse-results.pin-masonry .pin-card {
-  margin-bottom: 16px;
+.browse-results.pin-masonry .pin-card {
+  margin-bottom: 10px;
 }
 
-
-/* =============================================================
-   Override old novel-grid to masonry when pin-masonry is applied
-   ============================================================= */
-.store-light .pin-masonry.novel-grid,
-.store-light .pin-masonry.free-grid,
-.store-light .pin-masonry.sale-grid {
-  display: block;
-  columns: 5;
-  column-gap: 16px;
-  grid-template-columns: none;
-}
-
-
-/* =============================================================
-   Responsive Breakpoints
-   ============================================================= */
-@media (max-width: 1440px) {
-  .pin-masonry,
-  .store-light .browse-results.pin-masonry,
-  .store-light .pin-masonry.novel-grid,
-  .store-light .pin-masonry.free-grid,
-  .store-light .pin-masonry.sale-grid {
-    columns: 4;
-  }
-}
-
-@media (max-width: 1080px) {
-  .pin-masonry,
-  .store-light .browse-results.pin-masonry,
-  .store-light .pin-masonry.novel-grid,
-  .store-light .pin-masonry.free-grid,
-  .store-light .pin-masonry.sale-grid {
-    columns: 3;
-  }
-
-  .pin-detail-card {
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 24px;
-    padding: 20px;
-  }
-
-  .pin-detail-meta {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .pin-masonry,
-  .store-light .browse-results.pin-masonry,
-  .store-light .pin-masonry.novel-grid,
-  .store-light .pin-masonry.free-grid,
-  .store-light .pin-masonry.sale-grid {
-    columns: 2;
-  }
-
-  .pin-detail-card {
-    grid-template-columns: 1fr;
-    max-width: 520px;
-  }
-
-  .pin-detail-cover {
-    max-width: 240px;
-  }
-
-  .pin-promo-banner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .pin-filter-bar .sort-group {
-    margin-left: 0;
-    width: 100%;
-    overflow-x: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .pin-masonry,
-  .store-light .browse-results.pin-masonry,
-  .store-light .pin-masonry.novel-grid,
-  .store-light .pin-masonry.free-grid,
-  .store-light .pin-masonry.sale-grid {
-    columns: 2;
-    column-gap: 10px;
-  }
-
-  .pin-masonry > * {
-    margin-bottom: 10px;
-  }
-
-  .pin-card-copy {
-    padding: 10px 12px 12px;
-  }
-
-  .pin-card-title {
-    font-size: 0.84rem;
-  }
-
-  .pin-search-bar {
-    padding: 12px 16px;
-    border-radius: 20px;
-  }
-
-  .pin-genre-bar {
-    gap: 8px;
-  }
-
-  .pin-genre-pill {
-    min-height: 36px;
-    padding: 0 14px;
-    font-size: 0.82rem;
-  }
-}
+} /* end @media (max-width: 767px) */

@@ -394,14 +394,12 @@
     const statusLabel = novel.status === "completed" ? t("status.completed") : t("status.serializing");
     const genre = esc(novel.tags[0] || originLabel(novel.originCountry, novel.isTranslation));
 
-    // Cover overlay: episode info at bottom, sale mark at top-right
     const epLabel = freeCount > 0
       ? formatCount(freeCount) + "화 무료"
       : epCount > 0 ? "총 " + formatCount(epCount) + "화" : "";
     const epBadge = epLabel ? "<span class='novel-ep-badge'>" + epLabel + "</span>" : "";
     const saleMark = sale ? "<span class='novel-sale-mark'>-" + sale + "%</span>" : "";
 
-    // Bottom info: rating + price (price secondary)
     const rating = novel.reactionScore ? "<span class='novel-rating'>★ " + novel.reactionScore.toFixed(1) + "</span>" : "";
     let priceText = "";
     if (mode !== "free") {
@@ -1159,6 +1157,51 @@
   function mobileDetailHref(slug) { return "novel_detail.html?slug=" + encodeURIComponent(slug); }
   function mobileViewerHref(slug, ep) { return "novel_viewer.html?slug=" + encodeURIComponent(slug) + "&episode=" + ep; }
 
+  /** 슬러그 해시 기반으로 카드마다 다른 aspect-ratio 반환 — Pinterest 스타거 효과 */
+  function slugAspect(slug) {
+    var hash = 0;
+    var s = (slug || "") + "salt_v2";
+    for (var i = 0; i < s.length; i++) {
+      hash = ((hash << 5) - hash) + s.charCodeAt(i);
+      hash |= 0;
+    }
+    // 0.58 ~ 0.85 범위 (숫자가 작을수록 세로로 긺)
+    var ratios = [0.60, 0.65, 0.68, 0.72, 0.75, 0.78, 0.82, 0.63, 0.70, 0.85];
+    // Math.sin을 이용해 난수화 (동일 작품은 항상 동일 비율 유지)
+    var index = Math.floor(Math.abs(Math.sin(hash) * 1000)) % ratios.length;
+    return ratios[index];
+  }
+
+  function buildPinCard(novel, percentOverride) {
+    var sale = Number(percentOverride || salePercent(novel) || 0);
+    var freeCount = novel.freeEpisodeCount || 0;
+    var genre = esc(novel.tags ? novel.tags[0] : ((novel.genres || [])[0] || ""));
+
+    var saleMark = sale ? "<span class='pin-card-sale'>-" + sale + "%</span>" : "";
+    var freeMark = freeCount > 0 && !sale ? "<span class='pin-card-free'>" + formatCount(freeCount) + "화 무료</span>" : "";
+
+    var ratingLine = novel.reactionScore ? "<span class='pin-card-overlay-rating'>★ " + novel.reactionScore.toFixed(1) + "</span>" : "";
+    var genreLine = genre ? "<span class='pin-card-overlay-genre'>" + genre + "</span>" : "";
+    var freeLine = freeCount > 0 ? "<span class='pin-card-overlay-free'>" + formatCount(freeCount) + "화 무료</span>" : "";
+    var priceLine = sale
+      ? "<span class='pin-card-overlay-price'><span class='old'>편당 " + formatWon(EPISODE_PRICE) + "</span>편당 " + formatWon(discountedEpisodePrice(novel)) + "</span>"
+      : "<span class='pin-card-overlay-price'>편당 " + formatWon(EPISODE_PRICE) + "</span>";
+
+    return "<article class='pin-card'>" +
+      "<a class='pin-card-media' href='" + mobileDetailHref(novel.slug) + "'>" +
+      "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "' style='aspect-ratio:" + slugAspect(novel.slug) + ";width:100%;display:block;object-fit:cover;'>" +
+      saleMark + freeMark +
+      "<div class='pin-card-overlay'>" +
+        ratingLine + genreLine + freeLine + priceLine +
+      "</div>" +
+      "</a>" +
+      "<div class='pin-card-copy'>" +
+      "<h3 class='pin-card-title'>" + esc(novel.title) + "</h3>" +
+      "<p class='pin-card-author'>" + esc(novel.authorName) + "</p>" +
+      "</div>" +
+      "</article>";
+  }
+
   function buildMobileScrollCard(novel) {
     var sale = salePercent(novel);
     var priceHtml = sale
@@ -1248,13 +1291,15 @@
     var saleList = q("[data-mobile-sale-list]");
     if (saleList && saleNovels.length) {
       saleSection.style.display = "";
-      saleList.innerHTML = saleNovels.map(buildMobileScrollCard).join("");
+      saleList.classList.add("pin-masonry");
+      saleList.innerHTML = saleNovels.slice(0, 10).map(buildPinCard).join("");
     }
 
     var popularList = q("[data-mobile-popular-list]");
     if (popularList) {
       var sorted = novels.slice().sort(function (a, b) { return b.viewCount - a.viewCount; });
-      popularList.innerHTML = sorted.slice(0, 10).map(buildMobileScrollCard).join("");
+      popularList.classList.add("pin-masonry");
+      popularList.innerHTML = sorted.slice(0, 10).map(buildPinCard).join("");
     }
 
     var recentList = q("[data-mobile-recent-list]");
@@ -1290,7 +1335,12 @@
         return true;
       });
       if (countNode) countNode.textContent = filtered.length + "개 작품";
-      if (resultsNode) resultsNode.innerHTML = filtered.length ? filtered.map(buildMobileListRow).join("") : "<div class='library-empty'><h3>검색 결과가 없습니다</h3><p>다른 검색어나 필터를 시도해보세요.</p></div>";
+      if (resultsNode) {
+        resultsNode.classList.add("pin-masonry");
+        resultsNode.innerHTML = filtered.length
+          ? filtered.map(buildPinCard).join("")
+          : "<div class='library-empty'><h3>검색 결과가 없습니다</h3><p>다른 검색어나 필터를 시도해보세요.</p></div>";
+      }
     }
 
     genreChips.forEach(function (chip) {

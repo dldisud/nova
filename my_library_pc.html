@@ -12,7 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="assets/pc.css">
-  <link rel="stylesheet" href="assets/pinterest.css">
 </head>
 <body class="pc-desktop store-light">
   <header class="topbar">
@@ -41,40 +40,27 @@
 
   <main class="pc-page store-home">
     <div class="store-shell" style="padding-top:32px;">
-
-      <div class="pin-section-head" style="margin-bottom:24px;">
+      <div class="store-section-head" style="margin-bottom:24px;">
         <div>
-          <h1 class="pin-section-title">내 서재</h1>
+          <h1 class="store-section-title">내 서재</h1>
         </div>
-        <div class="pin-library-stats" data-library-stats></div>
+        <div class="library-stats" data-library-stats></div>
       </div>
 
-      <!-- Tab buttons -->
-      <div class="pin-filter-bar" style="padding-top:0;">
+      <div class="library-tabs">
         <button class="filter-chip" type="button" data-tab-target="reading" data-state="include">읽는 중</button>
         <button class="filter-chip" type="button" data-tab-target="wishlist">찜한 작품</button>
         <button class="filter-chip" type="button" data-tab-target="purchased">구매한 작품</button>
       </div>
 
-      <!-- Reading board -->
       <div data-tab-panel="reading">
-        <div class="pin-board-section">
-          <div class="pin-masonry library-list" data-library-reading></div>
-        </div>
+        <div class="library-list" data-library-reading></div>
       </div>
-
-      <!-- Wishlist board -->
       <div data-tab-panel="wishlist" style="display:none;">
-        <div class="pin-board-section">
-          <div class="pin-masonry library-list" data-library-wishlist></div>
-        </div>
+        <div class="library-list" data-library-wishlist></div>
       </div>
-
-      <!-- Purchased board -->
       <div data-tab-panel="purchased" style="display:none;">
-        <div class="pin-board-section">
-          <div class="pin-masonry library-list" data-library-purchased></div>
-        </div>
+        <div class="library-list" data-library-purchased></div>
       </div>
 
       <footer class="store-footer">

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>INKROAD | 글로벌 웹소설 스토어</title>
+  <meta name="description" content="INKROAD - 한국 웹소설을 세계로. 판타지, 로맨스, 회귀 등 다양한 장르의 웹소설을 만나보세요.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -41,68 +42,60 @@
   </header>
 
   <main class="pc-page store-home">
-    <section class="hero-band">
-      <div class="store-shell hero-grid">
-        <div class="hero-copy">
-          <div class="hero-badges">
-            <span class="sale-badge hero-sale-badge">-45% 세일</span>
-            <span class="muted-badge hero-direction-badge">한국 → 영어</span>
-            <span class="muted-badge hero-genre-badge">다크 판타지</span>
+    <!-- Hero Band -->
+    <section class="hero-band" data-hero-band>
+      <div class="store-shell">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="hero-badges">
+              <span class="sale-badge hero-sale-badge"></span>
+              <span class="muted-badge hero-direction-badge"></span>
+              <span class="muted-badge hero-genre-badge"></span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-title-main"></span><br>
+              <span class="hero-title-sub"></span>
+            </h1>
+            <p class="hero-description"></p>
+            <div class="hero-meta"></div>
+            <div class="hero-actions">
+              <a class="button primary" data-hero-read href="novel_viewer_pc.html">1화 읽기</a>
+              <button class="button secondary button-heart" type="button" data-hero-bookmark aria-label="찜하기">
+                <span class="material-symbols-outlined">favorite</span>
+                <span data-bookmark-label data-default-label="찜하기">찜하기</span>
+              </button>
+            </div>
           </div>
-          <p class="hero-brand">INKROAD</p>
-          <h1 class="hero-title hero-title-main">대표 작품 제목</h1>
-          <p class="hero-subtitle hero-title-sub">번역명과 함께 보이는 글로벌 스토어 히어로</p>
-          <p class="hero-description">무료 진입과 세일 전환이 한 화면에 이어지는 대표 작품을 보여줍니다.</p>
-          <div class="hero-meta"></div>
-          <div class="hero-actions">
-            <a class="button primary" data-hero-read href="novel_viewer_pc.html">무료로 읽기</a>
-            <button class="button secondary" type="button" data-hero-bookmark data-bookmark-id="pc-home-hero">
-              <span class="material-symbols-outlined">favorite</span>
-              <span data-bookmark-label data-default-label="위시리스트">위시리스트</span>
-            </button>
+          <div class="hero-cover-wrap">
+            <img class="hero-cover" src="https://placehold.co/180x250/333/fff?text=InkRoad" alt="표지">
           </div>
-        </div>
-        <div class="hero-cover-wrap">
-          <img class="hero-cover" src="https://placehold.co/360x500/222/fff?text=INKROAD" alt="대표 작품 표지">
         </div>
       </div>
     </section>
 
-    <div class="store-shell">
+    <div class="store-shell" style="padding-top:36px;">
+
+      <!-- Sale banner -->
+      <div class="sale-banner" data-home-sale-banner></div>
+
+      <!-- Genre grid -->
       <section class="store-section genre-section">
-        <div class="genre-grid"></div>
+        <div class="genre-grid" data-genre-grid></div>
       </section>
 
+      <!-- 지금 읽을 만한 (Free) -->
       <section class="store-section">
         <div class="store-section-head">
-          <div>
-            <h2 class="store-section-title">지금 읽을 만한</h2>
-            <p class="section-copy">무료 회차가 있고 평점이 좋은 작품들입니다.</p>
-          </div>
+          <h2 class="store-section-title">지금 읽을 만한</h2>
           <a class="link-inline" href="search_pc.html">전체 보기 <span class="material-symbols-outlined">arrow_forward</span></a>
         </div>
         <div class="novel-grid free-grid"></div>
       </section>
 
-      <section class="sale-banner" data-home-sale-banner>
-        <div class="sale-banner-copy">
-          <span class="sale-badge">진행 중인 세일</span>
-          <h2 class="sale-banner-title">이번 주 장르전</h2>
-          <div class="sale-banner-meta">
-            <span>참여 작품 8개</span>
-            <span>최대 45% 할인</span>
-            <span>2일 14시간 남음</span>
-          </div>
-        </div>
-        <a class="button secondary" href="search_pc.html">전체 보기</a>
-      </section>
-
+      <!-- 할인 작품 (Sale) -->
       <section class="store-section" id="sale-section">
         <div class="store-section-head">
-          <div>
-            <h2 class="store-section-title">할인 작품</h2>
-            <p class="section-copy">편당 고정 단가에서 할인율만 바뀌는 세일 작품들입니다.</p>
-          </div>
+          <h2 class="store-section-title">할인 작품</h2>
           <a class="link-inline" href="search_pc.html">전체 보기 <span class="material-symbols-outlined">arrow_forward</span></a>
         </div>
         <div class="novel-grid sale-grid"></div>
@@ -127,4 +120,3 @@
   <script src="assets/store-redesign.js"></script>
 </body>
 </html>
-
