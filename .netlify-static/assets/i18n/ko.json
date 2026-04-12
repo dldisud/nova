@@ -292,6 +292,14 @@
     "login_required": "로그인이 필요합니다",
     "login_subtitle": "작품 관리는 로그인 후 이용할 수 있습니다."
   },
+  "footer": {
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침",
+    "help": "고객센터",
+    "creator": "크리에이터",
+    "rights": "All rights reserved.",
+    "tagline": "글을 넘어, 세계를 잇는 서재"
+  },
   "upload": {
     "preview_edit": "편집으로 돌아가기",
     "preview_toggle": "미리보기",

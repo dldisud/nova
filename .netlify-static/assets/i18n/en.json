@@ -292,6 +292,14 @@
     "login_required": "Login required",
     "login_subtitle": "Log in to manage your works."
   },
+  "footer": {
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "help": "Support",
+    "creator": "Creator",
+    "rights": "All rights reserved.",
+    "tagline": "Your global webnovel library"
+  },
   "upload": {
     "preview_edit": "Back to editor",
     "preview_toggle": "Preview",

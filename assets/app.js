@@ -4,7 +4,7 @@
     reader: "inkroad-reader-settings"
   };
 
-  const bookmarkButtons = document.querySelectorAll("[data-bookmark-id]");
+  const getBookmarkButtons = () => document.querySelectorAll("[data-bookmark-id]");
   const yearTargets = document.querySelectorAll("[data-year]");
   const revealNodes = document.querySelectorAll("[data-reveal]");
   const navLinks = document.querySelectorAll("[data-nav-link]");
@@ -53,7 +53,7 @@
 
   const syncBookmarks = () => {
     const bookmarks = new Set(getBookmarks());
-    bookmarkButtons.forEach((button) => {
+    getBookmarkButtons().forEach((button) => {
       const id = button.dataset.bookmarkId;
       const isSaved = bookmarks.has(id);
       button.setAttribute("aria-pressed", String(isSaved));
@@ -65,20 +65,22 @@
     });
   };
 
-  bookmarkButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const bookmarks = new Set(getBookmarks());
-      const id = button.dataset.bookmarkId;
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-bookmark-id]");
+    if (!button) return;
 
-      if (bookmarks.has(id)) {
-        bookmarks.delete(id);
-      } else {
-        bookmarks.add(id);
-      }
+    const bookmarks = new Set(getBookmarks());
+    const id = button.dataset.bookmarkId;
+    if (!id) return;
 
-      setBookmarks(Array.from(bookmarks));
-      syncBookmarks();
-    });
+    if (bookmarks.has(id)) {
+      bookmarks.delete(id);
+    } else {
+      bookmarks.add(id);
+    }
+
+    setBookmarks(Array.from(bookmarks));
+    syncBookmarks();
   });
 
   yearTargets.forEach((node) => {
@@ -780,4 +782,3 @@
     console.error("[InkRoad] Supabase hydration failed:", error);
   });
 })();
-

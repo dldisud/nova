@@ -443,14 +443,14 @@
       .slice(0, 4);
     const freeNovels = data.novels.filter(function (novel) { return novel.freeEpisodeCount > 0; }).slice(0, 4);
     const genreDefs = [
-      { label: t("genre.fantasy"), match: function (novel) { return novel.tags.join(" ").indexOf("판타지") !== -1 || novel.tags.join(" ").indexOf("아카데미") !== -1; } },
-      { label: t("genre.romance"), match: function (novel) { return novel.tags.join(" ").indexOf("로맨스") !== -1; } },
-      { label: t("genre.regression"), match: function (novel) { return novel.tags.join(" ").indexOf("회귀") !== -1; } },
-      { label: t("genre.academy"), match: function (novel) { return novel.tags.join(" ").indexOf("아카데미") !== -1; } },
-      { label: t("genre.translated"), match: function (novel) { return novel.isTranslation; } },
-      { label: t("genre.dark"), match: function (novel) { return novel.tags.join(" ").indexOf("피폐") !== -1; } },
-      { label: t("genre.family"), match: function (novel) { return novel.tags.join(" ").indexOf("가문") !== -1; } },
-      { label: t("genre.dark_fantasy"), match: function (novel) { return novel.tags.join(" ").indexOf("다크") !== -1 || novel.tags.join(" ").indexOf("피폐") !== -1; } }
+      { label: t("genre.fantasy"), icon: "bolt", match: function (novel) { return novel.tags.join(" ").indexOf("판타지") !== -1 || novel.tags.join(" ").indexOf("아카데미") !== -1; } },
+      { label: t("genre.romance"), icon: "favorite", match: function (novel) { return novel.tags.join(" ").indexOf("로맨스") !== -1; } },
+      { label: t("genre.regression"), icon: "history", match: function (novel) { return novel.tags.join(" ").indexOf("회귀") !== -1; } },
+      { label: t("genre.academy"), icon: "school", match: function (novel) { return novel.tags.join(" ").indexOf("아카데미") !== -1; } },
+      { label: t("genre.translated"), icon: "translate", match: function (novel) { return novel.isTranslation; } },
+      { label: t("genre.dark"), icon: "skull", match: function (novel) { return novel.tags.join(" ").indexOf("피폐") !== -1; } },
+      { label: t("genre.family"), icon: "castle", match: function (novel) { return novel.tags.join(" ").indexOf("가문") !== -1; } },
+      { label: t("genre.dark_fantasy"), icon: "nights_stay", match: function (novel) { return novel.tags.join(" ").indexOf("다크") !== -1 || novel.tags.join(" ").indexOf("피폐") !== -1; } }
     ];
 
     const heroSale = salePercent(featured);
@@ -470,7 +470,11 @@
       q(".hero-cover").alt = featured.title + " 표지";
     }
     if (q(".hero-meta")) {
-      q(".hero-meta").innerHTML = "<span>총 " + formatCount(featured.totalEpisodeCount) + "화</span><span>평점 " + featured.reactionScore.toFixed(1) + "</span><span>" + (featured.freeEpisodeCount ? formatCount(featured.freeEpisodeCount) + "화 무료" : "무료 구간 없음") + "</span>" + (heroSale ? "<span>편당 " + formatWon(discountedEpisodePrice(featured)) + "</span>" : "<span>편당 " + formatWon(EPISODE_PRICE) + "</span>");
+      q(".hero-meta").innerHTML =
+        "<span><span class='material-symbols-outlined' style='font-size:14px;vertical-align:-2px;margin-right:2px;'>menu_book</span>총 " + formatCount(featured.totalEpisodeCount) + "화</span>" +
+        "<span><span class='material-symbols-outlined' style='font-size:14px;vertical-align:-2px;margin-right:2px;'>star</span>평점 " + featured.reactionScore.toFixed(1) + "</span>" +
+        "<span><span class='material-symbols-outlined' style='font-size:14px;vertical-align:-2px;margin-right:2px;'>lock_open</span>" + (featured.freeEpisodeCount ? formatCount(featured.freeEpisodeCount) + "화 무료" : "무료 구간 없음") + "</span>" +
+        "<span><span class='material-symbols-outlined' style='font-size:14px;vertical-align:-2px;margin-right:2px;'>payments</span>편당 " + formatWon(heroSale ? discountedEpisodePrice(featured) : EPISODE_PRICE) + "</span>";
     }
     const heroRead = q("[data-hero-read]");
     if (heroRead) heroRead.href = viewerHref(featured.slug, 1);
@@ -501,7 +505,9 @@
     const genreGrid = q(".genre-grid");
     if (genreGrid) {
       genreGrid.innerHTML = genreDefs.slice(0, 8).map(function (genre) {
-        return "<a class='genre-pill' href='search_pc.html?tag=" + encodeURIComponent(genre.label) + "'>" + esc(genre.label) + "</a>";
+        return "<a class='genre-pill' href='search_pc.html?tag=" + encodeURIComponent(genre.label) + "'>" +
+          "<span class='material-symbols-outlined' style='font-size:16px;'>" + (genre.icon || "tag") + "</span>" +
+          esc(genre.label) + "</a>";
       }).join("");
     }
 
@@ -1175,7 +1181,7 @@
   function buildPinCard(novel, percentOverride) {
     var sale = Number(percentOverride || salePercent(novel) || 0);
     var freeCount = novel.freeEpisodeCount || 0;
-    var genre = esc(novel.tags ? novel.tags[0] : ((novel.genres || [])[0] || ""));
+    var genre = esc((novel.tags || [])[0] || "");
 
     var saleMark = sale ? "<span class='pin-card-sale'>-" + sale + "%</span>" : "";
     var freeMark = freeCount > 0 && !sale ? "<span class='pin-card-free'>" + formatCount(freeCount) + "화 무료</span>" : "";
@@ -1200,33 +1206,6 @@
       "<p class='pin-card-author'>" + esc(novel.authorName) + "</p>" +
       "</div>" +
       "</article>";
-  }
-
-  function buildMobileScrollCard(novel) {
-    var sale = salePercent(novel);
-    var priceHtml = sale
-      ? "<span style='text-decoration:line-through;'>" + formatWon(EPISODE_PRICE) + "</span> <span style='color:var(--accent-sale);font-weight:600;'>" + formatWon(discountedEpisodePrice(novel)) + "</span>"
-      : formatWon(EPISODE_PRICE);
-    return "<a class='mobile-scroll-card' href='" + mobileDetailHref(novel.slug) + "'>" +
-      "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'>" +
-      "<div class='mobile-scroll-card-title'>" + esc(novel.title) + "</div>" +
-      "<div class='mobile-scroll-card-price'>편당 " + priceHtml + "</div>" +
-      "</a>";
-  }
-
-  function buildMobileListRow(novel) {
-    var sale = salePercent(novel);
-    var priceHtml = sale
-      ? "<span style='text-decoration:line-through;'>" + formatWon(EPISODE_PRICE) + "</span> <span style='color:var(--accent-sale);font-weight:600;'>" + formatWon(discountedEpisodePrice(novel)) + "</span>"
-      : formatWon(EPISODE_PRICE);
-    return "<a class='mobile-list-row' href='" + mobileDetailHref(novel.slug) + "'>" +
-      "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'>" +
-      "<div class='mobile-list-row-copy'>" +
-      "<div class='mobile-list-row-title'>" + esc(novel.title) + "</div>" +
-      "<div class='mobile-list-row-meta'>" + esc(novel.authorName) + " · " + esc((novel.genres || [])[0] || "") + "</div>" +
-      "<div class='mobile-list-row-meta'>편당 " + priceHtml + "</div>" +
-      "</div>" +
-      "</a>";
   }
 
   function renderMobileHome(data) {
@@ -1278,8 +1257,20 @@
     var saleBanner = q("[data-mobile-sale-banner]");
     var saleNovels = novels.filter(function (n) { return salePercent(n) > 0; });
     if (saleBanner) {
-      saleBanner.style.display = "none";
-      saleBanner.innerHTML = "";
+      if (saleNovels.length) {
+        var topSale = saleNovels[0];
+        saleBanner.style.display = "";
+        saleBanner.innerHTML =
+          "<span class='sale-badge'>-" + salePercent(topSale) + "% " + t("common.sale_badge").replace(/-\d+% /, "") + "</span>" +
+          "<h3>" + esc(topSale.title) + " " + t("common.sale_discount").replace("{{n}}", salePercent(topSale)) + "</h3>" +
+          "<p>편당 " + formatWon(discountedEpisodePrice(topSale)) + " · " + formatCount(saleNovels.length) + "개 작품 할인 중</p>";
+      } else {
+        saleBanner.style.display = "";
+        saleBanner.innerHTML =
+          "<span class='muted-badge'>" + t("store.sale_banner_title") + "</span>" +
+          "<h3>" + t("store.sale_banner_subtitle") + "</h3>" +
+          "<p>" + t("store.sale_banner_price") + "</p>";
+      }
     }
 
     var saleSection = q("[data-mobile-section-sale]");
@@ -1325,9 +1316,9 @@
       var filtered = novels.filter(function (n) {
         if (filters.q) {
           var term = filters.q.toLowerCase();
-          if (n.title.toLowerCase().indexOf(term) === -1 && n.authorName.toLowerCase().indexOf(term) === -1 && (n.genres || []).join(",").toLowerCase().indexOf(term) === -1) return false;
+          if (n.title.toLowerCase().indexOf(term) === -1 && n.authorName.toLowerCase().indexOf(term) === -1 && (n.tags || []).join(",").toLowerCase().indexOf(term) === -1) return false;
         }
-        if (filters.genre && (n.genres || []).indexOf(filters.genre) === -1) return false;
+        if (filters.genre && (n.tags || []).indexOf(filters.genre) === -1) return false;
         if (filters.origin && ((filters.origin === "한국" && n.isTranslation) || (filters.origin !== "한국" && !n.isTranslation))) return false;
         if (filters.status && n.status !== filters.status) return false;
         return true;
@@ -1436,7 +1427,7 @@
       var freeEp = list.find(function (ep) { return ep.episodeNumber === 1; }) || list[0];
       ctaNode.innerHTML =
         "<a class='button primary' style='flex:1;text-align:center;' href='" + mobileViewerHref(novel.slug, freeEp ? freeEp.episodeNumber : 1) + "'>" + t("store.read_free") + "</a>" +
-        "<button class='button secondary' data-bookmark='" + esc(novel.slug) + "'>♥ 찜</button>";
+        "<button class='button secondary' data-bookmark-id='" + esc(novel.slug) + "'><span data-bookmark-label data-default-label='찜하기'>찜하기</span></button>";
     }
 
     if (episodesNode) {
@@ -1595,13 +1586,124 @@
     refreshBookmarkButtons();
   }
 
+  /* ============================================
+     Detail Polish — Skeleton loading
+     ============================================ */
+  function showSkeletons() {
+    // PC novel grids
+    qa(".novel-grid").forEach(function (grid) {
+      if (grid.children.length > 0) return;
+      var count = 4;
+      var html = "";
+      for (var i = 0; i < count; i++) {
+        html += "<div class='skeleton-card'><div class='skeleton-img'></div><div class='skeleton-line'></div><div class='skeleton-line short'></div></div>";
+      }
+      grid.innerHTML = html;
+    });
+    // Mobile masonry
+    qa("[data-mobile-popular-list], [data-mobile-recent-list], [data-mobile-sale-list]").forEach(function (node) {
+      if (node.children.length > 0) return;
+      node.classList.add("pin-masonry");
+      var html = "";
+      for (var i = 0; i < 4; i++) {
+        var h = 120 + Math.floor(Math.random() * 60);
+        html += "<div class='skeleton-pin'><div class='skeleton-img' style='height:" + h + "px'></div><div class='skeleton-line'></div><div class='skeleton-line short'></div></div>";
+      }
+      node.innerHTML = html;
+    });
+    // PC hero skeleton
+    var heroBand = q(".hero-band");
+    if (heroBand && !heroBand.dataset.loaded) {
+      var heroShell = q(".store-shell", heroBand) || q(".hero-grid", heroBand);
+      if (heroShell && !q(".skeleton-hero", heroBand)) {
+        // keep existing structure, just add a loading class
+        heroBand.classList.add("skeleton");
+      }
+    }
+  }
+
+  function removeSkeletons() {
+    qa(".skeleton-card, .skeleton-pin, .skeleton-hero").forEach(function (el) { el.remove(); });
+    qa(".skeleton").forEach(function (el) { el.classList.remove("skeleton"); });
+  }
+
+  /* ============================================
+     Detail Polish — Topbar scroll detection
+     ============================================ */
+  (function initTopbarScroll() {
+    var topbar = q(".topbar") || q(".mobile-header");
+    if (!topbar) return;
+    var lastY = 0;
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      lastY = window.scrollY;
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          if (lastY > 20) {
+            topbar.classList.add("scrolled");
+          } else {
+            topbar.classList.remove("scrolled");
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+
+  /* ============================================
+     Detail Polish — Footer upgrade
+     ============================================ */
+  function upgradeFooters() {
+    // PC footer
+    qa(".store-footer").forEach(function (footer) {
+      var yearEl = q("[data-year]", footer);
+      var year = yearEl ? yearEl.textContent : new Date().getFullYear();
+      footer.innerHTML =
+        "<div class='footer-brand'>" +
+          "<span class='brand-mark material-symbols-outlined'>auto_stories</span>" +
+          "<strong>INKROAD</strong>" +
+        "</div>" +
+        "<div class='footer-links'>" +
+          "<a href='#'>" + t("footer.terms") + "</a>" +
+          "<a href='#'>" + t("footer.privacy") + "</a>" +
+          "<a href='#'>" + t("footer.help") + "</a>" +
+          "<a href='#'>" + t("footer.creator") + "</a>" +
+        "</div>" +
+        "<div class='footer-copy'>" +
+          "<span>&copy; " + year + " INKROAD. " + t("footer.rights") + "</span>" +
+        "</div>";
+    });
+    // Mobile footer
+    qa(".mobile-footer").forEach(function (footer) {
+      var yearEl = q("[data-year]", footer);
+      var year = yearEl ? yearEl.textContent : new Date().getFullYear();
+      footer.innerHTML =
+        "<div class='footer-brand-row'>" +
+          "<span class='brand-mark material-symbols-outlined'>auto_stories</span>" +
+          "<strong>INKROAD</strong>" +
+        "</div>" +
+        "<div class='footer-links'>" +
+          "<a href='#'>" + t("footer.terms") + "</a>" +
+          "<a href='#'>" + t("footer.privacy") + "</a>" +
+          "<a href='#'>" + t("footer.help") + "</a>" +
+        "</div>" +
+        "<div class='footer-tagline'>&copy; " + year + " INKROAD &mdash; " + t("footer.tagline") + "</div>";
+    });
+  }
+
+  showSkeletons();
+
   async function hydrate() {
+    upgradeFooters();
+
     if (page === "auth_pc") {
       renderAuth();
       return;
     }
 
     const data = await catalog();
+    removeSkeletons();
     if (!data.novels.length) return;
 
     if (page === "homepage_pc") {
