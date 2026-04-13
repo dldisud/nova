@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(C:\\Users\\rimur\\.qwen/**)"
-    ]
-  },
-  "$version": 3
-}
