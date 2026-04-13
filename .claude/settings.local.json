@@ -22,7 +22,11 @@
       "Bash(git commit:*)",
       "Bash(python -m pytest tests/ -v --tb=short)",
       "Bash(python -m unittest discover -s tests -v)",
-      "mcp__467e801e-62ae-4f4b-a08e-1b4761d85205__execute_sql"
+      "mcp__467e801e-62ae-4f4b-a08e-1b4761d85205__execute_sql",
+      "Bash(ls -la d:/nova/*.html)",
+      "Bash(node -c d:/nova/assets/store-redesign.js)",
+      "Bash(node -e ':*)",
+      "Bash(ls d:/nova/*.html)"
     ]
   }
 }

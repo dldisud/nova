@@ -34,7 +34,16 @@
         <input type="search" name="q" placeholder="작품명, 작가, 태그 검색">
       </form>
       <div data-lang-picker></div>
-      <a class="button ghost button-login" data-auth-link href="auth_pc.html" data-i18n="nav.login">로그인</a>
+      <div class="topbar-user-menu" data-user-menu>
+        <button class="topbar-user-trigger" data-topbar-auth data-i18n="nav.login" type="button">로그인</button>
+        <div class="topbar-user-dropdown" data-user-dropdown hidden>
+          <a class="topbar-dropdown-item" href="my_library_pc.html"><span class="material-symbols-outlined">auto_stories</span>내 서재</a>
+          <a class="topbar-dropdown-item" href="creator_dashboard_pc.html" data-menu-creator><span class="material-symbols-outlined">edit_note</span>크리에이터</a>
+          <a class="topbar-dropdown-item" href="admin_dashboard_pc.html" data-menu-admin hidden><span class="material-symbols-outlined">shield_person</span>관리자</a>
+          <div class="topbar-dropdown-divider"></div>
+          <button class="topbar-dropdown-item" type="button" data-menu-logout><span class="material-symbols-outlined">logout</span>로그아웃</button>
+        </div>
+      </div>
     </div>
   </header>
 

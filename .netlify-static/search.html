@@ -22,7 +22,7 @@
     </a>
     <div class="mobile-header-actions">
       <div data-lang-picker></div>
-      <a href="auth_pc.html" class="mobile-header-icon" data-auth-link><span class="material-symbols-outlined">person</span></a>
+      <button class="mobile-header-icon" data-mobile-user-btn type="button"><span class="material-symbols-outlined">person</span></button>
     </div>
   </header>
 
@@ -70,11 +70,28 @@
       <span class="material-symbols-outlined">auto_stories</span>
       <span class="tab-label" data-i18n="nav.my_library">서재</span>
     </a>
-    <a class="tab-item" href="auth_pc.html">
+    <button class="tab-item" data-mobile-user-btn type="button">
       <span class="material-symbols-outlined">person</span>
       <span class="tab-label">MY</span>
-    </a>
+    </button>
   </nav>
+
+  <div class="mobile-user-sheet" data-mobile-user-sheet hidden>
+    <div class="mobile-sheet-backdrop" data-mobile-sheet-close></div>
+    <div class="mobile-sheet-panel">
+      <div class="mobile-sheet-header">
+        <span class="mobile-sheet-title" data-mobile-user-name>로그인</span>
+        <button class="mobile-sheet-close-btn" data-mobile-sheet-close type="button"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="mobile-sheet-body">
+        <a class="mobile-sheet-item" href="my_library.html"><span class="material-symbols-outlined">auto_stories</span>내 서재</a>
+        <a class="mobile-sheet-item" href="creator_dashboard_pc.html" data-mobile-menu-creator><span class="material-symbols-outlined">edit_note</span>크리에이터</a>
+        <a class="mobile-sheet-item" href="admin_dashboard_pc.html" data-mobile-menu-admin hidden><span class="material-symbols-outlined">shield_person</span>관리자</a>
+        <div class="mobile-sheet-divider"></div>
+        <button class="mobile-sheet-item" data-mobile-menu-logout type="button"><span class="material-symbols-outlined">logout</span>로그아웃</button>
+      </div>
+    </div>
+  </div>
 
   <script src="assets/i18n.js"></script>
   <script src="assets/supabase-config.js"></script>

@@ -85,6 +85,274 @@
     return "https://placehold.co/320x440/ddd/222?text=" + encodeURIComponent(title || "InkRoad");
   }
 
+  const supplementalCatalog = {
+    novels: [
+      {
+        id: "sample-academy-necromancer",
+        slug: "academy-necromancer-undercover",
+        title: "아카데미 최강 흑마도사는 낙제생으로 위장한다",
+        subtitle: "수석 흑마도사의 잠입 생존기",
+        shortDescription: "아카데미와 다크 판타지를 동시에 눌러볼 수 있는 대표 샘플작",
+        description: "정체를 숨긴 흑마도사가 낙제생 신분으로 아카데미에 잠입해, 몰락 직전의 학년을 다시 세우는 학원 판타지입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 18,
+        totalEpisodeCount: 143,
+        reactionScore: 9.2,
+        viewCount: 165400,
+        commentCount: 2810,
+        bundleListPrice: 16800,
+        bundleSalePrice: 12600,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+        authorName: "한서림",
+        tags: ["아카데미", "다크 판타지", "성장", "남성향"]
+      },
+      {
+        id: "sample-villainess-ledger",
+        slug: "villainess-survives-by-contract",
+        title: "악역 영애는 후원 계약으로 살아남는다",
+        subtitle: "몰락을 아는 영애의 계약 생존",
+        shortDescription: "로맨스 판타지와 정치 서사를 찾을 때 보이는 여성향 대표 샘플",
+        description: "몰락이 예정된 영애가 후원 계약과 장부 조작으로 파멸 루트를 비틀어 나가는 로맨스 판타지입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 22,
+        totalEpisodeCount: 119,
+        reactionScore: 9.0,
+        viewCount: 132700,
+        commentCount: 2250,
+        bundleListPrice: 15400,
+        bundleSalePrice: null,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+        authorName: "이설원",
+        tags: ["로맨스 판타지", "정치", "가문물", "여성향"]
+      },
+      {
+        id: "sample-subway-manager",
+        slug: "haunted-subway-manager",
+        title: "심야 지하철 관리자는 귀신 민원을 처리한다",
+        subtitle: "도시 괴담을 민원 문서처럼 처리하는 현대 판타지",
+        shortDescription: "현대 판타지와 미스터리, 하드보일드 감성을 넣어주는 샘플",
+        description: "막차 이후의 역에서만 접수되는 기묘한 민원을 해결하는 관리자의 밤을 다루는 현대 판타지입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 12,
+        totalEpisodeCount: 87,
+        reactionScore: 8.8,
+        viewCount: 74600,
+        commentCount: 1540,
+        bundleListPrice: 13200,
+        bundleSalePrice: 9900,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 20).toISOString(),
+        authorName: "유리안",
+        tags: ["현대 판타지", "미스터리", "하드보일드", "한국"]
+      },
+      {
+        id: "sample-star-librarian",
+        slug: "starship-librarian-knights",
+        title: "우주정거장의 사서 기사단",
+        subtitle: "기록과 전투가 함께 가는 SF 모험",
+        shortDescription: "SF 장르 영역을 채워주는 이미지 좋은 샘플작",
+        description: "붕괴 직전의 우주정거장에서 금지 기록을 지키는 사서 기사단이 외부 침입과 내부 반란을 동시에 막아내는 SF입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "completed",
+        isTranslation: true,
+        originCountry: "US",
+        freeEpisodeCount: 10,
+        totalEpisodeCount: 74,
+        reactionScore: 8.7,
+        viewCount: 69500,
+        commentCount: 1180,
+        bundleListPrice: 14800,
+        bundleSalePrice: 10400,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 30).toISOString(),
+        authorName: "미카 사도",
+        tags: ["SF", "사서", "번역작", "군상극"]
+      },
+      {
+        id: "sample-murim-records",
+        slug: "murim-healer-grows-by-records",
+        title: "무림 의원은 기록으로 강해진다",
+        subtitle: "의술과 장부가 만난 성장 무협",
+        shortDescription: "무협 카테고리를 비워두지 않게 해주는 샘플 작품",
+        description: "환자를 살릴수록 기록이 무공으로 바뀌는 기이한 장부를 손에 넣은 의원의 성장 무협입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 16,
+        totalEpisodeCount: 102,
+        reactionScore: 8.9,
+        viewCount: 88400,
+        commentCount: 1710,
+        bundleListPrice: 13800,
+        bundleSalePrice: null,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 42).toISOString(),
+        authorName: "유리안",
+        tags: ["무협", "성장", "남성향", "장기 연재"]
+      },
+      {
+        id: "sample-frozen-ledger",
+        slug: "northern-duchess-hidden-ledger",
+        title: "북부 대공비는 숨겨둔 장부를 꺼내지 않는다",
+        subtitle: "장부와 외교로 버티는 북부 생존기",
+        shortDescription: "검색과 홈에서 여성향·정치 쪽 밀도를 채워주는 작품",
+        description: "얼어붙은 북부에서 전쟁 대신 장부와 외교문서를 무기로 살아남는 대공비의 정치 서사입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 14,
+        totalEpisodeCount: 91,
+        reactionScore: 8.8,
+        viewCount: 81100,
+        commentCount: 1490,
+        bundleListPrice: 14200,
+        bundleSalePrice: 11300,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 16).toISOString(),
+        authorName: "이설원",
+        tags: ["로맨스 판타지", "정치", "여성향", "가문물"]
+      },
+      {
+        id: "sample-court-mage",
+        slug: "late-night-court-mage",
+        title: "서초동 마도 법무관은 오늘도 야근한다",
+        subtitle: "법정과 마법이 얽히는 어반 판타지",
+        shortDescription: "현대 배경과 사건 해결형 읽을거리를 늘려주는 샘플",
+        description: "법정 제출용 마법 증거를 감정하는 법무관이 도심 괴이 사건을 해결하는 현대 판타지입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "serializing",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 11,
+        totalEpisodeCount: 69,
+        reactionScore: 8.6,
+        viewCount: 57200,
+        commentCount: 960,
+        bundleListPrice: 12600,
+        bundleSalePrice: null,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
+        authorName: "한서림",
+        tags: ["현대 판타지", "미스터리", "하드보일드", "한국"]
+      },
+      {
+        id: "sample-cooking-emperor",
+        slug: "reincarnated-emperor-chef",
+        title: "환생한 황제는 요리로 제국을 구한다",
+        subtitle: "미식과 정치가 만나는 이세계 궁정극",
+        shortDescription: "가벼운 톤의 환생 판타지 축을 채우는 샘플작",
+        description: "독살당한 황제가 요리사의 몸으로 환생해 식탁과 외교로 제국을 되살리는 환생 판타지입니다.",
+        coverUrl: "",
+        bannerUrl: "",
+        status: "completed",
+        isTranslation: false,
+        originCountry: "KR",
+        freeEpisodeCount: 8,
+        totalEpisodeCount: 58,
+        reactionScore: 8.5,
+        viewCount: 64100,
+        commentCount: 1110,
+        bundleListPrice: 11800,
+        bundleSalePrice: 8400,
+        updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 54).toISOString(),
+        authorName: "이설원",
+        tags: ["판타지", "환생", "정치", "남성향"]
+      }
+    ],
+    eventItems: [
+      { slug: "academy-necromancer-undercover", title: "학원 판타지 집중전", subtitle: "아카데미 인기작만 모은 한정 할인", discountPercent: 20, sortOrder: 10, endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 4).toISOString() },
+      { slug: "haunted-subway-manager", title: "도시 괴담 주간전", subtitle: "미스터리·현대 판타지 할인", discountPercent: 25, sortOrder: 11, endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString() },
+      { slug: "starship-librarian-knights", title: "번역작 특집전", subtitle: "해외 인기작을 한 번에", discountPercent: 30, sortOrder: 12, endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 6).toISOString() },
+      { slug: "reincarnated-emperor-chef", title: "완결 번들 세일", subtitle: "완결작 정주행 특가", discountPercent: 28, sortOrder: 13, endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5).toISOString() }
+    ]
+  };
+
+  const supplementalEpisodes = {
+    "academy-necromancer-undercover": [
+      { id: "sample-academy-necromancer-1", episodeNumber: 1, title: "낙제생 등록", teaser: "최강 흑마도사가 가장 낮은 반에 이름을 올립니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 70).toISOString(), body: "입학식 날, 그는 수석도 아닌 낙제생 명단에서 자신의 이름을 확인했다.\n\n**정체를 숨기는 순간**, 아카데미의 질서는 더 이상 예전과 같지 않았다." },
+      { id: "sample-academy-necromancer-2", episodeNumber: 2, title: "검은 실기 시험", teaser: "첫 수업에서 모두가 그의 손을 주목합니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 69).toISOString(), body: "실기장은 조용했다.\n\n그가 손끝을 세우자, 부서진 표적들이 역으로 다시 일어났다." },
+      { id: "sample-academy-necromancer-19", episodeNumber: 19, title: "금지 강의실", teaser: "무료 구간 이후 첫 유료 회차입니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 40).toISOString(), body: "금지 강의실 문이 닫히자, 학생들은 그제야 자신의 교관이 누구인지 눈치챘다." }
+    ],
+    "villainess-survives-by-contract": [
+      { id: "sample-villainess-ledger-1", episodeNumber: 1, title: "계약서 첫 줄", teaser: "파멸을 막기 위한 첫 줄이 써집니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 62).toISOString(), body: "파혼 통보보다 먼저, 그녀는 계약서 첫 줄에 자신의 이름을 적었다." },
+      { id: "sample-villainess-ledger-2", episodeNumber: 2, title: "후원자의 조건", teaser: "후원 계약이 의외의 방향으로 흘러갑니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 61).toISOString(), body: "후원자는 돈 대신 정보를 원했다.\n\n그리고 그녀는 그 정보가 미래를 바꿀 수 있다는 걸 알고 있었다." },
+      { id: "sample-villainess-ledger-23", episodeNumber: 23, title: "황실 회계 감사", teaser: "귀족 사회 전체가 흔들리는 회차입니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 20).toISOString(), body: "감사장 한 장이 연회장을 침묵시켰다." }
+    ],
+    "haunted-subway-manager": [
+      { id: "sample-subway-manager-1", episodeNumber: 1, title: "막차 이후 접수창구", teaser: "사람이 아닌 민원이 들어오기 시작합니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 34).toISOString(), body: "자정이 넘자, 민원 창구 버튼이 세 번 울렸다.\n\n첫 번째 신청인은 승객이 아니었다." },
+      { id: "sample-subway-manager-2", episodeNumber: 2, title: "9호선 승강장의 그림자", teaser: "지워진 CCTV 시간대를 추적합니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 33).toISOString(), body: "지워진 시간대는 없다.\n\n다만, 누군가 보지 못하게 숨겼을 뿐이다." },
+      { id: "sample-subway-manager-13", episodeNumber: 13, title: "종착역 안내 방송", teaser: "첫 유료 회차에서 진실이 드러납니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 8).toISOString(), body: "안내 방송 끝자락에서, 사람이 내면 안 되는 이름이 불렸다." }
+    ],
+    "starship-librarian-knights": [
+      { id: "sample-star-librarian-1", episodeNumber: 1, title: "분실된 항해 기록", teaser: "정거장의 첫 비밀이 열립니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 80).toISOString(), body: "항해 기록이 사라진 날, 사서 기사단의 검도 함께 사라졌다." },
+      { id: "sample-star-librarian-2", episodeNumber: 2, title: "은하 서고 봉쇄령", teaser: "기록 보관구역이 봉쇄됩니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 79).toISOString(), body: "봉쇄령은 늘 늦는다.\n\n이미 누군가는 서고 안으로 들어가 있었다." },
+      { id: "sample-star-librarian-11", episodeNumber: 11, title: "진공 속의 서가", teaser: "번역작 분위기를 느끼기 좋은 유료 회차입니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 40).toISOString(), body: "문이 열리자, 책장 대신 별빛이 넘실거렸다." }
+    ],
+    "murim-healer-grows-by-records": [
+      { id: "sample-murim-records-1", episodeNumber: 1, title: "죽지 않는 처방전", teaser: "의원은 첫 환자와 함께 기이한 장부를 만납니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 55).toISOString(), body: "환자가 살아남는 순간, 장부 첫 장에 붉은 문장이 떠올랐다." },
+      { id: "sample-murim-records-2", episodeNumber: 2, title: "경혈과 장부", teaser: "의술이 무공으로 변하기 시작합니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 54).toISOString(), body: "그는 침을 놓았고, 장부는 그 동작을 무공으로 기록했다." },
+      { id: "sample-murim-records-17", episodeNumber: 17, title: "독문의 장", teaser: "무림 의원의 첫 큰 시험입니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 19).toISOString(), body: "해독법이 아니라, 독 자체를 기록으로 거꾸로 푸는 밤이었다." }
+    ],
+    "northern-duchess-hidden-ledger": [
+      { id: "sample-frozen-ledger-1", episodeNumber: 1, title: "얼어붙은 감사장", teaser: "북부로 보내진 감사장이 모든 시작입니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 47).toISOString(), body: "그 겨울, 대공비가 가장 먼저 봉인한 것은 편지가 아니라 장부였다." },
+      { id: "sample-frozen-ledger-2", episodeNumber: 2, title: "서고의 장부 열쇠", teaser: "누가 장부를 숨겼는지 드러납니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 46).toISOString(), body: "서고 열쇠는 항상 보이는 곳에 있었다.\n\n아무도 장부가 그 열쇠라고 생각하지 않았을 뿐." },
+      { id: "sample-frozen-ledger-15", episodeNumber: 15, title: "북부 사절단 연회", teaser: "정치전이 본격적으로 시작됩니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString(), body: "축배가 올라갈수록, 거짓말도 더 정교해졌다." }
+    ],
+    "late-night-court-mage": [
+      { id: "sample-court-mage-1", episodeNumber: 1, title: "증거물 제14호", teaser: "법정 마법 감정이 첫 사건을 부릅니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 26).toISOString(), body: "증거물 제14호는 분명 반지였지만, 감정 결과는 기억이었다." },
+      { id: "sample-court-mage-2", episodeNumber: 2, title: "야근 감정실", teaser: "야근 중에만 나타나는 사건입니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 25).toISOString(), body: "퇴근 후에만 열리는 감정실은 늘 진실을 너무 늦게 보여줬다." },
+      { id: "sample-court-mage-12", episodeNumber: 12, title: "주문서의 피고인", teaser: "첫 유료 회차에서 판이 커집니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(), body: "피고인은 사람 하나가 아니었다. 주문서에 찍힌 도장이 모두 피고인이었다." }
+    ],
+    "reincarnated-emperor-chef": [
+      { id: "sample-cooking-emperor-1", episodeNumber: 1, title: "황제의 마지막 식탁", teaser: "독살 이후, 그는 요리사의 몸에서 눈을 뜹니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 92).toISOString(), body: "죽기 직전까지도 그는 맛을 기억했다.\n\n다시 눈을 뜬 곳은 궁정 주방이었다." },
+      { id: "sample-cooking-emperor-2", episodeNumber: 2, title: "국물 한 숟갈의 외교", teaser: "식탁이 외교장이 됩니다.", accessType: "free", price: 0, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 91).toISOString(), body: "협상은 늘 칼끝에서 끝났지만, 이번엔 국물 한 숟갈이 먼저 말을 걸었다." },
+      { id: "sample-cooking-emperor-9", episodeNumber: 9, title: "독이 아닌 향신료", teaser: "완결작 체험용 유료 회차입니다.", accessType: "paid", price: 300, publishedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60).toISOString(), body: "독살을 막아낸 건 검사가 아니라, 혀끝에 남은 아주 작은 향이었다." }
+    ]
+  };
+
+  function mergeSupplementalNovels(mappedNovels) {
+    var existing = new Set(mappedNovels.map(function (novel) { return novel.slug; }));
+    var merged = mappedNovels.slice();
+    supplementalCatalog.novels.forEach(function (novel) {
+      if (!existing.has(novel.slug)) merged.push(Object.assign({}, novel));
+    });
+    return merged.sort(function (left, right) {
+      return right.reactionScore - left.reactionScore || right.viewCount - left.viewCount;
+    });
+  }
+
+  function buildSupplementalEventItems(novelsBySlug) {
+    return supplementalCatalog.eventItems.map(function (item) {
+      var novel = novelsBySlug.get(item.slug);
+      if (!novel) return null;
+      return {
+        event: {
+          id: "sample-event-" + item.slug,
+          title: item.title,
+          subtitle: item.subtitle,
+          endsAt: item.endsAt
+        },
+        novel: novel,
+        discountPercent: item.discountPercent,
+        salePrice: null,
+        sortOrder: item.sortOrder
+      };
+    }).filter(Boolean);
+  }
+
   function cover(novel) {
     return novel.coverUrl || placeholder(novel.title);
   }
@@ -218,7 +486,7 @@
     }) : [];
 
     const events = await rest("events", {
-      select: "id,title,subtitle,status,starts_at,ends_at",
+      select: "id,slug,title,subtitle,description,hero_image_url,event_type,status,starts_at,ends_at",
       status: "eq.active",
       order: "starts_at.desc"
     });
@@ -269,11 +537,21 @@
       return mapped;
     });
 
+    const combinedNovels = mergeSupplementalNovels(mappedNovels);
+    combinedNovels.forEach(function (novel) {
+      novelMap.set(novel.id, novel);
+      novelsBySlug.set(novel.slug, novel);
+    });
+
     const eventMap = new Map(events.map(function (event) {
       return [event.id, {
         id: event.id,
+        slug: event.slug,
         title: event.title,
         subtitle: event.subtitle || "",
+        description: event.description || "",
+        heroImageUrl: event.hero_image_url || "",
+        type: event.event_type || "bundle_sale",
         endsAt: event.ends_at || null
       }];
     }));
@@ -288,10 +566,10 @@
       };
     }).filter(function (item) {
       return item.event && item.novel;
-    });
+    }).concat(buildSupplementalEventItems(novelsBySlug));
 
     cachedCatalog = {
-      novels: mappedNovels,
+      novels: combinedNovels,
       novelsBySlug: novelsBySlug,
       eventItems: mappedItems
     };
@@ -305,7 +583,7 @@
       status: "eq.published",
       order: "episode_number.asc"
     });
-    return rows.map(function (row) {
+    const mapped = rows.map(function (row) {
       return {
         id: row.id,
         episodeNumber: Number(row.episode_number || 0),
@@ -314,6 +592,22 @@
         accessType: row.access_type || "free",
         price: row.price !== null ? Number(row.price) : EPISODE_PRICE,
         publishedAt: row.published_at || null
+      };
+    });
+    if (mapped.length) return mapped;
+
+    const data = await catalog();
+    const novel = data.novels.find(function (entry) { return entry.id === novelId; });
+    if (!novel) return [];
+    return (supplementalEpisodes[novel.slug] || []).map(function (episode) {
+      return {
+        id: episode.id,
+        episodeNumber: episode.episodeNumber,
+        title: episode.title,
+        teaser: episode.teaser || "",
+        accessType: episode.accessType || "free",
+        price: episode.price !== null ? Number(episode.price || 0) : EPISODE_PRICE,
+        publishedAt: episode.publishedAt || null
       };
     });
   }
@@ -368,7 +662,13 @@
       select: "body",
       episode_id: "eq." + episodeId
     });
-    return rows[0] && rows[0].body ? rows[0].body : "";
+    if (rows[0] && rows[0].body) return rows[0].body;
+    for (var slug in supplementalEpisodes) {
+      if (!Object.prototype.hasOwnProperty.call(supplementalEpisodes, slug)) continue;
+      var match = supplementalEpisodes[slug].find(function (episode) { return episode.id === episodeId; });
+      if (match) return match.body || "";
+    }
+    return "";
   }
 
   function refreshBookmarkButtons() {
@@ -426,17 +726,23 @@
   }
 
   function renderHome(data) {
-    const featured = data.novelsBySlug.get(query.get("slug") || "black-mage-oath") || data.novels[0];
+    const heroEventLead = data.eventItems.find(function (item) {
+      return item.event && item.event.type === "featured_drop";
+    }) || null;
+    const featured = heroEventLead ? heroEventLead.novel : (data.novelsBySlug.get(query.get("slug") || "black-mage-oath") || data.novels[0]);
     if (!featured) return;
 
     const heroBand = q(".hero-band");
     if (heroBand) {
-      const heroImage = banner(featured).replace(/'/g, "%27");
+      const heroImage = (heroEventLead && heroEventLead.event.heroImageUrl ? heroEventLead.event.heroImageUrl : banner(featured)).replace(/'/g, "%27");
       heroBand.style.backgroundImage = "linear-gradient(90deg, rgba(26, 26, 26, 0.96) 0%, rgba(26, 26, 26, 0.82) 52%, rgba(26, 26, 26, 0.96) 100%), url('" + heroImage + "')";
     }
 
-    const eventLead = data.eventItems[0] || null;
-    const saleItems = data.eventItems
+    const saleEventItems = data.eventItems.filter(function (item) {
+      return item.event && item.event.type !== "featured_drop";
+    });
+    const eventLead = saleEventItems[0] || null;
+    const saleItems = saleEventItems
       .filter(function (item, index, list) {
         return item.novel && list.findIndex(function (entry) { return entry.novel.id === item.novel.id; }) === index;
       })
@@ -462,9 +768,9 @@
     if (heroBadges.sale) heroBadges.sale.textContent = heroSale ? "-" + heroSale + "% 세일" : t("common.new_recommend");
     if (heroBadges.direction) heroBadges.direction.textContent = translationDirection(featured);
     if (heroBadges.genre) heroBadges.genre.textContent = featured.tags[0] || (featured.isTranslation ? t("store.translated_work") : t("store.korean_work"));
-    if (q(".hero-title-main")) q(".hero-title-main").textContent = featured.title;
-    if (q(".hero-title-sub")) q(".hero-title-sub").textContent = featured.subtitle || t("store.hero_subtitle");
-    if (q(".hero-description")) q(".hero-description").textContent = summary(featured);
+    if (q(".hero-title-main")) q(".hero-title-main").textContent = heroEventLead ? (heroEventLead.event.title || featured.title) : featured.title;
+    if (q(".hero-title-sub")) q(".hero-title-sub").textContent = heroEventLead ? (heroEventLead.event.subtitle || featured.subtitle || t("store.hero_subtitle")) : (featured.subtitle || t("store.hero_subtitle"));
+    if (q(".hero-description")) q(".hero-description").textContent = heroEventLead ? (heroEventLead.event.description || summary(featured)) : summary(featured);
     if (q(".hero-cover")) {
       q(".hero-cover").src = cover(featured);
       q(".hero-cover").alt = featured.title + " 표지";
@@ -1004,7 +1310,7 @@
         if (password.length < 6) { showError(errorSignup, "비밀번호는 6자 이상이어야 합니다."); return; }
         if (!supabaseClient) { showError(errorSignup, "서비스 연결에 실패했습니다."); return; }
         try {
-          var result = await supabaseClient.auth.signUp({ email: email, password: password, options: { data: { pen_name: penName } } });
+          var result = await supabaseClient.auth.signUp({ email: email, password: password, options: { data: { pen_name: penName, display_name: penName } } });
           if (result.error) { showError(errorSignup, result.error.message); return; }
           if (result.data && result.data.session) {
             localStorage.setItem(store.accessToken, result.data.session.access_token);
@@ -1210,91 +1516,154 @@
 
   function renderMobileHome(data) {
     var novels = data.novels;
-    var featured = novels[0];
+    var heroEventLead = data.eventItems.find(function (item) {
+      return item.event && item.event.type === "featured_drop";
+    }) || null;
+    var featured = heroEventLead ? heroEventLead.novel : novels[0];
     if (!featured) return;
 
-    var heroNode = q("[data-mobile-hero]");
-    var ctaNode = q("[data-mobile-hero-cta]");
+    /* ── Hero ── */
+    var heroNode = q("[data-mh-hero]");
     if (heroNode) {
       var sale = salePercent(featured);
-      var tags = [];
-      if (sale) tags.push("<span class='sale-badge'>-" + sale + "% 세일</span>");
-      if ((featured.tags || [])[0]) tags.push("<span class='muted-badge'>" + esc(featured.tags[0]) + "</span>");
-      var heroPrice = sale
-        ? "<span class='mobile-hero-price-strike'>" + formatWon(EPISODE_PRICE) + "</span><strong>" + formatWon(discountedEpisodePrice(featured)) + "</strong>"
-        : "<strong>" + formatWon(EPISODE_PRICE) + "</strong>";
-      var banner = featured.bannerUrl || cover(featured);
-      heroNode.style.setProperty('--mobile-hero-image', "url('" + esc(banner) + "')");
+      var heroImg = (heroEventLead && heroEventLead.event.heroImageUrl) || featured.bannerUrl || cover(featured);
+      var badges = [];
+      if (sale) badges.push("<span class='badge badge-sale'>-" + sale + "%</span>");
+      if (featured.freeEpisodeCount > 0) badges.push("<span class='badge badge-free'>" + formatCount(featured.freeEpisodeCount) + "화 무료</span>");
+      if ((featured.tags || [])[0]) badges.push("<span class='badge badge-genre'>" + esc(featured.tags[0]) + "</span>");
+
       heroNode.innerHTML =
-        "<div class='mobile-hero-promo'>" +
-          "<div class='mobile-hero-copy'>" +
-            "<p class='mobile-hero-kicker'>이번 주 대표 프로모션</p>" +
-            "<div class='mobile-hero-badges'>" + tags.join(" ") + "</div>" +
-            "<h2 class='mobile-hero-title'>" + esc(featured.title) + "</h2>" +
-            "<p class='mobile-hero-hook'>" + esc(summary(featured)) + "</p>" +
-            "<div class='mobile-hero-meta-row'>" +
-              "<span>" + esc(featured.authorName) + "</span>" +
-              "<span>총 " + formatCount(featured.totalEpisodeCount) + "화</span>" +
-              "<span>" + formatCount(featured.freeEpisodeCount) + "화 무료</span>" +
-            "</div>" +
-            "<div class='mobile-hero-price-line'>" +
-              "<span>편당 " + heroPrice + "</span>" +
-              "<span>평점 " + featured.reactionScore.toFixed(1) + "</span>" +
-            "</div>" +
-            "<div class='mobile-hero-actions'>" +
-              "<a class='button primary mobile-hero-primary' href='" + mobileViewerHref(featured.slug, 1) + "'>" + t("store.read_free") + "</a>" +
-              "<button class='button secondary mobile-hero-secondary' data-bookmark-id='" + esc(featured.slug) + "'><span data-bookmark-label data-default-label='찜하기'>찜하기</span></button>" +
-            "</div>" +
+        "<div class='mh-hero-bg' style=\"background-image:url('" + esc(heroImg) + "')\"></div>" +
+        "<div class='mh-hero-gradient'></div>" +
+        "<div class='mh-hero-inner'>" +
+          "<div class='mh-hero-badges'>" + badges.join("") + "</div>" +
+          "<h1 class='mh-hero-title'>" + esc(heroEventLead ? (heroEventLead.event.title || featured.title) : featured.title) + "</h1>" +
+          "<p class='mh-hero-subtitle'>" + esc(heroEventLead ? (heroEventLead.event.description || summary(featured)) : summary(featured)) + "</p>" +
+          "<div class='mh-hero-meta'>" +
+            "<span>" + esc(featured.authorName) + "</span>" +
+            "<span><span class='material-symbols-outlined'>menu_book</span>" + formatCount(featured.totalEpisodeCount) + "화</span>" +
+            "<span><span class='material-symbols-outlined'>star</span>" + featured.reactionScore.toFixed(1) + "</span>" +
           "</div>" +
-          "<a class='mobile-hero-art' href='" + mobileDetailHref(featured.slug) + "'><img src='" + esc(cover(featured)) + "' alt='" + esc(featured.title) + "'></a>" +
+          "<div class='mh-hero-actions'>" +
+            "<a class='mh-hero-btn-primary' href='" + mobileViewerHref(featured.slug, 1) + "'>" +
+              "<span class='material-symbols-outlined' style='font-size:18px'>play_arrow</span>" + t("store.read_free") +
+            "</a>" +
+            "<button class='mh-hero-btn-secondary' type='button' data-bookmark-id='" + esc(featured.slug) + "'>" +
+              "<span class='material-symbols-outlined' style='font-size:20px'>favorite</span>" +
+            "</button>" +
+          "</div>" +
         "</div>";
     }
-    if (ctaNode) {
-      ctaNode.innerHTML = "";
-      ctaNode.style.display = "none";
-    }
 
-    var saleBanner = q("[data-mobile-sale-banner]");
+    /* ── Banner ── */
+    var bannerNode = q("[data-mh-banner]");
     var saleNovels = novels.filter(function (n) { return salePercent(n) > 0; });
-    if (saleBanner) {
+    if (bannerNode) {
       if (saleNovels.length) {
         var topSale = saleNovels[0];
-        saleBanner.style.display = "";
-        saleBanner.innerHTML =
-          "<span class='sale-badge'>-" + salePercent(topSale) + "% " + t("common.sale_badge").replace(/-\d+% /, "") + "</span>" +
-          "<h3>" + esc(topSale.title) + " " + t("common.sale_discount").replace("{{n}}", salePercent(topSale)) + "</h3>" +
-          "<p>편당 " + formatWon(discountedEpisodePrice(topSale)) + " · " + formatCount(saleNovels.length) + "개 작품 할인 중</p>";
+        bannerNode.style.display = "";
+        bannerNode.innerHTML =
+          "<span class='mh-banner-badge sale'>-" + salePercent(topSale) + "% 할인</span>" +
+          "<h3>" + formatCount(saleNovels.length) + "개 작품 할인 중</h3>" +
+          "<p>편당 최저 " + formatWon(discountedEpisodePrice(topSale)) + "부터</p>";
       } else {
-        saleBanner.style.display = "";
-        saleBanner.innerHTML =
-          "<span class='muted-badge'>" + t("store.sale_banner_title") + "</span>" +
+        bannerNode.style.display = "";
+        bannerNode.innerHTML =
+          "<span class='mh-banner-badge muted'>" + t("store.sale_banner_title") + "</span>" +
           "<h3>" + t("store.sale_banner_subtitle") + "</h3>" +
           "<p>" + t("store.sale_banner_price") + "</p>";
       }
     }
 
-    var saleSection = q("[data-mobile-section-sale]");
-    var saleList = q("[data-mobile-sale-list]");
+    /* ── Sale section (horizontal scroll) ── */
+    var saleSection = q("[data-mh-section-sale]");
+    var saleList = q("[data-mh-sale-list]");
     if (saleList && saleNovels.length) {
       saleSection.style.display = "";
-      saleList.classList.add("pin-masonry");
-      saleList.innerHTML = saleNovels.slice(0, 6).map(buildPinCard).join("");
+      saleList.innerHTML = saleNovels.slice(0, 8).map(function (novel) {
+        var percent = salePercent(novel);
+        return "<a class='mh-scroll-card' href='" + mobileDetailHref(novel.slug) + "'>" +
+          "<div class='mh-scroll-card-cover'>" +
+            "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'>" +
+            (percent ? "<span class='mh-scroll-card-badge'>-" + percent + "%</span>" : "") +
+          "</div>" +
+          "<p class='mh-scroll-card-title'>" + esc(novel.title) + "</p>" +
+          "<p class='mh-scroll-card-meta'>" + esc(novel.authorName) + "</p>" +
+          "<p class='mh-scroll-card-price'>" +
+            "<span class='old'>" + formatWon(EPISODE_PRICE) + "</span>" +
+            "<span class='sale'>" + formatWon(discountedEpisodePrice(novel)) + "</span>" +
+          "</p>" +
+        "</a>";
+      }).join("");
     } else if (saleSection) {
       saleSection.style.display = "none";
     }
 
-    var popularList = q("[data-mobile-popular-list]");
+    /* ── Popular section (2-column grid) ── */
+    var popularList = q("[data-mh-popular-list]");
     if (popularList) {
       var sorted = novels.slice().sort(function (a, b) { return b.viewCount - a.viewCount; });
-      popularList.classList.add("pin-masonry");
-      popularList.innerHTML = sorted.slice(0, 6).map(buildPinCard).join("");
+      popularList.innerHTML = sorted.slice(0, 6).map(function (novel, idx) {
+        var sale = salePercent(novel);
+        var freeCount = novel.freeEpisodeCount || 0;
+        return "<a class='mh-card' href='" + mobileDetailHref(novel.slug) + "'>" +
+          "<div class='mh-card-cover'>" +
+            "<img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'>" +
+            "<span class='mh-card-rank'>" + (idx + 1) + "</span>" +
+            (sale ? "<span class='mh-card-sale-mark'>-" + sale + "%</span>" : "") +
+            (freeCount > 0 && !sale ? "<span class='mh-card-free-mark'>" + formatCount(freeCount) + "화 무료</span>" : "") +
+          "</div>" +
+          "<div class='mh-card-info'>" +
+            "<h3 class='mh-card-title'>" + esc(novel.title) + "</h3>" +
+            "<p class='mh-card-author'>" + esc(novel.authorName) + "</p>" +
+            "<div class='mh-card-bottom'>" +
+              (novel.reactionScore ? "<span class='mh-card-rating'>★ " + novel.reactionScore.toFixed(1) + "</span>" : "<span></span>") +
+              (sale
+                ? "<span class='mh-card-price'><span class='sale'>" + formatWon(discountedEpisodePrice(novel)) + "</span></span>"
+                : "<span class='mh-card-price'>" + formatWon(EPISODE_PRICE) + "</span>") +
+            "</div>" +
+          "</div>" +
+        "</a>";
+      }).join("");
     }
 
-    var recentList = q("[data-mobile-recent-list]");
+    /* ── Recent updates (list) ── */
+    var recentList = q("[data-mh-recent-list]");
     if (recentList) {
       var byDate = novels.slice().sort(function (a, b) { return (b.updatedAt || "").localeCompare(a.updatedAt || ""); });
-      recentList.classList.add("pin-masonry");
-      recentList.innerHTML = byDate.slice(0, 6).map(buildPinCard).join("");
+      recentList.innerHTML = byDate.slice(0, 6).map(function (novel) {
+        var sale = salePercent(novel);
+        var epLabel = novel.totalEpisodeCount ? formatCount(novel.totalEpisodeCount) + "화" : "";
+        var statusLabel = novel.status === "completed" ? t("status.completed") : t("status.serializing");
+        var badgeClass = sale ? "sale" : "new";
+        var badgeText = sale ? "-" + sale + "%" : statusLabel;
+        return "<a class='mh-update-row' href='" + mobileDetailHref(novel.slug) + "'>" +
+          "<div class='mh-update-cover'><img src='" + esc(cover(novel)) + "' alt='" + esc(novel.title) + "'></div>" +
+          "<div class='mh-update-copy'>" +
+            "<h4 class='mh-update-title'>" + esc(novel.title) + "</h4>" +
+            "<p class='mh-update-meta'>" + esc(novel.authorName) + " · " + esc((novel.tags || [])[0] || "") + "</p>" +
+          "</div>" +
+          "<div class='mh-update-side'>" +
+            "<span class='mh-update-badge " + badgeClass + "'>" + badgeText + "</span>" +
+            (epLabel ? "<span class='mh-update-ep'>" + epLabel + "</span>" : "") +
+          "</div>" +
+        "</a>";
+      }).join("");
+    }
+
+    /* ── Topbar scroll ── */
+    var mhHeader = q(".mh-header");
+    if (mhHeader) {
+      var ticking = false;
+      window.addEventListener("scroll", function () {
+        if (!ticking) {
+          window.requestAnimationFrame(function () {
+            mhHeader.classList.toggle("scrolled", window.scrollY > 20);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
     }
 
     refreshBookmarkButtons();
@@ -1600,14 +1969,20 @@
       }
       grid.innerHTML = html;
     });
-    // Mobile masonry
-    qa("[data-mobile-popular-list], [data-mobile-recent-list], [data-mobile-sale-list]").forEach(function (node) {
+    // Mobile home — new mh-* skeleton cards
+    qa("[data-mh-popular-list]").forEach(function (node) {
       if (node.children.length > 0) return;
-      node.classList.add("pin-masonry");
       var html = "";
       for (var i = 0; i < 4; i++) {
-        var h = 120 + Math.floor(Math.random() * 60);
-        html += "<div class='skeleton-pin'><div class='skeleton-img' style='height:" + h + "px'></div><div class='skeleton-line'></div><div class='skeleton-line short'></div></div>";
+        html += "<div class='mh-skel mh-skel-card'><div class='mh-skel-img'></div><div class='mh-skel-line'></div><div class='mh-skel-line short'></div></div>";
+      }
+      node.innerHTML = html;
+    });
+    qa("[data-mh-recent-list]").forEach(function (node) {
+      if (node.children.length > 0) return;
+      var html = "";
+      for (var i = 0; i < 3; i++) {
+        html += "<div class='mh-skel mh-skel-row'><div class='mh-skel-thumb'></div><div class='mh-skel-body'><div class='mh-skel-line'></div><div class='mh-skel-line short'></div></div></div>";
       }
       node.innerHTML = html;
     });

@@ -28,6 +28,7 @@
   let bookmarkListenerBound = false;
   let purchaseListenerBound = false;
   let libraryRefreshTimer = null;
+  let profileCache = null;
   const cache = {
     novels: null,
     novelsBySlug: new Map()
@@ -40,6 +41,14 @@
   function qa(selector, root) {
     return Array.from((root || document).querySelectorAll(selector));
   }
+
+  const topbarCreatorLinks = isPc ? q("[data-topbar-creator-links]") : null;
+  const topbarAdminLink = isPc ? q("[data-admin-link]") : null;
+  const topbarAuthLink = isPc ? q("[data-topbar-auth]") : null;
+  const userMenu = isPc ? q("[data-user-menu]") : null;
+  const userDropdown = isPc ? q("[data-user-dropdown]") : null;
+  const menuAdmin = isPc ? q("[data-menu-admin]") : null;
+  const menuLogout = isPc ? q("[data-menu-logout]") : null;
 
   function esc(value) {
     return String(value || "")
@@ -98,6 +107,130 @@
 
   function setLocalArray(keyName, value) {
     localStorage.setItem(keyName, JSON.stringify(value));
+  }
+
+  async function fetchOwnProfile(userId) {
+    if (!client || !userId) return null;
+    if (profileCache && profileCache.id === userId) return profileCache;
+    const result = await client.from("profiles").select("id, display_name, role").eq("id", userId).maybeSingle();
+    profileCache = result.data || null;
+    return profileCache;
+  }
+
+  function renderPcTopbarGuest() {
+    if (!isPc) return;
+    if (topbarCreatorLinks) topbarCreatorLinks.hidden = true;
+    if (topbarAdminLink) topbarAdminLink.hidden = true;
+    if (userDropdown) userDropdown.hidden = true;
+    if (topbarAuthLink) {
+      topbarAuthLink.textContent = "로그인";
+      topbarAuthLink.setAttribute("data-i18n", "nav.login");
+      topbarAuthLink.classList.remove("topbar-user-logged-in");
+      topbarAuthLink.addEventListener("click", function guestClick() {
+        topbarAuthLink.removeEventListener("click", guestClick);
+        window.location.href = "auth_pc.html?next=" + encodeURIComponent(window.location.pathname.split("/").pop() || links.home);
+      }, { once: true });
+    }
+  }
+
+  function setupUserDropdown(session) {
+    if (!userMenu || !userDropdown || !topbarAuthLink) return;
+
+    topbarAuthLink.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var isOpen = !userDropdown.hidden;
+      userDropdown.hidden = isOpen;
+      topbarAuthLink.classList.toggle("is-open", !isOpen);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!userMenu.contains(e.target)) {
+        userDropdown.hidden = true;
+        topbarAuthLink.classList.remove("is-open");
+      }
+    });
+
+    if (menuLogout) {
+      menuLogout.addEventListener("click", async function () {
+        if (client) await client.auth.signOut();
+        window.location.reload();
+      });
+    }
+  }
+
+  async function renderPcTopbar(session) {
+    if (!isPc) return;
+    if (!session) {
+      renderPcTopbarGuest();
+      return;
+    }
+    const profile = await fetchOwnProfile(session.user.id);
+    const meta = session.user.user_metadata || {};
+    const nickname = (profile && profile.display_name) || meta.display_name || meta.pen_name || meta.full_name || meta.name || session.user.email || "내 서재";
+    const isAdmin = profile && profile.role === "admin";
+    if (topbarCreatorLinks) topbarCreatorLinks.hidden = true;
+    if (topbarAdminLink) topbarAdminLink.hidden = true;
+    if (menuAdmin) menuAdmin.hidden = !isAdmin;
+    if (topbarAuthLink) {
+      topbarAuthLink.textContent = nickname;
+      topbarAuthLink.removeAttribute("data-i18n");
+      topbarAuthLink.classList.add("topbar-user-logged-in");
+    }
+    setupUserDropdown(session);
+  }
+
+  /* --- Mobile user bottom sheet --- */
+  function setupMobileUserSheet() {
+    var sheet = q("[data-mobile-user-sheet]");
+    if (!sheet) return;
+    var btns = qa("[data-mobile-user-btn]");
+    var closers = qa("[data-mobile-sheet-close]");
+
+    function open() { sheet.hidden = false; requestAnimationFrame(function () { sheet.classList.add("is-open"); }); }
+    function close() { sheet.classList.remove("is-open"); setTimeout(function () { sheet.hidden = true; }, 250); }
+
+    btns.forEach(function (b) { b.addEventListener("click", function (e) { e.preventDefault(); open(); }); });
+    closers.forEach(function (c) { c.addEventListener("click", close); });
+
+    var logoutBtn = q("[data-mobile-menu-logout]");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", async function () {
+        if (client) await client.auth.signOut();
+        window.location.reload();
+      });
+    }
+  }
+
+  function renderMobileTopbar(session) {
+    if (isPc) return;
+    var sheet = q("[data-mobile-user-sheet]");
+    if (!sheet) { setupMobileUserSheet(); return; }
+    var nameEl = q("[data-mobile-user-name]");
+    var adminItem = q("[data-mobile-menu-admin]");
+    var logoutItem = q("[data-mobile-menu-logout]");
+    var btns = qa("[data-mobile-user-btn]");
+
+    if (!session) {
+      if (nameEl) nameEl.textContent = "로그인";
+      if (logoutItem) logoutItem.hidden = true;
+      if (adminItem) adminItem.hidden = true;
+      // 비로그인: 시트 대신 로그인 페이지로 이동
+      btns.forEach(function (b) {
+        b.addEventListener("click", function (e) { e.preventDefault(); window.location.href = "auth_pc.html"; });
+      });
+      return;
+    }
+
+    fetchOwnProfile(session.user.id).then(function (profile) {
+      var meta = session.user.user_metadata || {};
+      var nickname = (profile && profile.display_name) || meta.display_name || meta.pen_name || meta.full_name || meta.name || session.user.email || "독자";
+      var isAdmin = profile && profile.role === "admin";
+      if (nameEl) nameEl.textContent = nickname;
+      if (adminItem) adminItem.hidden = !isAdmin;
+      if (logoutItem) logoutItem.hidden = false;
+    });
+
+    setupMobileUserSheet();
   }
 
   function resolveBookmarkSlug(button) {
@@ -257,12 +390,14 @@
 
   async function signUp(email, password, displayName) {
     if (!email || !password) throw new Error("이메일과 비밀번호를 먼저 입력해주세요.");
+    const name = displayName || email.split("@")[0];
     const result = await client.auth.signUp({
       email: email,
       password: password,
       options: {
         data: {
-          display_name: displayName || email.split("@")[0]
+          display_name: name,
+          pen_name: name
         }
       }
     });
@@ -700,11 +835,16 @@
 
     readingNode.innerHTML = reading.length ? reading.map(function (item) {
       const episodeNumber = item.episode && item.episode.episode_number ? item.episode.episode_number : 1;
+      const totalEp = Number(item.novel.total_episode_count || 0);
       const progress = readingProgress(item);
+      const remainEp = Math.max(0, totalEp - episodeNumber);
+      const estMinutes = remainEp * 12;
+      const estLabel = estMinutes >= 60 ? Math.round(estMinutes / 60) + "시간 남음" : estMinutes + "분 남음";
       const href = viewerHref(item.novel.slug, episodeNumber);
+      const progressBar = "<div class='reading-progress-bar'><div class='reading-progress-fill' style='width:" + progress + "%'></div></div>";
       return mobile
-        ? "<a class='mobile-list-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='mobile-list-row-meta'>" + episodeNumber + "화 · 진행률 " + progress + "%</div></div></a>"
-        : "<article class='library-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><p class='library-row-meta'>" + episodeNumber + "화 읽는 중 · 진행률 " + progress + "%</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>이어 읽기</a></div></article>";
+        ? "<a class='mobile-list-row library-reading-row' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'><div class='mobile-list-row-copy'><div class='mobile-list-row-title'>" + esc(item.novel.title) + "</div><div class='reading-stats'><span class='reading-stat-highlight'>" + progress + "%</span><span class='reading-stat-sep'>·</span><span>" + episodeNumber + "/" + (totalEp || "?") + "화</span><span class='reading-stat-sep'>·</span><span>" + estLabel + "</span></div>" + progressBar + "<div class='reading-last-pos'>최근: " + episodeNumber + "화</div></div></a>"
+        : "<article class='library-row library-reading-row'><a class='library-row-thumb' href='" + href + "'><img src='" + esc(cover(item.novel)) + "' alt='" + esc(item.novel.title) + " 표지'></a><div class='library-row-copy'><h3 class='library-row-title'>" + esc(item.novel.title) + "</h3><div class='reading-stats'><span class='reading-stat-highlight'>" + progress + "%</span><span class='reading-stat-sep'>·</span><span>" + episodeNumber + "/" + (totalEp || "?") + "화</span><span class='reading-stat-sep'>·</span><span>" + estLabel + "</span></div>" + progressBar + "<p class='reading-last-pos'>최근 읽은 위치: " + episodeNumber + "화</p></div><div class='library-row-side'><a class='button small primary' href='" + href + "'>이어 읽기</a></div></article>";
     }).join("") : simpleLibraryEmpty("아직 읽는 작품이 없습니다", "스토어에서 작품을 열면 여기에 자동으로 이어집니다.", links.search, "작품 탐색하기");
 
     wishlistNode.innerHTML = saved.length ? saved.map(function (item) {
@@ -872,7 +1012,8 @@
     await migrateLocalStateToSupabase(session);
     await mergeRemoteBookmarksIntoLocal(session.user.id);
     const data = await fetchLibraryData(session.user.id);
-    const displayName = (data.profile && data.profile.display_name) || session.user.user_metadata.display_name || session.user.email || "독자";
+    const meta = session.user.user_metadata || {};
+    const displayName = (data.profile && data.profile.display_name) || meta.display_name || meta.pen_name || meta.full_name || meta.name || session.user.email || "독자";
     renderSignedInCard(session, displayName);
     if (isPc) {
       renderPcLibrary(data, session, displayName);
@@ -922,6 +1063,9 @@
     client.auth.onAuthStateChange(function (_event, session) {
       syncSessionAccessToken(session);
       if (!session) {
+        profileCache = null;
+        renderPcTopbarGuest();
+        renderMobileTopbar(null);
         if (isLibraryPage) renderAuthGate();
         return;
       }
@@ -929,6 +1073,10 @@
         window.location.replace(safeRedirectPath(query.get("next"), links.library));
         return;
       }
+      renderPcTopbar(session).catch(function (error) {
+        console.error("[InkRoad] topbar sync failed:", error);
+      });
+      renderMobileTopbar(session);
       mergeRemoteBookmarksIntoLocal(session.user.id)
         .then(function () {
           if (isLibraryPage) return renderLibrary(session);
@@ -941,6 +1089,13 @@
     const sessionResult = await client.auth.getSession();
     const session = sessionResult.data.session;
     syncSessionAccessToken(session);
+    if (session) {
+      await renderPcTopbar(session);
+      renderMobileTopbar(session);
+    } else {
+      renderPcTopbarGuest();
+      renderMobileTopbar(null);
+    }
 
     if (isAuthPage) {
       if (session) {
