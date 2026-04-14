@@ -48,7 +48,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Install Tuist
-        if: hashFiles(format('{0}/Project.swift', inputs.ios_path), format('{0}/Tuist.swift', inputs.ios_path)) != ''
+        if: hashFiles(format('{0}/Project.swift', inputs.ios_path), format('{0}/Tuist.swift', inputs.ios_path), 'ios/Project.swift', 'ios/Tuist.swift') != ''
         run: |
           curl -Ls https://install.tuist.io | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
