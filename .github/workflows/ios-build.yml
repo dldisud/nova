@@ -180,7 +180,7 @@ jobs:
           # Generate Xcode project when the repo uses Tuist
           if [ -f "Project.swift" ] || [ -f "Tuist.swift" ]; then
             echo "Generating Xcode project with Tuist..."
-            tuist generate
+            tuist generate --no-open
           fi
 
           # Find workspace or project
