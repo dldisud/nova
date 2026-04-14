@@ -47,6 +47,12 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Install Tuist
+        if: hashFiles(format('{0}/Project.swift', inputs.ios_path), format('{0}/Tuist.swift', inputs.ios_path)) != ''
+        run: |
+          curl -Ls https://install.tuist.io | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Restore DerivedData cache
         uses: actions/cache/restore@v4
         id: cache-deriveddata
@@ -59,9 +65,7 @@ jobs:
       - name: Detect project type
         id: detect
         run: |
-          if [ -f "ios/Project.swift" ] || [ -f "$IOS_PATH/Project.swift" ]; then
-            echo "type=tuist" >> $GITHUB_OUTPUT
-          elif [ -f "pubspec.yaml" ]; then
+          if [ -f "pubspec.yaml" ]; then
             echo "type=flutter" >> $GITHUB_OUTPUT
           elif [ -f "package.json" ] && grep -q '"expo"' package.json; then
             echo "type=expo" >> $GITHUB_OUTPUT
@@ -70,15 +74,6 @@ jobs:
           else
             echo "type=native" >> $GITHUB_OUTPUT
           fi
-
-      - name: Setup Tuist
-        if: steps.detect.outputs.type == 'tuist'
-        run: |
-          brew install tuist
-          cd "$IOS_PATH"
-          tuist install || true
-          tuist generate --no-open
-          ls -la
 
       - name: Setup Flutter
         if: steps.detect.outputs.type == 'flutter'
@@ -171,6 +166,12 @@ jobs:
 
           # Navigate to iOS project
           cd "$IOS_PATH"
+
+          # Generate Xcode project when the repo uses Tuist
+          if [ -f "Project.swift" ] || [ -f "Tuist.swift" ]; then
+            echo "Generating Xcode project with Tuist..."
+            tuist generate
+          fi
 
           # Find workspace or project
           WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)

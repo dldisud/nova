@@ -54,6 +54,30 @@ xcodebuild \
 ./Scripts/test.sh
 ```
 
+## Windows에서 원격 빌드하기
+
+이 저장소에는 `builder.exe`가 같이 들어 있어서, Windows에서도 GitHub Actions의 macOS 러너로 iOS 빌드를 보낼 수 있습니다.
+
+### 1) 변경사항을 GitHub에 푸시
+
+```powershell
+git add ios .github/workflows/ios-build.yml builder.json
+git commit -m "Add InkRoad iOS starter app"
+git push origin master
+```
+
+### 2) 원격 unsigned IPA 빌드
+
+```powershell
+./builder.exe ios build --unsigned
+```
+
+이 흐름은 GitHub Actions의 macOS 환경에서 다음을 자동으로 처리합니다.
+
+- `tuist generate`
+- `xcodebuild`
+- unsigned IPA 생성
+
 ## 기본 검증 목표
 
 - 홈 / 탐색 / 서재 / MY 탭이 뜨는지
