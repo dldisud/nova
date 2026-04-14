@@ -39,9 +39,17 @@ jobs:
         run: |
           set -e
           cd ios/App
-
+          
+          echo "=== Listing files ==="
+          ls -la
+          
+          echo "=== Checking workspace ==="
+          ls -la *.xcworkspace || echo "No workspace found"
+          ls -la *.xcodeproj || echo "No project found"
+          
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
 
+          echo "=== Starting xcodebuild ==="
           xcodebuild \
             -workspace App.xcworkspace \
             -scheme App \
@@ -52,8 +60,9 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             ONLY_ACTIVE_ARCH=YES \
-            build
+            build || { echo "xcodebuild failed with exit code $?"; exit 1; }
 
+          echo "=== Searching for .app ==="
           APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -type d | head -1)
           echo "Found app: $APP_PATH"
 
