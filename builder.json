@@ -6,7 +6,8 @@
     "repo": "nova"
   },
   "ios": {
-    "path": "D:\\nova"
+    "path": "ios",
+    "scheme": "InkRoad"
   },
   "flutter": {
     "watch": {}
