@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INKROAD | 통계</title>
+  <title>INKROAD | 통계 대시보드</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -29,6 +29,9 @@
         <a class="creator-nav-link active" href="author_dashboard_pc.html">
           <span class="material-symbols-outlined">bar_chart</span> 통계
         </a>
+        <a class="creator-nav-link" href="profile_settings_pc.html">
+          <span class="material-symbols-outlined">person</span> 내 정보
+        </a>
         <a class="creator-nav-link" href="novel_upload_pc.html">
           <span class="material-symbols-outlined">add_circle</span> 작품 등록
         </a>
@@ -43,42 +46,189 @@
     </aside>
 
     <main class="creator-main">
-      <div class="creator-main-head">
-        <h1 class="creator-main-title">통계</h1>
-      </div>
-
-      <div class="kpi-grid" data-kpi-cards></div>
-
-      <div class="period-filter" data-period-filter>
-        <button class="filter-chip" type="button" data-period="7d">7일</button>
-        <button class="filter-chip" type="button" data-period="30d">30일</button>
-        <button class="filter-chip" type="button" data-period="all" data-state="include">전체</button>
-      </div>
-
-      <section style="margin-bottom:32px;">
-        <h2 class="store-section-title" style="margin-bottom:16px;">작품별 성과</h2>
-        <div class="stats-table-wrap">
-          <table class="stats-table">
-            <thead>
-              <tr>
-                <th>작품명</th>
-                <th class="num">조회수</th>
-                <th class="num">찜</th>
-                <th class="num">댓글</th>
-                <th class="num">평점</th>
-                <th>최근 업데이트</th>
-              </tr>
-            </thead>
-            <tbody data-stats-table></tbody>
-          </table>
+      <div class="dashboard-head">
+        <div class="dashboard-head-copy">
+          <h1 class="creator-main-title">통계 대시보드</h1>
+          <p class="creator-main-sub">작품 성과와 독자 활동을 한눈에 확인하세요.</p>
         </div>
-      </section>
+        <div class="dashboard-period-filter" data-period-filter>
+          <button class="period-btn" type="button" data-period="7d">7일</button>
+          <button class="period-btn is-active" type="button" data-period="30d">30일</button>
+          <button class="period-btn" type="button" data-period="all">전체</button>
+        </div>
+      </div>
 
-      <section>
-        <h2 class="store-section-title" style="margin-bottom:16px;">최근 활동</h2>
-        <div class="activity-list" data-recent-activity></div>
-      </section>
+      <!-- KPI Summary Cards -->
+      <div class="dashboard-kpi-grid" data-kpi-cards>
+        <article class="dashboard-kpi-card">
+          <div class="kpi-icon-wrap">
+            <span class="material-symbols-outlined">visibility</span>
+          </div>
+          <div class="kpi-metric">
+            <strong class="kpi-value" data-kpi-value="views">0</strong>
+            <span class="kpi-label">총 조회수</span>
+          </div>
+        </article>
+        <article class="dashboard-kpi-card">
+          <div class="kpi-icon-wrap">
+            <span class="material-symbols-outlined">favorite</span>
+          </div>
+          <div class="kpi-metric">
+            <strong class="kpi-value" data-kpi-value="bookmarks">0</strong>
+            <span class="kpi-label">총 찜 수</span>
+          </div>
+        </article>
+        <article class="dashboard-kpi-card">
+          <div class="kpi-icon-wrap">
+            <span class="material-symbols-outlined">chat_bubble</span>
+          </div>
+          <div class="kpi-metric">
+            <strong class="kpi-value" data-kpi-value="comments">0</strong>
+            <span class="kpi-label">총 댓글</span>
+          </div>
+        </article>
+        <article class="dashboard-kpi-card kpi-clickable" data-kpi-clickable="retention">
+          <div class="kpi-icon-wrap">
+            <span class="material-symbols-outlined">trending_up</span>
+          </div>
+          <div class="kpi-metric">
+            <strong class="kpi-value" data-kpi-value="retention">0%</strong>
+            <span class="kpi-label">평균 연독률</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-main-grid">
+        <!-- Left: Novel Performance Table -->
+        <section class="dashboard-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">
+              <span class="material-symbols-outlined">leaderboard</span>
+              작품별 성과
+            </h2>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="dashboard-stats-table">
+              <thead>
+                <tr>
+                  <th>작품</th>
+                  <th class="num">조회수</th>
+                  <th class="num">찜</th>
+                  <th class="num">댓글</th>
+                  <th class="num">평점</th>
+                  <th class="num">연독률</th>
+                </tr>
+              </thead>
+              <tbody data-stats-table>
+                <tr><td colspan="6" class="empty-cell">데이터를 불러오는 중...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Right: Top Novels & Activity -->
+        <aside class="dashboard-side-rail">
+          <!-- Top Novels -->
+          <section class="dashboard-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">
+                <span class="material-symbols-outlined">emoji_events</span>
+                인기 작품 TOP 5
+              </h2>
+            </div>
+            <div class="top-novels-list" data-top-novels>
+              <p class="empty-state">작품 데이터를 분석 중입니다...</p>
+            </div>
+          </section>
+
+          <!-- Recent Activity -->
+          <section class="dashboard-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">
+                <span class="material-symbols-outlined">activity</span>
+                최근 활동
+              </h2>
+            </div>
+            <div class="activity-feed" data-recent-activity>
+              <p class="empty-state">최근 활동이 없습니다.</p>
+            </div>
+          </section>
+        </aside>
+      </div>
     </main>
+  </div>
+
+  <!-- Retention Rate Modal -->
+  <div class="retention-modal" data-retention-modal hidden>
+    <div class="retention-overlay" data-retention-overlay></div>
+    <div class="retention-panel">
+      <div class="retention-panel-head">
+        <div>
+          <span class="eyebrow">연독률 분석</span>
+          <h3 class="retention-panel-title" data-retention-title>작품명</h3>
+        </div>
+        <button class="retention-close" type="button" data-retention-close>
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="retention-funnel" data-retention-funnel>
+        <div class="funnel-stage">
+          <div class="funnel-bar">
+            <div class="funnel-fill" data-funnel-first data-funnel-max="100"></div>
+          </div>
+          <div class="funnel-label">
+            <span class="funnel-stage-label">첫 화 독자</span>
+            <strong class="funnel-stage-value" data-funnel-first-value>0</strong>
+          </div>
+        </div>
+        <div class="funnel-arrow">
+          <span class="material-symbols-outlined">arrow_downward</span>
+        </div>
+        <div class="funnel-stage">
+          <div class="funnel-bar">
+            <div class="funnel-fill" data-funnel-last data-funnel-max="100"></div>
+          </div>
+          <div class="funnel-label">
+            <span class="funnel-stage-label">마지막 화 독자</span>
+            <strong class="funnel-stage-value" data-funnel-last-value>0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="retention-summary">
+        <div class="retention-metric">
+          <span class="retention-metric-label">연독률</span>
+          <strong class="retention-metric-value" data-retention-rate>0%</strong>
+        </div>
+        <div class="retention-metric">
+          <span class="retention-metric-label">이탈 독자</span>
+          <strong class="retention-metric-value retention-churn" data-retention-churn>0</strong>
+        </div>
+        <div class="retention-metric">
+          <span class="retention-metric-label">총 화수</span>
+          <strong class="retention-metric-value" data-retention-episodes>0</strong>
+        </div>
+      </div>
+
+      <div class="retention-bar-chart" data-retention-bar-chart>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">첫 화</div>
+          <div class="bar-chart-track">
+            <div class="bar-chart-fill" data-bar-first data-bar-fill></div>
+          </div>
+          <div class="bar-chart-value" data-bar-first-value>100%</div>
+        </div>
+        <div class="bar-chart-row">
+          <div class="bar-chart-label">마지막 화</div>
+          <div class="bar-chart-track">
+            <div class="bar-chart-fill" data-bar-last data-bar-fill></div>
+          </div>
+          <div class="bar-chart-value" data-bar-last-value>0%</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="assets/i18n.js"></script>

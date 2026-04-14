@@ -699,16 +699,17 @@
         const coverUrl = await uploadCover(session);
         if (!isActiveSubmitRequest(requestToken)) return;
         const rpcResult = await state.client.rpc("create_novel_with_episode", {
+          p_user_id: session.user.id,
           p_title: title,
+          p_slug: slugPart(title),
           p_short_description: shortDescription || null,
-          p_description: shortDescription || null,
-          p_cover_url: coverUrl,
-          p_episode_title: episodeTitle,
-          p_episode_body: body,
-          p_tags: tags,
           p_age_rating: ageRating,
+          p_origin_country: originCountry,
           p_is_translation: isTranslation,
-          p_origin_country: originCountry
+          p_cover_url: coverUrl,
+          p_tags: tags,
+          p_episode_title: episodeTitle,
+          p_body: body
         });
 
         if (!isActiveSubmitRequest(requestToken)) return;

@@ -216,7 +216,7 @@
       if (adminItem) adminItem.hidden = true;
       // 비로그인: 시트 대신 로그인 페이지로 이동
       btns.forEach(function (b) {
-        b.addEventListener("click", function (e) { e.preventDefault(); window.location.href = "auth_pc.html"; });
+        b.onclick = function (e) { e.preventDefault(); window.location.href = "auth.html"; };
       });
       return;
     }
@@ -228,6 +228,15 @@
       if (nameEl) nameEl.textContent = nickname;
       if (adminItem) adminItem.hidden = !isAdmin;
       if (logoutItem) logoutItem.hidden = false;
+
+      // 모바일 시트 메뉴 업데이트
+      var sheet = q("[data-mobile-user-sheet]");
+      if (sheet) {
+        var profileLink = sheet.querySelector("[data-mobile-menu-profile]");
+        if (profileLink) profileLink.setAttribute("href", "profile_settings.html");
+        var paymentLink = sheet.querySelector("[data-mobile-menu-payment]");
+        if (paymentLink) paymentLink.setAttribute("href", "payment.html");
+      }
     });
 
     setupMobileUserSheet();

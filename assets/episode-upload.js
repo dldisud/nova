@@ -1198,11 +1198,11 @@
         });
       } else {
         rpcResult = await state.client.rpc("create_episode_for_author_novel", {
-          p_novel_slug: work.slug,
+          p_user_id: session.user.id,
+          p_novel_id: work.id,
           p_title: title,
           p_body: body,
-          p_access_type: accessType,
-          p_price: accessType === "paid" ? price : 0
+          p_is_free: accessType === "free"
         });
       }
 
@@ -1210,7 +1210,7 @@
       if (rpcResult.error) throw rpcResult.error;
 
       const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
-      if (!row || !row.novel_slug) {
+      if (!row || !row.episode_id) {
         throw new Error("회차는 저장됐지만 이동할 주소를 찾지 못했습니다.");
       }
 

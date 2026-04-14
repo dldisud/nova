@@ -417,11 +417,13 @@
   }
 
   function detailHref(slug) {
-    return "novel_detail_pc.html?slug=" + encodeURIComponent(slug);
+    var isMobile = document.body.classList.contains("mobile-app");
+    return (isMobile ? "novel_detail.html" : "novel_detail_pc.html") + "?slug=" + encodeURIComponent(slug);
   }
 
   function viewerHref(slug, episodeNumber) {
-    return "novel_viewer_pc.html?slug=" + encodeURIComponent(slug) + "&episode=" + encodeURIComponent(episodeNumber || 1);
+    var isMobile = document.body.classList.contains("mobile-app");
+    return (isMobile ? "novel_viewer.html" : "novel_viewer_pc.html") + "?slug=" + encodeURIComponent(slug) + "&episode=" + encodeURIComponent(episodeNumber || 1);
   }
 
   function safeInternalPath(value, fallback) {
@@ -1400,6 +1402,7 @@
     var kpiNode = q("[data-kpi-cards]");
     var tableBody = q("[data-stats-table]");
     var activityNode = q("[data-recent-activity]");
+    var topNovelsNode = q("[data-top-novels]");
 
     var token = accessToken();
     var isLoggedIn = Boolean(token && token !== cfg.anonKey && token !== (cfg.publishableKey || ""));
@@ -1414,51 +1417,252 @@
     var novels = data.novels;
     var totalViews = novels.reduce(function (sum, n) { return sum + n.viewCount; }, 0);
     var totalComments = novels.reduce(function (sum, n) { return sum + n.commentCount; }, 0);
-    var totalPaidEpisodes = novels.reduce(function (sum, n) { return sum + Math.max(0, n.totalEpisodeCount - n.freeEpisodeCount); }, 0);
-    var estimatedRevenue = totalPaidEpisodes * EPISODE_PRICE;
-    var bookmarks = [];
-    try { bookmarks = JSON.parse(localStorage.getItem(store.bookmarks) || "[]"); } catch (_e) { bookmarks = []; }
+    var totalBookmarks = novels.reduce(function (sum, n) { return sum + n.reactionScore; }, 0);
+    var novelsWithRetention = novels.filter(function(n) { return n.retentionRate != null; });
+    var avgRetention = novelsWithRetention.length > 0
+      ? novelsWithRetention.reduce(function(sum, n) { return sum + n.retentionRate; }, 0) / novelsWithRetention.length
+      : 0;
 
+    // Store novel data globally for modal access
+    window.__authorDashboardNovels = novels;
+
+    // KPI Cards - New Dashboard Format
     if (kpiNode) {
-      kpiNode.innerHTML =
-        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>visibility</span><div class='kpi-card-value'>" + formatCount(totalViews) + "</div><div class='kpi-card-label'>" + t("dashboard.total_views") + "</div></div>" +
-        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>favorite</span><div class='kpi-card-value'>" + formatCount(bookmarks.length) + "</div><div class='kpi-card-label'>총 찜 수</div></div>" +
-        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>chat_bubble</span><div class='kpi-card-value'>" + formatCount(totalComments) + "</div><div class='kpi-card-label'>총 댓글 수</div></div>" +
-        "<div class='kpi-card'><span class='material-symbols-outlined kpi-card-icon'>payments</span><div class='kpi-card-value'>" + formatWon(estimatedRevenue) + "</div><div class='kpi-card-label'>추정 수익</div></div>";
+      var kpiValues = q("[data-kpi-value]");
+      if (kpiValues.length >= 4) {
+        kpiValues[0].textContent = formatCount(totalViews);
+        kpiValues[1].textContent = formatCount(totalBookmarks);
+        kpiValues[2].textContent = formatCount(totalComments);
+        kpiValues[3].textContent = (avgRetention > 0 ? avgRetention.toFixed(1) + "%" : "—");
+      }
     }
 
+    // Stats Table
     if (tableBody) {
       if (novels.length) {
-        tableBody.innerHTML = novels.map(function (novel) {
-          return "<tr onclick=\"window.location.href='" + detailHref(novel.slug) + "'\">" +
+        tableBody.innerHTML = novels.map(function (novel, idx) {
+          var retention = novel.retentionRate != null ? novel.retentionRate : null;
+          var firstReaders = novel.firstChapterReaders || 0;
+          var lastReaders = novel.lastChapterReaders || 0;
+          var retentionDisplay = retention != null
+            ? "<td class='num retention-clickable' data-retention-idx='" + idx + "'><span class='retention-rate" + (retention < 30 ? " low" : retention < 60 ? " medium" : "") + "'>" + retention + "%</span></td>"
+            : "<td class='num'>—</td>";
+          return "<tr>" +
             "<td>" + esc(novel.title) + "</td>" +
             "<td class='num'>" + formatCount(novel.viewCount) + "</td>" +
             "<td class='num'>" + formatCount(novel.reactionScore) + "</td>" +
             "<td class='num'>" + formatCount(novel.commentCount) + "</td>" +
             "<td class='num'>★ " + novel.reactionScore.toFixed(1) + "</td>" +
-            "<td>" + esc(novel.updatedAt ? novel.updatedAt.slice(0, 10) : "—") + "</td>" +
+            retentionDisplay +
             "</tr>";
         }).join("");
       } else {
-        tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;color:var(--text-muted);padding:32px;'>등록된 작품이 없습니다</td></tr>";
+        tableBody.innerHTML = "<tr><td colspan='6' class='empty-cell'>등록된 작품이 없습니다</td></tr>";
       }
     }
 
-    if (activityNode) {
-      var activities = novels.slice(0, 5).map(function (novel) {
-        return "<div class='activity-item'><span class='material-symbols-outlined'>chat_bubble</span><span>" + esc(novel.title) + "에 새로운 반응이 있습니다</span><span class='activity-time'>최근</span></div>";
-      });
-      activityNode.innerHTML = activities.length
-        ? activities.join("")
-        : "<div class='activity-item'><span class='material-symbols-outlined'>info</span><span>최근 활동이 없습니다</span></div>";
+    // Top Novels TOP 5
+    if (topNovelsNode) {
+      var sortedNovels = novels.slice().sort(function(a, b) { return b.viewCount - a.viewCount; }).slice(0, 5);
+      if (sortedNovels.length) {
+        topNovelsNode.innerHTML = sortedNovels.map(function(novel, idx) {
+          var rankClass = idx < 3 ? " rank-" + (idx + 1) : "";
+          return "<div class='top-novel-item'>" +
+            "<div class='top-novel-rank" + rankClass + "'>" + (idx + 1) + "</div>" +
+            "<div class='top-novel-info'>" +
+            "<div class='top-novel-title'>" + esc(novel.title) + "</div>" +
+            "<div class='top-novel-meta'>" + esc(novel.authorName) + "</div>" +
+            "</div>" +
+            "<div class='top-novel-stat'>" +
+            "<div class='top-novel-views'>" + formatCount(novel.viewCount) + "</div>" +
+            "</div>" +
+            "</div>";
+        }).join("");
+      } else {
+        topNovelsNode.innerHTML = "<p class='empty-state'>아직 작품이 없습니다.</p>";
+      }
     }
 
+    // Activity Feed
+    if (activityNode) {
+      var activities = [];
+      novels.slice(0, 5).forEach(function(novel) {
+        if (novel.commentCount > 0) {
+          activities.push("<div class='activity-item'>" +
+            "<span class='material-symbols-outlined'>chat_bubble</span>" +
+            "<div>" +
+            "<div class='activity-text'>" + esc(novel.title) + "에 " + formatCount(novel.commentCount) + "개의 댓글</div>" +
+            "<div class='activity-time'>최근 업데이트</div>" +
+            "</div>" +
+            "</div>");
+        }
+      });
+      if (activities.length) {
+        activityNode.innerHTML = activities.join("");
+      } else {
+        activityNode.innerHTML = "<p class='empty-state'>최근 활동이 없습니다.</p>";
+      }
+    }
+
+    // Period Filter Buttons
     var periodBtns = qa("[data-period]");
     periodBtns.forEach(function (btn) {
       btn.addEventListener("click", function () {
-        periodBtns.forEach(function (b) { b.dataset.state = ""; });
-        btn.dataset.state = "include";
+        periodBtns.forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
       });
+    });
+
+    // Retention Modal Handlers
+    initRetentionModal(tableBody);
+  }
+
+  function initRetentionModal(tableBody) {
+    if (!tableBody) return;
+
+    var modal = q("[data-retention-modal]");
+    var closeBtn = q("[data-retention-close]");
+    var overlay = q("[data-retention-overlay]");
+
+    if (!modal) {
+      console.warn("[Retention] Modal element not found");
+      return;
+    }
+
+    function openRetentionModal(novel) {
+      if (!modal) return;
+      var retention = novel.retentionRate || 0;
+      var firstReaders = novel.firstChapterReaders || 0;
+      var lastReaders = novel.lastChapterReaders || 0;
+      var episodes = novel.totalEpisodeCount || 0;
+      var churn = firstReaders - lastReaders;
+
+      // Set title
+      var titleEl = q("[data-retention-title]");
+      if (titleEl) titleEl.textContent = novel.title;
+
+      // Set values
+      var rateEl = q("[data-retention-rate]");
+      if (rateEl) rateEl.textContent = retention.toFixed(1) + "%";
+
+      var firstValueEl = q("[data-funnel-first-value]");
+      if (firstValueEl) firstValueEl.textContent = formatCount(firstReaders);
+
+      var lastValueEl = q("[data-funnel-last-value]");
+      if (lastValueEl) lastValueEl.textContent = formatCount(lastReaders);
+
+      var churnEl = q("[data-retention-churn]");
+      if (churnEl) churnEl.textContent = formatCount(churn);
+
+      var episodesEl = q("[data-retention-episodes]");
+      if (episodesEl) episodesEl.textContent = episodes + "화";
+
+      // Reset funnel bars for animation
+      var firstBar = q("[data-funnel-first]");
+      var lastBar = q("[data-funnel-last]");
+      if (firstBar) firstBar.style.width = "0%";
+      if (lastBar) lastBar.style.width = "0%";
+
+      // Animate funnel bars
+      setTimeout(function() {
+        if (firstBar) firstBar.style.width = "100%";
+        if (lastBar) lastBar.style.width = retention + "%";
+      }, 100);
+
+      // Bar chart - reset
+      var barFirst = q("[data-bar-first]");
+      var barLast = q("[data-bar-last]");
+      var barFirstValue = q("[data-bar-first-value]");
+      var barLastValue = q("[data-bar-last-value]");
+
+      if (barFirst) barFirst.style.width = "0%";
+      if (barLast) barLast.style.width = "0%";
+
+      setTimeout(function() {
+        if (barFirst) {
+          barFirst.style.width = "100%";
+          barFirst.setAttribute("data-bar-fill", "first");
+        }
+        if (barLast) {
+          barLast.style.width = retention + "%";
+          barLast.setAttribute("data-bar-fill", "last");
+        }
+        if (barFirstValue) barFirstValue.textContent = "100%";
+        if (barLastValue) barLastValue.textContent = retention.toFixed(1) + "%";
+      }, 100);
+
+      modal.hidden = false;
+    }
+
+    function openOverviewModal() {
+      var novels = window.__authorDashboardNovels || [];
+      var novelsWithRetention = novels.filter(function(n) { return n.retentionRate != null; });
+      if (!novelsWithRetention.length) {
+        alert("연독률 데이터가 있는 작품이 없습니다.");
+        return;
+      }
+      // Show the first novel with retention data as overview
+      openRetentionModal(novelsWithRetention[0]);
+    }
+
+    function closeRetentionModal() {
+      if (!modal) return;
+      modal.hidden = true;
+    }
+
+    // KPI Card click handler (average retention)
+    var kpiRetentionCard = q("[data-kpi-clickable='retention']");
+    if (kpiRetentionCard) {
+      kpiRetentionCard.addEventListener("click", function() {
+        openOverviewModal();
+      });
+    }
+
+    // Table cell click handler (individual novel)
+    document.addEventListener("click", function(e) {
+      // Check if clicked on retention cell
+      var cell = e.target.closest(".retention-clickable");
+      if (cell) {
+        var idx = parseInt(cell.getAttribute("data-retention-idx"));
+        if (!isNaN(idx)) {
+          var novels = window.__authorDashboardNovels || [];
+          if (novels[idx] && novels[idx].retentionRate != null) {
+            openRetentionModal(novels[idx]);
+            return;
+          }
+        }
+      }
+
+      // Check if clicked on retention-rate span inside table
+      var rateSpan = e.target.closest(".retention-rate");
+      if (rateSpan) {
+        var parentCell = rateSpan.closest(".retention-clickable");
+        if (parentCell) {
+          var idx = parseInt(parentCell.getAttribute("data-retention-idx"));
+          if (!isNaN(idx)) {
+            var novels = window.__authorDashboardNovels || [];
+            if (novels[idx] && novels[idx].retentionRate != null) {
+              openRetentionModal(novels[idx]);
+              return;
+            }
+          }
+        }
+      }
+    });
+
+    // Close handlers
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeRetentionModal);
+    }
+    if (overlay) {
+      overlay.addEventListener("click", closeRetentionModal);
+    }
+
+    // Escape key
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && !modal.hidden) {
+        closeRetentionModal();
+      }
     });
   }
 
@@ -2102,6 +2306,37 @@
     }
 
     if (page === "author_dashboard_pc") {
+      // Enrich novels with retention data
+      try {
+        var token = accessToken();
+        var isLoggedIn = Boolean(token && token !== cfg.anonKey && token !== (cfg.publishableKey || ""));
+        if (isLoggedIn && window.supabase) {
+          var client = window.supabase.createClient(base, key, {
+            auth: { persistSession: true, storageKey: "inkroad-supabase-auth" }
+          });
+          var sessionResult = await client.auth.getSession();
+          var session = sessionResult.data.session;
+          if (session) {
+            var statsResult = await client.rpc("get_novel_stats_with_retention", { p_user_id: session.user.id });
+            if (statsResult.data) {
+              var retentionMap = {};
+              statsResult.data.forEach(function(stat) {
+                retentionMap[stat.novel_id] = stat;
+              });
+              data.novels.forEach(function(novel) {
+                if (retentionMap[novel.id]) {
+                  var stat = retentionMap[novel.id];
+                  novel.retentionRate = stat.retention_rate || 0;
+                  novel.firstChapterReaders = stat.first_chapter_readers || 0;
+                  novel.lastChapterReaders = stat.last_chapter_readers || 0;
+                }
+              });
+            }
+          }
+        }
+      } catch(e) {
+        console.warn("[Stats] Failed to load retention data:", e);
+      }
       renderAuthorDashboard(data);
       return;
     }

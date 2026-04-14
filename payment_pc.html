@@ -23,12 +23,12 @@
       font-size: clamp(2rem, 4vw, 3rem);
       letter-spacing: -0.04em;
       line-height: 1.1;
-      color: #111;
+      color: #f2ece0 !important;
     }
 
     .store-hero p {
       margin: 12px 0 0;
-      color: #555;
+      color: #d4bc8a !important;
       font-size: 1rem;
     }
 
@@ -45,30 +45,31 @@
       display: grid;
       gap: 20px;
       padding: 36px 28px 32px;
-      background: #fff;
-      border: 1px solid #e5e5e5;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(212, 168, 67, 0.12) !important;
+      border-radius: var(--radius-lg);
       text-align: center;
       transition: all 400ms cubic-bezier(0.25, 1, 0.33, 1);
     }
 
     .tier-card:hover {
       transform: translateY(-4px);
-      border-color: #ccc;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+      border-color: rgba(212, 168, 67, 0.25) !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
 
     .tier-card.featured {
-      background: #fff;
-      border-color: #111;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: #d4a843 !important;
       border-width: 2px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 32px rgba(212, 168, 67, 0.15);
       transform: scale(1.03);
       z-index: 2;
     }
 
     .tier-card.featured:hover {
       transform: scale(1.03) translateY(-4px);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 16px 48px rgba(212, 168, 67, 0.25);
     }
 
     .tier-badge {
@@ -77,12 +78,13 @@
       left: 50%;
       transform: translateX(-50%);
       white-space: nowrap;
-      background: #111;
-      color: #fff;
+      background: #d4a843;
+      color: #080808;
       font-weight: 800;
       padding: 6px 20px;
       font-size: 0.78rem;
       letter-spacing: 0.04em;
+      border-radius: 999px;
     }
 
     .tier-amount {
@@ -91,17 +93,17 @@
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
-      color: #111;
+      color: #f2ece0 !important;
     }
 
     .tier-amount span {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #888;
+      color: #d4bc8a !important;
     }
 
     .tier-bonus {
-      color: var(--accent);
+      color: #d4a843 !important;
       font-weight: 700;
       font-size: 0.95rem;
     }
@@ -109,6 +111,7 @@
     .tier-bonus .material-symbols-outlined {
       font-size: 18px;
       vertical-align: middle;
+      color: #d4a843 !important;
     }
 
     .tier-price {
@@ -119,7 +122,7 @@
     }
 
     .tier-price .original {
-      color: #aaa;
+      color: #998b73 !important;
       text-decoration: line-through;
       font-size: 1rem;
     }
@@ -128,18 +131,14 @@
       font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      color: #111;
-    }
-
-    .tier-card.featured .tier-price .current {
-      color: #111;
+      color: #f2ece0 !important;
     }
 
     .tier-features {
       display: grid;
       gap: 10px;
       padding-top: 16px;
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       text-align: left;
     }
 
@@ -147,13 +146,13 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: #555;
+      color: #d4bc8a !important;
       font-size: 0.88rem;
     }
 
     .tier-feature .material-symbols-outlined {
       font-size: 18px;
-      color: var(--accent);
+      color: #d4a843 !important;
     }
 
     .store-info {
@@ -163,7 +162,7 @@
       max-width: 1200px;
       margin: 64px auto 0;
       padding-top: 48px;
-      border-top: 1px solid #e5e5e5;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .store-info-block {
@@ -175,14 +174,28 @@
       margin: 0;
       font-size: 1.1rem;
       font-weight: 700;
-      color: #111;
+      color: #f2ece0 !important;
     }
 
     .store-info-block p {
       margin: 0;
-      color: #555;
+      color: #d4bc8a !important;
       font-size: 0.92rem;
       line-height: 1.7;
+    }
+
+    .payment-status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      min-height: 20px;
+    }
+
+    .payment-status.success {
+      color: #4ade80;
+    }
+
+    .payment-status.error {
+      color: #f87171;
     }
 
     @media (max-width: 1080px) {
@@ -219,124 +232,145 @@
       </form>
 
       <div data-lang-picker></div>
-      <a class="button ghost button-login" href="my_library_pc.html" data-i18n="nav.login">로그인</a>
+      <div class="topbar-user-menu" data-user-menu>
+        <button class="topbar-user-trigger" data-topbar-auth data-i18n="nav.login" type="button">로그인</button>
+        <div class="topbar-user-dropdown" data-user-dropdown hidden>
+          <a class="topbar-dropdown-item" href="my_library_pc.html"><span class="material-symbols-outlined">auto_stories</span>내 서재</a>
+          <a class="topbar-dropdown-item" href="profile_settings_pc.html"><span class="material-symbols-outlined">person</span>내 정보</a>
+          <a class="topbar-dropdown-item" href="creator_dashboard_pc.html" data-menu-creator><span class="material-symbols-outlined">edit_note</span>크리에이터</a>
+          <a class="topbar-dropdown-item" href="admin_dashboard_pc.html" data-menu-admin hidden><span class="material-symbols-outlined">shield_person</span>관리자</a>
+          <div class="topbar-dropdown-divider"></div>
+          <button class="topbar-dropdown-item" type="button" data-menu-logout><span class="material-symbols-outlined">logout</span>로그아웃</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <main class="pc-page">
     <div class="pc-shell">
-      <div class="store-hero">
-        <span class="eyebrow">잉크로드 코인 충전소</span>
-        <h1>여정의 보급품을 충전하세요</h1>
-        <p>더 많이 충전할수록 보너스 코인이 늘어납니다. 지금 번들 할인을 확인하세요.</p>
-      </div>
+      <section class="auth-shell" data-payment-auth></section>
 
-      <div class="tier-grid">
-        <!-- Tier 1 -->
-        <div class="tier-card">
-          <div class="tier-amount">500 <span>G</span></div>
-          <div class="tier-price">
-            <span class="current">₩5,000</span>
+      <section class="payment-dashboard" data-payment-dashboard hidden>
+        <div class="store-hero">
+          <span class="eyebrow">잉크로드 코인 충전소</span>
+          <h1>여정의 보급품을 충전하세요</h1>
+          <p>더 많이 충전할수록 보너스 코인이 늘어납니다. 지금 번들 할인을 확인하세요.</p>
+          <div class="payment-user-info" data-payment-user-info>
+            <span class="tier-bonus" data-payment-balance>현재 코인: 0 G</span>
           </div>
-          <div class="tier-features">
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              단편 1~2편 구매 가능
-            </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              가볍게 시작하기
-            </div>
-          </div>
-          <button class="button secondary" style="width: 100%; justify-content: center;">결제하기</button>
         </div>
 
-        <!-- Tier 2 -->
-        <div class="tier-card">
-          <div class="tier-amount">1,000 <span>G</span></div>
-          <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 100 G 보너스</div>
-          <div class="tier-price">
-            <span class="current">₩10,000</span>
-          </div>
-          <div class="tier-features">
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              장편 1편 전권 구매
+        <div class="tier-grid">
+          <!-- Tier 1 -->
+          <div class="tier-card">
+            <div class="tier-amount">500 <span>G</span></div>
+            <div class="tier-price">
+              <span class="current">₩5,000</span>
             </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              +10% 보너스 코인
+            <div class="tier-features">
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                단편 1~2편 구매 가능
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                가볍게 시작하기
+              </div>
             </div>
+            <button class="button secondary" style="width: 100%; justify-content: center;" data-payment-buy data-tier="500" data-amount="5000">결제하기</button>
+            <div class="payment-status" data-payment-status="500"></div>
           </div>
-          <button class="button secondary" style="width: 100%; justify-content: center;">결제하기</button>
+
+          <!-- Tier 2 -->
+          <div class="tier-card">
+            <div class="tier-amount">1,000 <span>G</span></div>
+            <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 100 G 보너스</div>
+            <div class="tier-price">
+              <span class="current">₩10,000</span>
+            </div>
+            <div class="tier-features">
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                장편 1편 전권 구매
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                +10% 보너스 코인
+              </div>
+            </div>
+            <button class="button secondary" style="width: 100%; justify-content: center;" data-payment-buy data-tier="1000" data-amount="10000">결제하기</button>
+            <div class="payment-status" data-payment-status="1000"></div>
+          </div>
+
+          <!-- Tier 3 (Featured) -->
+          <div class="tier-card featured">
+            <div class="tier-badge">가장 인기있는 선택</div>
+            <div class="tier-amount">5,000 <span>G</span></div>
+            <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 1,000 G 보너스 증정!</div>
+            <div class="tier-price">
+              <span class="original">₩60,000</span>
+              <span class="current">₩50,000</span>
+            </div>
+            <div class="tier-features">
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                장편 5편 이상 구매
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                +20% 보너스 코인
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                할인 세일 알림 우선 수신
+              </div>
+            </div>
+            <button class="button primary" style="width: 100%; justify-content: center;" data-payment-buy data-tier="5000" data-amount="50000">결제하기</button>
+            <div class="payment-status" data-payment-status="5000"></div>
+          </div>
+
+          <!-- Tier 4 -->
+          <div class="tier-card">
+            <div class="tier-amount">10,000 <span>G</span></div>
+            <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 2,500 G 보너스 증정!</div>
+            <div class="tier-price">
+              <span class="original">₩125,000</span>
+              <span class="current">₩100,000</span>
+            </div>
+            <div class="tier-features">
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                장르전 번들 무제한 구매
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                +25% 보너스 코인
+              </div>
+              <div class="tier-feature">
+                <span class="material-symbols-outlined">check_circle</span>
+                프리미엄 독자 뱃지
+              </div>
+            </div>
+            <button class="button secondary" style="width: 100%; justify-content: center;" data-payment-buy data-tier="10000" data-amount="100000">결제하기</button>
+            <div class="payment-status" data-payment-status="10000"></div>
+          </div>
         </div>
 
-        <!-- Tier 3 (Featured) -->
-        <div class="tier-card featured">
-          <div class="tier-badge">가장 인기있는 선택</div>
-          <div class="tier-amount">5,000 <span>G</span></div>
-          <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 1,000 G 보너스 증정!</div>
-          <div class="tier-price">
-            <span class="original">₩60,000</span>
-            <span class="current">₩50,000</span>
+        <div class="store-info">
+          <div class="store-info-block">
+            <h3>안전한 결제</h3>
+            <p>모든 결제는 PG사(이니시스/토스페이먼츠)를 경유하며, 카드 정보는 서버에 저장되지 않습니다.</p>
           </div>
-          <div class="tier-features">
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              장편 5편 이상 구매
-            </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              +20% 보너스 코인
-            </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              할인 세일 알림 우선 수신
-            </div>
+          <div class="store-info-block">
+            <h3>코인 유효기간</h3>
+            <p>충전된 코인은 충전일로부터 5년간 유효합니다. 보너스 코인은 충전 코인과 동일하게 적용됩니다.</p>
           </div>
-          <button class="button primary" style="width: 100%; justify-content: center;">결제하기</button>
-        </div>
-
-        <!-- Tier 4 -->
-        <div class="tier-card">
-          <div class="tier-amount">10,000 <span>G</span></div>
-          <div class="tier-bonus"><span class="material-symbols-outlined">add_circle</span> 2,500 G 보너스 증정!</div>
-          <div class="tier-price">
-            <span class="original">₩125,000</span>
-            <span class="current">₩100,000</span>
+          <div class="store-info-block">
+            <h3>환불 정책</h3>
+            <p>미사용 코인은 충전 후 7일 이내 전액 환불 가능합니다. 자세한 사항은 고객센터를 확인하세요.</p>
           </div>
-          <div class="tier-features">
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              장르전 번들 무제한 구매
-            </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              +25% 보너스 코인
-            </div>
-            <div class="tier-feature">
-              <span class="material-symbols-outlined">check_circle</span>
-              프리미엄 독자 뱃지
-            </div>
-          </div>
-          <button class="button secondary" style="width: 100%; justify-content: center;">결제하기</button>
         </div>
-      </div>
-
-      <div class="store-info">
-        <div class="store-info-block">
-          <h3>안전한 결제</h3>
-          <p>모든 결제는 PG사(이니시스/토스페이먼츠)를 경유하며, 카드 정보는 서버에 저장되지 않습니다.</p>
-        </div>
-        <div class="store-info-block">
-          <h3>코인 유효기간</h3>
-          <p>충전된 코인은 충전일로부터 5년간 유효합니다. 보너스 코인은 충전 코인과 동일하게 적용됩니다.</p>
-        </div>
-        <div class="store-info-block">
-          <h3>환불 정책</h3>
-          <p>미사용 코인은 충전 후 7일 이내 전액 환불 가능합니다. 자세한 사항은 고객센터를 확인하세요.</p>
-        </div>
-      </div>
+      </section>
 
       <footer class="desktop-footer">
         <span>코인 충전소를 매대형 구조로 정리하고, 인기 번들에 시선이 먼저 가도록 구성했습니다.</span>
@@ -345,5 +379,11 @@
     </div>
   </main>
   <script src="assets/i18n.js"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
+  <script src="assets/payment.js"></script>
 </body>
 </html>

@@ -28,6 +28,9 @@
         <a class="creator-nav-link" href="author_dashboard_pc.html">
           <span class="material-symbols-outlined">bar_chart</span> 통계
         </a>
+        <a class="creator-nav-link" href="profile_settings_pc.html">
+          <span class="material-symbols-outlined">person</span> 내 정보
+        </a>
         <a class="creator-nav-link active" href="novel_upload_pc.html">
           <span class="material-symbols-outlined">add_circle</span> 작품 등록
         </a>
@@ -41,9 +44,11 @@
       </div>
     </aside>
     <main class="creator-main">
+      <section class="auth-shell" data-upload-auth></section>
+
       <div class="creator-main-head">
         <div class="creator-main-copy">
-          <h1 class="creator-main-title">작품 등록</h1>
+          <h1 class="creator-main-title" data-upload-page-title>작품 등록</h1>
           <p class="creator-main-sub" data-upload-page-subtitle>제목, 태그, 첫 회차 본문을 작성합니다.</p>
         </div>
         <button class="button primary" type="submit" form="upload-form" data-upload-submit disabled>발행하기</button>
@@ -228,6 +233,7 @@
 
   <script src="assets/i18n.js"></script>
   <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
   <script src="assets/supabase-live.js"></script>

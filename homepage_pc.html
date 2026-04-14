@@ -41,6 +41,7 @@
         <button class="topbar-user-trigger" data-topbar-auth data-i18n="nav.login" type="button">로그인</button>
         <div class="topbar-user-dropdown" data-user-dropdown hidden>
           <a class="topbar-dropdown-item" href="my_library_pc.html"><span class="material-symbols-outlined">auto_stories</span>내 서재</a>
+          <a class="topbar-dropdown-item" href="profile_settings_pc.html"><span class="material-symbols-outlined">person</span>내 정보</a>
           <a class="topbar-dropdown-item" href="creator_dashboard_pc.html" data-menu-creator><span class="material-symbols-outlined">edit_note</span>크리에이터</a>
           <a class="topbar-dropdown-item" href="admin_dashboard_pc.html" data-menu-admin hidden><span class="material-symbols-outlined">shield_person</span>관리자</a>
           <div class="topbar-dropdown-divider"></div>
@@ -53,31 +54,29 @@
   <main class="pc-page store-home">
     <!-- Hero Band -->
     <section class="hero-band" data-hero-band>
-      <div class="store-shell">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <div class="hero-badges">
-              <span class="sale-badge hero-sale-badge"></span>
-              <span class="muted-badge hero-direction-badge"></span>
-              <span class="muted-badge hero-genre-badge"></span>
-            </div>
-            <h1 class="hero-title">
-              <span class="hero-title-main"></span><br>
-              <span class="hero-title-sub"></span>
-            </h1>
-            <p class="hero-description"></p>
-            <div class="hero-meta"></div>
-            <div class="hero-actions">
-              <a class="button primary" data-hero-read href="novel_viewer_pc.html">1화 읽기</a>
-              <button class="button secondary button-heart" type="button" data-hero-bookmark aria-label="찜하기">
-                <span class="material-symbols-outlined">favorite</span>
-                <span data-bookmark-label data-default-label="찜하기">찜하기</span>
-              </button>
-            </div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="hero-badges">
+            <span class="sale-badge hero-sale-badge"></span>
+            <span class="muted-badge hero-direction-badge"></span>
+            <span class="muted-badge hero-genre-badge"></span>
           </div>
-          <div class="hero-cover-wrap">
-            <img class="hero-cover" src="https://placehold.co/280x389/333/fff?text=InkRoad" alt="표지">
+          <h1 class="hero-title">
+            <span class="hero-title-main"></span><br>
+            <span class="hero-title-sub"></span>
+          </h1>
+          <p class="hero-description"></p>
+          <div class="hero-meta"></div>
+          <div class="hero-actions">
+            <a class="button primary" data-hero-read href="novel_viewer_pc.html">1화 읽기</a>
+            <button class="button secondary button-heart" type="button" data-hero-bookmark aria-label="찜하기">
+              <span class="material-symbols-outlined">favorite</span>
+              <span data-bookmark-label data-default-label="찜하기">찜하기</span>
+            </button>
           </div>
+        </div>
+        <div class="hero-cover-wrap">
+          <img class="hero-cover" src="https://placehold.co/280x389/333/fff?text=InkRoad" alt="표지">
         </div>
       </div>
     </section>

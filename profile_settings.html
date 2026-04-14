@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>INKROAD | 내 정보</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/mobile-profile.css">
+</head>
+<body class="mobile-app store-light mobile-profile-page">
+  <header class="mh-header">
+    <a class="back-btn" href="homepage.html"><span class="material-symbols-outlined">arrow_back</span></a>
+    <span class="mh-header-title">내 정보</span>
+    <div class="spacer"></div>
+  </header>
+
+  <main class="mh-content mobile-profile-shell" data-profile-shell>
+    <div class="profile-header-card">
+      <div class="profile-avatar" data-profile-avatar>
+        <span class="material-symbols-outlined">person</span>
+      </div>
+      <div class="profile-info">
+        <h2 class="profile-name" data-profile-name>사용자</h2>
+        <p class="profile-email" data-profile-email>email@example.com</p>
+      </div>
+    </div>
+
+    <!-- Profile Settings -->
+    <section class="profile-section">
+      <h3 class="profile-section-title">프로필 설정</h3>
+      <div class="profile-form" data-profile-form>
+        <label class="profile-field">
+          <span class="profile-label">닉네임</span>
+          <input type="text" class="profile-input" data-profile-pen-name placeholder="닉네임 입력" required>
+        </label>
+        <label class="profile-field">
+          <span class="profile-label">소개</span>
+          <input type="text" class="profile-input" data-profile-bio placeholder="소개 문구 (선택)">
+        </label>
+        <button class="profile-btn primary" type="button" data-profile-save>저장하기</button>
+        <p class="profile-status" data-profile-status hidden></p>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section class="profile-section">
+      <h3 class="profile-section-title">알림 설정</h3>
+      <div class="profile-toggles" data-profile-toggles>
+        <label class="profile-toggle">
+          <span class="toggle-label">댓글 알림</span>
+          <input type="checkbox" data-profile-notify-comments checked>
+          <span class="toggle-switch"></span>
+        </label>
+        <label class="profile-toggle">
+          <span class="toggle-label">좋아요 알림</span>
+          <input type="checkbox" data-profile-notify-likes checked>
+          <span class="toggle-switch"></span>
+        </label>
+        <label class="profile-toggle">
+          <span class="toggle-label">세일 알림</span>
+          <input type="checkbox" data-profile-notify-sales checked>
+          <span class="toggle-switch"></span>
+        </label>
+      </div>
+      <button class="profile-btn primary" type="button" data-notification-save>알림 저장</button>
+      <p class="profile-status" data-notification-status hidden></p>
+    </section>
+
+    <!-- Account Actions -->
+    <section class="profile-section">
+      <h3 class="profile-section-title">계정 관리</h3>
+      <div class="profile-actions" data-profile-actions>
+        <button class="profile-btn ghost full" type="button" data-profile-logout>로그아웃</button>
+        <button class="profile-btn danger full" type="button" data-profile-delete>계정 탈퇴</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-tab-bar" aria-label="주요 탐색">
+    <a class="tab-item" href="homepage.html">
+      <span class="material-symbols-outlined">home</span>
+      <span class="tab-label">홈</span>
+    </a>
+    <a class="tab-item" href="search.html">
+      <span class="material-symbols-outlined">search</span>
+      <span class="tab-label">탐색</span>
+    </a>
+    <a class="tab-item" href="my_library.html">
+      <span class="material-symbols-outlined">auto_stories</span>
+      <span class="tab-label">서재</span>
+    </a>
+    <button class="tab-item active" type="button" data-mobile-user-btn>
+      <span class="material-symbols-outlined">person</span>
+      <span class="tab-label">MY</span>
+    </button>
+  </nav>
+
+  <script src="assets/i18n.js"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/mobile-profile.js"></script>
+</body>
+</html>
