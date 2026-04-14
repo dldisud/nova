@@ -74,10 +74,11 @@ jobs:
       - name: Setup Tuist
         if: steps.detect.outputs.type == 'tuist'
         run: |
-          curl -Ls https://install.tuist.io | bash
+          brew install tuist
           cd "$IOS_PATH"
-          tuist install
-          tuist generate
+          tuist install || true
+          tuist generate --no-open
+          ls -la
 
       - name: Setup Flutter
         if: steps.detect.outputs.type == 'flutter'
