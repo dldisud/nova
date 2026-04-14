@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INKROAD | 관리자 운영</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/pc.css">
+</head>
+<body class="pc-desktop store-light">
+  <div class="creator-layout">
+    <aside class="creator-sidebar">
+      <div class="creator-sidebar-brand">
+        <span class="brand-mark material-symbols-outlined">admin_panel_settings</span>
+        <span class="brand-copy">
+          <strong class="brand-name">INKROAD</strong>
+          <span class="brand-sub">관리자 운영</span>
+        </span>
+      </div>
+      <nav class="creator-sidebar-nav">
+        <a class="creator-nav-link active" href="admin_dashboard_pc.html">
+          <span class="material-symbols-outlined">dashboard</span> 관리자 대시보드
+        </a>
+        <a class="creator-nav-link" href="creator_dashboard_pc.html">
+          <span class="material-symbols-outlined">auto_stories</span> 작가 대시보드
+        </a>
+        <a class="creator-nav-link" href="profile_settings_pc.html">
+          <span class="material-symbols-outlined">person</span> 내 정보
+        </a>
+        <a class="creator-nav-link" href="novel_upload_pc.html">
+          <span class="material-symbols-outlined">add_circle</span> 작품 등록
+        </a>
+        <a class="creator-nav-link" href="homepage_pc.html">
+          <span class="material-symbols-outlined">storefront</span> 스토어 보기
+        </a>
+      </nav>
+      <div class="creator-sidebar-footer">
+        <div data-lang-picker></div>
+        <a href="homepage_pc.html">← 스토어로 돌아가기</a>
+      </div>
+    </aside>
+
+    <main class="creator-main">
+      <section class="auth-shell" data-admin-auth></section>
+
+      <section class="admin-dashboard-shell" data-admin-dashboard hidden>
+        <div class="creator-main-head">
+          <div class="creator-main-copy">
+            <h1 class="creator-main-title">스토어 운영</h1>
+            <p class="creator-main-sub">
+              전체 작품 <strong data-admin-head-stat="total">0개</strong> · 세일 진행 <strong data-admin-head-stat="sale">0개</strong> · 대표 배너 <strong data-admin-head-stat="banner">없음</strong>
+            </p>
+          </div>
+          <div class="button-row">
+            <a class="button ghost" href="homepage_pc.html">스토어 확인</a>
+            <a class="button primary" href="novel_upload_pc.html">새 작품 등록</a>
+          </div>
+        </div>
+
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span class="summary-card-icon material-symbols-outlined">menu_book</span>
+            <strong class="summary-card-value" data-admin-metric="works">0</strong>
+            <span class="summary-card-label">전체 작품</span>
+          </article>
+          <article class="summary-card">
+            <span class="summary-card-icon material-symbols-outlined">local_offer</span>
+            <strong class="summary-card-value" data-admin-metric="sales">0</strong>
+            <span class="summary-card-label">진행 중 세일</span>
+          </article>
+          <article class="summary-card">
+            <span class="summary-card-icon material-symbols-outlined">event_upcoming</span>
+            <strong class="summary-card-value" data-admin-metric="expiring">0</strong>
+            <span class="summary-card-label">3일 내 종료</span>
+          </article>
+          <article class="summary-card">
+            <span class="summary-card-icon material-symbols-outlined">ads_click</span>
+            <strong class="summary-card-value" data-admin-metric="banner">미설정</strong>
+            <span class="summary-card-label">홈 대표 배너</span>
+          </article>
+        </div>
+
+        <section class="creator-featured admin-banner-summary" data-admin-banner-summary></section>
+
+        <div class="admin-toolbar">
+          <label class="creator-field admin-search-field">
+            <span>작품 찾기</span>
+            <input type="search" placeholder="작품명, 작가명으로 찾기" data-admin-search>
+          </label>
+          <div class="creator-filter-row admin-filter-row">
+            <button class="button ghost small is-active" type="button" data-admin-filter="all">전체</button>
+            <button class="button ghost small" type="button" data-admin-filter="sale">세일 중</button>
+            <button class="button ghost small" type="button" data-admin-filter="serializing">연재중</button>
+            <button class="button ghost small" type="button" data-admin-filter="completed">완결</button>
+            <button class="button ghost small" type="button" data-admin-filter="translated">번역작</button>
+          </div>
+        </div>
+
+        <div class="creator-work-list" data-admin-list></div>
+
+        <div class="creator-empty" data-admin-empty hidden>
+          <span class="material-symbols-outlined" style="font-size:48px;color:var(--border);">dashboard</span>
+          <h3>조건에 맞는 작품이 없습니다</h3>
+          <p>필터나 검색어를 바꾸면 바로 다시 볼 수 있습니다.</p>
+        </div>
+
+        <section class="creator-sale-panel" data-admin-sale-panel hidden>
+          <div class="creator-sale-panel-head">
+            <div>
+              <span class="eyebrow">세일 운영</span>
+              <h2 data-admin-sale-title>할인 등록</h2>
+            </div>
+            <button class="button ghost small" type="button" data-admin-sale-close>닫기</button>
+          </div>
+          <form class="creator-sale-form" data-admin-sale-form>
+            <label class="creator-field">
+              <span>작품명</span>
+              <input type="text" data-admin-sale-work-title readonly>
+            </label>
+            <div class="creator-sale-grid">
+              <label class="creator-field">
+                <span>할인율</span>
+                <select data-admin-sale-discount>
+                  <option value="5">5%</option>
+                  <option value="10">10%</option>
+                  <option value="15">15%</option>
+                  <option value="20">20%</option>
+                  <option value="30">30%</option>
+                  <option value="40">40%</option>
+                  <option value="50">50%</option>
+                </select>
+              </label>
+              <label class="creator-field">
+                <span>시작일</span>
+                <input type="datetime-local" data-admin-sale-start required>
+              </label>
+              <label class="creator-field">
+                <span>종료일</span>
+                <input type="datetime-local" data-admin-sale-end required>
+              </label>
+            </div>
+            <p class="creator-sale-preview" data-admin-sale-preview>묶음 정가 0원 -> 0원</p>
+            <div class="creator-sale-actions">
+              <button class="button danger" type="button" data-admin-sale-clear hidden>할인 해제</button>
+              <button class="button primary" type="submit">할인 저장</button>
+              <p class="creator-sale-status" data-admin-sale-status hidden></p>
+            </div>
+          </form>
+        </section>
+
+        <section class="creator-sale-panel" data-admin-banner-panel hidden>
+          <div class="creator-sale-panel-head">
+            <div>
+              <span class="eyebrow">광고 배너</span>
+              <h2>홈 대표 프로모션</h2>
+            </div>
+            <button class="button ghost small" type="button" data-admin-banner-close>닫기</button>
+          </div>
+          <form class="creator-sale-form" data-admin-banner-form>
+            <label class="creator-field">
+              <span>대표 작품</span>
+              <input type="text" data-admin-banner-work-title readonly>
+            </label>
+            <div class="creator-sale-grid admin-banner-grid">
+              <label class="creator-field">
+                <span>배너 제목</span>
+                <input type="text" data-admin-banner-title placeholder="예: 이번 주 대표 프로모션">
+              </label>
+              <label class="creator-field">
+                <span>보조 문구</span>
+                <input type="text" data-admin-banner-subtitle placeholder="예: 다크 판타지 대표작">
+              </label>
+              <label class="creator-field">
+                <span>배너 이미지 URL</span>
+                <input type="url" data-admin-banner-image placeholder="https://...">
+              </label>
+            </div>
+            <label class="creator-field">
+              <span>설명 문구</span>
+              <input type="text" data-admin-banner-description placeholder="홈 상단에 보일 한 줄 소개">
+            </label>
+            <div class="creator-sale-grid">
+              <label class="creator-field">
+                <span>노출 시작</span>
+                <input type="datetime-local" data-admin-banner-start required>
+              </label>
+              <label class="creator-field">
+                <span>노출 종료</span>
+                <input type="datetime-local" data-admin-banner-end required>
+              </label>
+            </div>
+            <div class="creator-sale-actions">
+              <button class="button danger" type="button" data-admin-banner-clear hidden>배너 해제</button>
+              <button class="button primary" type="submit">배너 저장</button>
+              <p class="creator-sale-status" data-admin-banner-status hidden></p>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/i18n.js"></script>
+  <script src="assets/supabase-config.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/supabase-live.js"></script>
+  <script src="assets/store-redesign.js"></script>
+  <script src="assets/admin-dashboard.js"></script>
+</body>
+</html>

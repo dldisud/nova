@@ -20,6 +20,5 @@ yarn-error.log*
 pnpm-debug.log*
 ios/.build/
 ios/DerivedData/
-ios/*.xcodeproj
-ios/*.xcworkspace
 ios/**/xcuserdata/
+ios/**/Pods/
