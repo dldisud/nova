@@ -1,0 +1,16 @@
+{
+  "project": "nova",
+  "platform": "ios",
+  "github": {
+    "owner": "dldisud",
+    "repo": "nova"
+  },
+  "ios": {
+    "path": "D:\\nova"
+  },
+  "flutter": {
+    "watch": {}
+  },
+  "reactNative": {},
+  "mobai": {}
+}
