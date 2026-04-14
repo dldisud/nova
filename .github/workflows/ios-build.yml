@@ -167,6 +167,16 @@ jobs:
           # Navigate to iOS project
           cd "$IOS_PATH"
 
+          # Some callers still trigger the workflow with ios_path='.' even when the
+          # actual native project lives in ./ios. Fall back automatically so the
+          # workflow works for Tuist-based repositories from Windows as well.
+          if [ ! -f "Project.swift" ] && [ ! -f "Tuist.swift" ] && [ -z "$(find . -maxdepth 1 -name '*.xcodeproj' -o -name '*.xcworkspace' | head -1)" ]; then
+            if [ -d "ios" ] && { [ -f "ios/Project.swift" ] || [ -f "ios/Tuist.swift" ] || [ -n "$(find ios -maxdepth 1 -name '*.xcodeproj' -o -name '*.xcworkspace' | head -1)" ]; }; then
+              echo "No iOS project found at '$IOS_PATH'. Falling back to nested ./ios directory."
+              cd ios
+            fi
+          fi
+
           # Generate Xcode project when the repo uses Tuist
           if [ -f "Project.swift" ] || [ -f "Tuist.swift" ]; then
             echo "Generating Xcode project with Tuist..."
