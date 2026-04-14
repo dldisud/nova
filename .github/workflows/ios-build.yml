@@ -1,5 +1,4 @@
 name: iOS Build (Capacitor)
-
 on:
   workflow_dispatch:
     inputs:
@@ -7,87 +6,46 @@ on:
         description: 'Unique build identifier'
         required: true
         type: string
-
 jobs:
   build:
     runs-on: macos-14
     timeout-minutes: 30
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.2'
-
       - name: Sync Capacitor
-        run: |
-          echo "Syncing Capacitor..."
-          npx cap sync ios
-          echo "Contents of ios/App:"
-          ls -la ios/App
-          echo "Checking workspace:"
-          ls -la ios/App/*.xcworkspace || echo "No workspace found"
-          ls -la ios/App/*.xcodeproj || echo "No project found"
-
+        run: npx cap sync ios
       - name: Build App
         run: |
-          set -x
+          set -e
           cd ios/App
-          
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
-          
-          echo "Building with xcodebuild..."
-          xcodebuild -resolvePackageDependencies \
-            -workspace App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -destination 'generic/platform=iOS Simulator'
-            
-          xcodebuild build \
-            -workspace App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -destination 'generic/platform=iOS Simulator' \
-            -derivedDataPath "$DERIVED_DATA_PATH" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            ONLY_ACTIVE_ARCH=YES \
-            COMPILER_INDEX_STORE_ENABLE=NO
-          
-          echo "Searching for app..."
-          APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -type d | grep -v "Package.swift" | head -1)
-          echo "Found app: $APP_PATH"
-          
+          xcodebuild -resolvePackageDependencies -workspace App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS Simulator'
+          xcodebuild build -workspace App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath "$DERIVED_DATA_PATH" CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=YES COMPILER_INDEX_STORE_ENABLE=NO
+          APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -type d | head -1)
           if [ -z "$APP_PATH" ]; then
             echo "Error: No .app found."
-            find "$DERIVED_DATA_PATH" -name "*.app" -type d
             exit 1
           fi
-          
           cd ../..
           mkdir -p build/Payload
           cp -R "$APP_PATH" build/Payload/
           cd build
           zip -rq "${{ inputs.build_id }}.ipa" Payload
           rm -rf Payload
-          echo "Created IPA: build/${{ inputs.build_id }}.ipa"
-          ls -lh *.ipa
-
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
