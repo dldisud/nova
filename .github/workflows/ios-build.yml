@@ -10,47 +10,54 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Install npm dependencies
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '16.2'
 
       - name: Sync Capacitor
-        run: npx cap sync
-
-      - name: Build IPA
-        env:
-          BUILD_ID: ${{ inputs.build_id }}
         run: |
-          set -e
+          echo "Syncing Capacitor..."
+          npx cap sync ios
+          echo "Contents of ios/App:"
+          ls -la ios/App
+          echo "Checking workspace:"
+          ls -la ios/App/*.xcworkspace || echo "No workspace found"
+          ls -la ios/App/*.xcodeproj || echo "No project found"
+
+      - name: Build App
+        run: |
+          set -x
           cd ios/App
           
-          echo "=== Listing files ==="
-          ls -la
-          
-          echo "=== Checking workspace ==="
-          ls -la *.xcworkspace || echo "No workspace found"
-          ls -la *.xcodeproj || echo "No project found"
-          
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
-
-          echo "=== Starting xcodebuild ==="
-          xcodebuild \
+          
+          echo "Building with xcodebuild..."
+          xcodebuild -resolvePackageDependencies \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS Simulator'
+            
+          xcodebuild build \
             -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
@@ -60,30 +67,31 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
             ONLY_ACTIVE_ARCH=YES \
-            build || { echo "xcodebuild failed with exit code $?"; exit 1; }
-
-          echo "=== Searching for .app ==="
-          APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -type d | head -1)
+            COMPILER_INDEX_STORE_ENABLE=NO
+          
+          echo "Searching for app..."
+          APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -type d | grep -v "Package.swift" | head -1)
           echo "Found app: $APP_PATH"
-
-          if [ -n "$APP_PATH" ]; then
-            cd ../..
-            mkdir -p build/Payload
-            cp -R "$APP_PATH" build/Payload/
-            cd build
-            zip -rq "${BUILD_ID}.ipa" Payload
-            rm -rf Payload
-            echo "Created IPA: build/${BUILD_ID}.ipa"
-          else
-            echo "Error: No .app found in DerivedData"
-            find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null || true
+          
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: No .app found."
+            find "$DERIVED_DATA_PATH" -name "*.app" -type d
             exit 1
           fi
+          
+          cd ../..
+          mkdir -p build/Payload
+          cp -R "$APP_PATH" build/Payload/
+          cd build
+          zip -rq "${{ inputs.build_id }}.ipa" Payload
+          rm -rf Payload
+          echo "Created IPA: build/${{ inputs.build_id }}.ipa"
+          ls -lh *.ipa
 
-      - name: Upload IPA artifact
+      - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ipa
+          name: ios-ipa
           path: build/*.ipa
-          retention-days: 7
+          retention-days: 5
           if-no-files-found: error
