@@ -59,7 +59,9 @@ jobs:
       - name: Detect project type
         id: detect
         run: |
-          if [ -f "pubspec.yaml" ]; then
+          if [ -f "ios/Project.swift" ] || [ -f "$IOS_PATH/Project.swift" ]; then
+            echo "type=tuist" >> $GITHUB_OUTPUT
+          elif [ -f "pubspec.yaml" ]; then
             echo "type=flutter" >> $GITHUB_OUTPUT
           elif [ -f "package.json" ] && grep -q '"expo"' package.json; then
             echo "type=expo" >> $GITHUB_OUTPUT
@@ -68,6 +70,14 @@ jobs:
           else
             echo "type=native" >> $GITHUB_OUTPUT
           fi
+
+      - name: Setup Tuist
+        if: steps.detect.outputs.type == 'tuist'
+        run: |
+          curl -Ls https://install.tuist.io | bash
+          cd "$IOS_PATH"
+          tuist install
+          tuist generate
 
       - name: Setup Flutter
         if: steps.detect.outputs.type == 'flutter'
