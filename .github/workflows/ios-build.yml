@@ -1,10 +1,12 @@
 name: iOS Build (Capacitor)
 on:
+  push:
+    branches: [ master ]
   workflow_dispatch:
     inputs:
       build_id:
         description: 'Unique build identifier'
-        required: true
+        required: false
         type: string
 jobs:
   build:
@@ -44,7 +46,7 @@ jobs:
           mkdir -p build/Payload
           cp -R "$APP_PATH" build/Payload/
           cd build
-          zip -rq "${{ inputs.build_id }}.ipa" Payload
+          zip -rq "${{ inputs.build_id || github.sha }}.ipa" Payload
           rm -rf Payload
       - name: Upload IPA
         uses: actions/upload-artifact@v4
