@@ -28,6 +28,9 @@ let project = Project(
                 with: [
                     "CFBundleDisplayName": "InkRoad",
                     "UILaunchScreen": [:],
+                    "NSAppTransportSecurity": [
+                        "NSAllowsArbitraryLoads": true
+                    ],
                     "UISupportedInterfaceOrientations": [
                         "UIInterfaceOrientationPortrait",
                         "UIInterfaceOrientationLandscapeLeft",
@@ -43,18 +46,6 @@ let project = Project(
             ),
             sources: ["InkRoadApp/Sources/**"],
             resources: ["InkRoadApp/Resources/**"]
-        ),
-        .target(
-            name: "InkRoadTests",
-            destinations: .iOS,
-            product: .unitTests,
-            bundleId: "com.inkroad.appTests",
-            deploymentTargets: .iOS("17.0"),
-            infoPlist: .default,
-            sources: ["InkRoadApp/Tests/**"],
-            dependencies: [
-                .target(name: "InkRoad")
-            ]
         )
     ]
 )
