@@ -1,13 +1,12 @@
 {
-  "project": "nova",
+  "project": "inkroad",
   "platform": "ios",
   "github": {
     "owner": "dldisud",
     "repo": "nova"
   },
   "ios": {
-    "path": "ios",
-    "scheme": "InkRoad"
+    "path": "ios/App"
   },
   "flutter": {
     "watch": {}
