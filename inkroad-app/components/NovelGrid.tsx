@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { novelGridData, NovelData } from '../data/dummyHome';
+
+import { Link } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const COLUMN_COUNT = 2;
@@ -15,11 +17,13 @@ export default function NovelGrid() {
       <Text style={styles.sectionTitle}>인기 상승작</Text>
       <View style={styles.grid}>
         {novelGridData.map((novel: NovelData) => (
-          <View key={novel.id} style={styles.gridItem}>
-            <Image source={{ uri: novel.coverUrl }} style={styles.coverImage} />
-            <Text style={styles.title} numberOfLines={1}>{novel.title}</Text>
-            <Text style={styles.author} numberOfLines={1}>{novel.author}</Text>
-          </View>
+          <Link key={novel.id} href={`/novel/${novel.id}`} asChild>
+            <TouchableOpacity style={styles.gridItem} activeOpacity={0.8}>
+              <Image source={{ uri: novel.coverUrl }} style={styles.coverImage} />
+              <Text style={styles.title} numberOfLines={1}>{novel.title}</Text>
+              <Text style={styles.author} numberOfLines={1}>{novel.author}</Text>
+            </TouchableOpacity>
+          </Link>
         ))}
       </View>
     </View>

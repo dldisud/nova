@@ -1,21 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { heroCarouselData, NovelData } from '../data/dummyHome';
 
 const { width } = Dimensions.get('window');
+
+import { Link } from 'expo-router';
 
 // We want the card to take up almost the full width, leaving a bit of margin
 const CARD_WIDTH = width - 32;
 
 export default function HeroCarousel() {
   const renderItem = ({ item }: { item: NovelData }) => (
-    <View style={styles.cardContainer}>
-      <Image source={{ uri: item.coverUrl }} style={styles.image} />
-      <View style={styles.overlay}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.author}>{item.author}</Text>
-      </View>
-    </View>
+    <Link href={`/novel/${item.id}`} asChild>
+      <TouchableOpacity activeOpacity={0.9}>
+        <View style={styles.cardContainer}>
+          <Image source={{ uri: item.coverUrl }} style={styles.image} />
+          <View style={styles.overlay}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.author}>{item.author}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Link>
   );
 
   return (
