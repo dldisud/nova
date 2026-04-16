@@ -60,6 +60,11 @@ jobs:
         run: |
           cd inkroad-app
           npx expo prebuild --platform ios --no-install
+      - name: Hardcode Metro IP
+        run: |
+          cd inkroad-app/ios/inkroadapp
+          # React Native Packager를 GitHub Actions 환경이 아닌 사용자 로컬 PC IP로 연결하도록 강제 설정
+          sed -i '' 's|return \[\[RCTBundleURLProvider sharedSettings\].*;|return \[NSURL URLWithString:@"http://192.168.45.59:8081/.expo/.virtual-metro-entry.bundle?platform=ios\&dev=true\&minify=false"\];|g' AppDelegate.mm
       - name: Install CocoaPods
         run: |
           cd inkroad-app/ios
