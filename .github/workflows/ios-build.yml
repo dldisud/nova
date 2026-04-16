@@ -8,6 +8,14 @@ on:
         description: 'Unique build identifier'
         required: false
         type: string
+      scheme:
+        description: 'Scheme to build'
+        required: false
+        type: string
+      clean:
+        description: 'Clean build'
+        required: false
+        type: boolean
 jobs:
   build:
     runs-on: macos-14
