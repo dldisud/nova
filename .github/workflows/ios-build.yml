@@ -62,27 +62,13 @@ jobs:
           npx expo prebuild --platform ios --no-install
       - name: Hardcode Metro IP
         run: |
-          cd inkroad-app/ios
-          echo "=== Listing all files ==="
-          find . -name "AppDelegate*" -o -name "*.swift" -o -name "*.mm" -o -name "*.m" | head -30
-          echo "=== Setting bundler host in Info.plist ==="
-          # Find the app's Info.plist
-          INFO_PLIST=$(find . -path "*/inkroadapp/Info.plist" -o -path "*/inkroad-app/Info.plist" | head -n 1)
-          if [ -z "$INFO_PLIST" ]; then
-            INFO_PLIST=$(find . -name "Info.plist" -not -path "*/Pods/*" | head -n 1)
-          fi
-          echo "Found Info.plist at: $INFO_PLIST"
-          # Inject the metro bundler host directly into Info.plist
-          /usr/libexec/PlistBuddy -c "Add :RCTBundleURLHost string 192.168.45.59" "$INFO_PLIST" 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Set :RCTBundleURLHost 192.168.45.59" "$INFO_PLIST"
-          /usr/libexec/PlistBuddy -c "Add :RCTBundleURLPort string 8081" "$INFO_PLIST" 2>/dev/null || \
-          /usr/libexec/PlistBuddy -c "Set :RCTBundleURLPort 8081" "$INFO_PLIST"
-          # Also try patching AppDelegate.swift if it exists
-          SWIFT_DELEGATE=$(find . -name "AppDelegate.swift" -not -path "*/Pods/*" | head -n 1)
-          if [ -n "$SWIFT_DELEGATE" ]; then
-            echo "Found Swift AppDelegate at: $SWIFT_DELEGATE"
-            cat "$SWIFT_DELEGATE"
-          fi
+          cd inkroad-app/ios/inkroadapp
+          echo "=== Before patch ==="
+          grep -n "bundleURL" AppDelegate.swift
+          # AppDelegate.swift의 bundleURL() 메서드에서 jsLocation을 PC IP로 강제 지정
+          sed -i '' 's|return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")|RCTBundleURLProvider.sharedSettings().jsLocation = "192.168.45.59"; return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")|' AppDelegate.swift
+          echo "=== After patch ==="
+          grep -n "bundleURL\|jsLocation" AppDelegate.swift
       - name: Install CocoaPods
         run: |
           cd inkroad-app/ios
