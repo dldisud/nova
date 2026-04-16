@@ -1,14 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { StyleSheet, ScrollView } from 'react-native';
+import HomeHeader from '../../components/HomeHeader';
+import HeroCarousel from '../../components/HeroCarousel';
+import GenreChips from '../../components/GenreChips';
+import NovelGrid from '../../components/NovelGrid';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>홈 (Home)</Text>
-    </View>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <HomeHeader />
+      <HeroCarousel />
+      <GenreChips />
+      <NovelGrid />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#0e0d12', // INKROAD dark background
+  },
 });
