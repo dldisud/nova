@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { getNovelById } from '../../data/dummyHome';
 
@@ -54,6 +54,13 @@ export default function NovelDetail() {
           </View>
         </View>
       </ScrollView>
+      
+      {/* Floating Action Bar */}
+      <View style={styles.actionBar}>
+        <TouchableOpacity style={styles.actionButton} activeOpacity={0.8}>
+          <Text style={styles.actionButtonText}>첫화 보기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -152,5 +159,29 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 24,
     color: '#dddddd',
+  },
+  actionBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#1a1a1a',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 32, // Accommodates safe area
+    borderTopWidth: 1,
+    borderTopColor: '#333',
+  },
+  actionButton: {
+    backgroundColor: '#007AFF', // Primary Blue
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+  },
+  actionButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
   }
 });
