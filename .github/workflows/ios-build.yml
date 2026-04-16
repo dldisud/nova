@@ -1,4 +1,4 @@
-name: iOS Build (Expo React Native)
+name: iOS Build (Capacitor)
 on:
   push:
     branches: [ master, main ]
