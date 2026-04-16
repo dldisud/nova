@@ -89,17 +89,13 @@ jobs:
           PODFILE_PATH=$(find ios -maxdepth 4 -name Podfile -print -quit)
 
           if [ -z "$PODFILE_PATH" ]; then
-            echo "Podfile not found after sync. Recreating iOS shell once..."
-            rm -rf ios
-            npx cap add ios
-            npx cap sync ios
             PODFILE_PATH=$(find ios -maxdepth 4 -name Podfile -print -quit)
           fi
 
           if [ -z "$PODFILE_PATH" ]; then
-            echo "Error: Podfile still missing after iOS shell recreation."
-            find ios -maxdepth 4 -print || true
-            exit 1
+            echo "No Podfile found. Continuing without CocoaPods (likely SPM-based Capacitor shell)."
+            find ios -maxdepth 4 \( -name "Podfile" -o -name "*.xcodeproj" -o -name "*.xcworkspace" \) -print || true
+            exit 0
           fi
 
           POD_DIR=$(dirname "$PODFILE_PATH")
@@ -111,26 +107,38 @@ jobs:
         run: |
           set -e
           WORKSPACE_PATH=$(find ios -maxdepth 4 -name "*.xcworkspace" -print -quit)
-          if [ -z "$WORKSPACE_PATH" ]; then
-            echo "Error: No xcworkspace found."
-            find ios -maxdepth 4 -print || true
-            exit 1
-          fi
-
-          IOS_PROJECT_DIR=$(dirname "$WORKSPACE_PATH")
-          WORKSPACE_NAME=$(basename "$WORKSPACE_PATH")
+          PROJECT_PATH=$(find ios -maxdepth 4 -name "*.xcodeproj" -print -quit)
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
           SCHEME_NAME="${{ inputs.scheme }}"
           CONFIGURATION_NAME="${{ inputs.configuration }}"
 
+          if [ -n "$WORKSPACE_PATH" ]; then
+            IOS_PROJECT_DIR=$(dirname "$WORKSPACE_PATH")
+            CONTAINER_NAME=$(basename "$WORKSPACE_PATH")
+            CONTAINER_FLAG="-workspace"
+            DEFAULT_SCHEME=$(basename "$WORKSPACE_PATH" .xcworkspace)
+          elif [ -n "$PROJECT_PATH" ]; then
+            IOS_PROJECT_DIR=$(dirname "$PROJECT_PATH")
+            CONTAINER_NAME=$(basename "$PROJECT_PATH")
+            CONTAINER_FLAG="-project"
+            DEFAULT_SCHEME=$(basename "$PROJECT_PATH" .xcodeproj)
+          else
+            echo "Error: No xcworkspace or xcodeproj found."
+            find ios -maxdepth 4 -print || true
+            exit 1
+          fi
+
           cd "$IOS_PROJECT_DIR"
 
           if [ -z "$SCHEME_NAME" ] || [ "$SCHEME_NAME" = "." ]; then
-            SCHEME_NAME=$(basename "$WORKSPACE_NAME" .xcworkspace)
+            SCHEME_NAME="$DEFAULT_SCHEME"
           fi
 
+          echo "Building with $CONTAINER_FLAG $CONTAINER_NAME"
+          echo "Scheme: $SCHEME_NAME"
+
           xcodebuild build \
-            -workspace "$WORKSPACE_NAME" \
+            "$CONTAINER_FLAG" "$CONTAINER_NAME" \
             -scheme "$SCHEME_NAME" \
             -configuration "$CONFIGURATION_NAME" \
             -destination 'generic/platform=iOS' \
