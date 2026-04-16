@@ -9,6 +9,31 @@ on:
         description: Unique build identifier
         required: true
         type: string
+      ios_path:
+        description: Path to iOS project
+        required: false
+        type: string
+        default: "ios/App"
+      scheme:
+        description: Xcode scheme to build
+        required: false
+        type: string
+        default: "App"
+      use_signing:
+        description: Enable code signing
+        required: false
+        type: boolean
+        default: false
+      configuration:
+        description: Build configuration
+        required: false
+        type: string
+        default: "Release"
+      flutter_version:
+        description: Flutter version
+        required: false
+        type: string
+        default: ""
 
 jobs:
   build:
@@ -31,9 +56,17 @@ jobs:
 
       - name: Sync mob web assets into www
         run: |
-          rm -rf www
-          mkdir -p www
-          rsync -a --delete mob/ www/
+          if [ -d mob ]; then
+            rm -rf www
+            mkdir -p www
+            rsync -a --delete mob/ www/
+            echo "Synced mob/ -> www/"
+          elif [ -d www ]; then
+            echo "mob/ not found, using checked-in www/ as-is"
+          else
+            echo "Error: neither mob/ nor www/ exists"
+            exit 1
+          fi
           test -f www/index.html
           test -f www/homepage.html
 
@@ -59,11 +92,13 @@ jobs:
           set -e
           cd ios/App
           DERIVED_DATA_PATH="${GITHUB_WORKSPACE}/DerivedData"
+          SCHEME_NAME="${{ inputs.scheme }}"
+          CONFIGURATION_NAME="${{ inputs.configuration }}"
 
           xcodebuild build \
             -workspace "App.xcworkspace" \
-            -scheme "App" \
-            -configuration Release \
+            -scheme "$SCHEME_NAME" \
+            -configuration "$CONFIGURATION_NAME" \
             -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CODE_SIGNING_ALLOWED=NO \
