@@ -1,14 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
+import LibraryScreen from '../../src/mobile/screens/LibraryScreen';
 
-export default function LibraryScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>서재 (My Library)</Text>
-    </View>
-  );
+export default function Library() {
+  return <LibraryScreen />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 20 },
-});
