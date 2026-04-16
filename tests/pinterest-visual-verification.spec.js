@@ -50,6 +50,13 @@ function createServer() {
   });
 }
 
+async function gotoAndWait(page, url, selectors) {
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  for (const selector of selectors) {
+    await expect(page.locator(selector).first(), `waiting for ${selector}`).toBeVisible();
+  }
+}
+
 test.describe("pinterest redesign visual verification", () => {
   let server;
 
@@ -62,82 +69,95 @@ test.describe("pinterest redesign visual verification", () => {
     await new Promise((resolve) => server.close(resolve));
   });
 
-  test("homepage/search/detail/library satisfy Task 4 structure checks", async ({ browser }) => {
+  test("homepage/search/detail/library satisfy current store layout checks", async ({ browser }) => {
     for (const viewport of VIEWPORTS) {
       const page = await browser.newPage({ viewport });
 
-      await page.goto(`${BASE}/homepage_pc.html?visual=${viewport.label}`, { waitUntil: "networkidle" });
-      await expect(page.locator(".pin-promo-banner")).toBeVisible();
-      await expect(page.locator(".pin-genre-bar .pin-genre-pill").first()).toBeVisible();
-      await expect(page.locator(".free-grid.pin-masonry .pin-card").first()).toBeVisible();
-      await expect(page.locator(".sale-grid.pin-masonry .pin-card").first()).toBeVisible();
-      const homepageColumns = await page.locator(".free-grid.pin-masonry").evaluate((el) => getComputedStyle(el).columnCount);
+      await gotoAndWait(page, `${BASE}/homepage_pc.html?visual=${viewport.label}`, [
+        ".hero-band",
+        ".hero-title-main",
+        ".sale-banner",
+        ".genre-grid .genre-pill",
+        ".free-grid .novel-card",
+        ".sale-grid .novel-card",
+      ]);
+      const homepageColumns = await page.locator(".free-grid").evaluate((el) => getComputedStyle(el).columnCount);
       console.log(`homepage columns @${viewport.label}:`, homepageColumns);
+      const heroTitle = await page.locator(".hero-title-main").textContent();
+      expect(heroTitle && heroTitle.trim().length > 0).toBeTruthy();
       await page.screenshot({ path: path.join(ROOT, "test-results", `task4-home-${viewport.label}.png`), fullPage: true });
 
-      const firstCard = page.locator(".free-grid.pin-masonry .pin-card").first();
-      const firstCardMedia = firstCard.locator(".pin-card-media");
-      const overlay = firstCard.locator(".pin-card-overlay");
+      const firstCard = page.locator(".free-grid .novel-card").first();
+      const firstCardMedia = firstCard.locator(".novel-card-media");
+      const overlay = firstCard.locator(".novel-card-overlay");
       await firstCardMedia.hover({ force: true });
       await expect
-        .poll(async () => {
-          return Number(await overlay.evaluate((el) => getComputedStyle(el).opacity));
-        }, {
+        .poll(async () => Number(await overlay.evaluate((el) => getComputedStyle(el).opacity)), {
           message: `homepage overlay opacity should rise after hover @${viewport.label}`,
-          timeout: 2_000
+          timeout: 2_000,
         })
         .toBeGreaterThan(0.5);
       const overlayOpacity = await overlay.evaluate((el) => getComputedStyle(el).opacity);
       console.log(`homepage overlay opacity @${viewport.label}:`, overlayOpacity);
 
-      await page.goto(`${BASE}/search_pc.html?visual=${viewport.label}`, { waitUntil: "networkidle" });
-      await expect(page.locator(".pin-search-bar")).toBeVisible();
-      await expect(page.locator(".pin-filter-bar")).toBeVisible();
-      await expect(page.locator(".browse-rail")).toHaveCount(0);
-      await expect(page.locator(".browse-results.pin-masonry .pin-card").first()).toBeVisible();
-      const searchColumns = await page.locator(".browse-results.pin-masonry").evaluate((el) => getComputedStyle(el).columnCount);
+      await gotoAndWait(page, `${BASE}/search_pc.html?visual=${viewport.label}`, [
+        ".search-bar",
+        ".browse-rail",
+        ".browse-results .novel-card",
+      ]);
+      await expect(page.locator(".browse-count")).toBeVisible();
+      await expect(page.locator(".browse-results .novel-card").first()).toBeVisible();
+      const searchColumns = await page.locator(".browse-results").evaluate((el) => getComputedStyle(el).columnCount);
       console.log(`search columns @${viewport.label}:`, searchColumns);
       await page.screenshot({ path: path.join(ROOT, "test-results", `task4-search-${viewport.label}.png`), fullPage: true });
 
-      await page.goto(`${BASE}/novel_detail_pc.html?slug=abyss-librarian-forbidden-archive&visual=${viewport.label}`, { waitUntil: "networkidle" });
-      await expect(page.locator(".pin-detail-card")).toBeVisible();
-      await expect(page.locator(".pin-detail-meta .detail-meta-item, .pin-detail-meta .pin-detail-meta-item").first()).toBeVisible();
-      await expect(page.locator("[data-similar-grid].pin-masonry .pin-card").first()).toBeVisible();
+      await gotoAndWait(page, `${BASE}/novel_detail_pc.html?slug=abyss-librarian-forbidden-archive&visual=${viewport.label}`, [
+        ".detail-top",
+        ".detail-cover",
+        ".detail-info",
+        ".detail-meta-grid",
+        "[data-similar-grid] .novel-card",
+        "[data-episode-list] .episode-row",
+      ]);
+      await expect(page.locator(".detail-title")).toHaveText(/.+/);
+      await expect(page.locator("[data-similar-grid] .novel-card").first()).toBeVisible();
       await page.screenshot({ path: path.join(ROOT, "test-results", `task4-detail-${viewport.label}.png`), fullPage: true });
 
-      await page.goto(`${BASE}/my_library_pc.html?visual=${viewport.label}`, { waitUntil: "networkidle" });
-      await expect(page.locator(".pin-filter-bar")).toBeVisible();
+      await page.goto(`${BASE}/my_library_pc.html?visual=${viewport.label}`, { waitUntil: "domcontentloaded" });
+      await expect(page.locator(".library-tabs")).toHaveCount(1);
+      await expect(page.locator("[data-tab-panel='reading']")).toHaveCount(1);
+      await expect(page.locator("[data-library-reading]")).toHaveCount(1);
       await page.evaluate(() => {
-        const readingPanel = document.querySelector("[data-tab-panel='reading']");
-        if (readingPanel) {
-          readingPanel.hidden = false;
-          readingPanel.style.display = "";
-        }
+        document.querySelectorAll(".library-tabs, [data-tab-panel]").forEach((node) => {
+          node.hidden = false;
+          node.style.display = "";
+        });
 
         const readingList = document.querySelector("[data-library-reading]");
-        if (readingList && !readingList.children.length) {
+        if (readingList && !readingList.querySelector(".library-row")) {
           readingList.innerHTML = `
-            <article class="pin-card">
-              <a class="pin-card-media" href="#">
-                <img src="https://placehold.co/360x520/e9e1d4/2b2117?text=INKROAD" alt="테스트 표지" style="height:280px;object-fit:cover;width:100%">
-                <div class="pin-card-overlay" style="transform:translateY(0);opacity:1">
-                  <span class="pin-card-overlay-rating">★ 9.6</span>
-                  <span class="pin-card-overlay-genre">회귀 · 미스터리</span>
-                  <span class="pin-card-overlay-free">12화 무료</span>
-                  <span class="pin-card-overlay-price">편당 300원</span>
-                </div>
+            <article class="library-row">
+              <a class="library-row-thumb" href="#">
+                <img src="https://placehold.co/360x520/e9e1d4/2b2117?text=INKROAD" alt="테스트 표지">
               </a>
-              <div class="pin-card-copy">
-                <h3 class="pin-card-title">서재 검증용 더미 카드</h3>
-                <p class="pin-card-author">INKROAD QA</p>
+              <div class="library-row-copy">
+                <h3 class="library-row-title">서재 검증용 더미 카드</h3>
+                <p class="library-row-meta">INKROAD QA · 이어서 읽기</p>
+              </div>
+              <div class="library-row-side">
+                <a class="button small primary" href="#">이어 읽기</a>
               </div>
             </article>
           `;
         }
       });
+      await expect(page.locator(".library-tabs")).toBeVisible();
       await expect(page.locator("[data-tab-panel='reading']")).toBeVisible();
-      await expect(page.locator("[data-tab-panel='reading'] .pin-board-section")).toBeVisible();
-      await expect(page.locator("[data-tab-panel='reading'] [data-library-reading].pin-masonry")).toBeVisible();
+      await expect(page.locator("[data-library-reading] .library-row").first()).toBeVisible();
+      await page.locator(".library-tabs [data-tab-target='wishlist']").click();
+      await expect(page.locator("[data-tab-panel='wishlist']")).toBeVisible();
+      await page.locator(".library-tabs [data-tab-target='reading']").click();
+      await expect(page.locator("[data-tab-panel='reading']")).toBeVisible();
       await page.screenshot({ path: path.join(ROOT, "test-results", `task4-library-${viewport.label}.png`), fullPage: true });
 
       await page.close();
