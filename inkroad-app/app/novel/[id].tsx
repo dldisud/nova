@@ -34,7 +34,24 @@ export default function NovelDetail() {
         </View>
 
         <View style={styles.content}>
-          <Text style={{ color: 'white' }}>Skeleton Loaded for {novel.title}</Text>
+          <View style={styles.heroSection}>
+            <Image source={{ uri: novel.coverUrl }} style={styles.frontCover} />
+            <View style={styles.heroInfo}>
+              <Text style={styles.title}>{novel.title}</Text>
+              <Text style={styles.author}>{novel.author}</Text>
+              <View style={styles.tagsContainer}>
+                {novel.genre && <Text style={styles.tag}>{novel.genre}</Text>}
+                {novel.views && <Text style={styles.statTag}>조회수 {novel.views}만</Text>}
+              </View>
+            </View>
+          </View>
+          
+          <View style={styles.synopsisContainer}>
+            <Text style={styles.sectionHeader}>작품 소개</Text>
+            <Text style={styles.synopsisText} numberOfLines={4}>
+              {novel.synopsis || '내용이 없습니다.'}
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -44,14 +61,14 @@ export default function NovelDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Pure dark mode background
+    backgroundColor: '#121212', 
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 120, // Leave room for fixed action bar
   },
   backdropContainer: {
     width: width,
-    height: height * 0.4,
+    height: height * 0.45,
     position: 'absolute',
     top: 0,
   },
@@ -62,11 +79,78 @@ const styles = StyleSheet.create({
   },
   backdropOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(18, 18, 18, 0.7)', // Fades the backdrop back into the dark theme
+    backgroundColor: 'rgba(18, 18, 18, 0.8)', // Fades the backdrop back into the dark theme
   },
   content: {
     marginTop: height * 0.15, // Pushes content down over the backdrop
     paddingHorizontal: 20,
     position: 'relative',
+  },
+  heroSection: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 30,
+  },
+  frontCover: {
+    width: 120,
+    height: 175,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  heroInfo: {
+    flex: 1,
+    marginLeft: 16,
+    paddingBottom: 8,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  author: {
+    fontSize: 16,
+    color: '#bbbbbb',
+    marginBottom: 12,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  tag: {
+    backgroundColor: '#333333',
+    color: '#ffffff',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    overflow: 'hidden',
+    fontSize: 12,
+  },
+  statTag: {
+    backgroundColor: 'rgba(233, 30, 99, 0.2)', // Pinkish tint
+    color: '#E91E63',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    overflow: 'hidden',
+    fontSize: 12,
+  },
+  synopsisContainer: {
+    marginTop: 10,
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#222',
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 12,
+  },
+  synopsisText: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: '#dddddd',
   }
 });
