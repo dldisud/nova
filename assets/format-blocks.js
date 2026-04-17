@@ -44,16 +44,18 @@
   function parseBlocks(body) {
     if (!body) return '';
 
-    var text = body.replace(/\[루비:([^\|]+)\|([^\]]+)\]/g, function (_, main, ruby) {
-      return '<ruby>' + esc(main.trim()) + '<rt>' + esc(ruby.trim()) + '</rt></ruby>';
-    });
-
-    return text.split(/\n{2,}/).filter(Boolean).map(function (para) {
+    return body.split(/\n{2,}/).filter(Boolean).map(function (para) {
       var trimmed = para.trim();
       if (trimmed.startsWith('[상태창:') && trimmed.endsWith(']')) return renderStatusBlock(trimmed);
       if (trimmed.startsWith('[시스템:') && trimmed.endsWith(']')) return renderSystemBlock(trimmed);
       if (trimmed.startsWith('[채팅:') && trimmed.endsWith(']')) return renderChatBlock(trimmed);
-      return '<p>' + para.replace(/\n/g, '<br>') + '</p>';
+
+      // 일반 단락: HTML 이스케이프 후 루비 인라인 치환
+      var escaped = esc(para).replace(/\n/g, '<br>');
+      var withRuby = escaped.replace(/\[루비:([^\|]+)\|([^\]]+)\]/g, function (_, main, ruby) {
+        return '<ruby>' + esc(main.trim()) + '<rt>' + esc(ruby.trim()) + '</rt></ruby>';
+      });
+      return '<p>' + withRuby + '</p>';
     }).join('');
   }
 
