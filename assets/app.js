@@ -717,7 +717,7 @@
       localStorage.setItem(store.history, JSON.stringify(history.slice(0, 8)));
     } catch (error) {}
 
-    const articleHtml = body ? body.split(/\n{2,}/).filter(Boolean).map(function (paragraph) { return "<p>" + esc(paragraph).replace(/\n/g, "<br>") + "</p>"; }).join("") : "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || "") + "</p><p><a href='" + detailHref(novel.slug) + "'>작품 상세로 돌아가 구매 정보를 확인하세요.</a></p>";
+    const articleHtml = body ? parseBlocks(body) : "<p>이 회차는 구매 후 열람할 수 있습니다.</p><p>" + esc(selected.teaser || "") + "</p><p><a href='" + detailHref(novel.slug) + "'>작품 상세로 돌아가 구매 정보를 확인하세요.</a></p>";
 
     if (isPc) {
       if (q(".topbar .brand-name")) q(".topbar .brand-name").textContent = novel.title;
