@@ -6197,3 +6197,107 @@ body.store-light::before {
     text-align: center;
   }
 }
+
+/* === Genre Format Engine === */
+ruby rt {
+  font-size: 10px;
+  color: rgba(240, 230, 211, 0.45);
+  letter-spacing: 0.5px;
+}
+
+.fmt-status,
+.fmt-system {
+  background: rgba(10, 15, 20, 0.9);
+  border: 1px solid rgba(80, 160, 255, 0.2);
+  border-radius: 2px;
+  padding: 16px 20px;
+  position: relative;
+  margin: 24px 0;
+}
+
+.fmt-status::before,
+.fmt-status::after,
+.fmt-system::before,
+.fmt-system::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(80, 160, 255, 0.7);
+  border-style: solid;
+}
+
+.fmt-status::before,
+.fmt-system::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.fmt-status::after,
+.fmt-system::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+.fmt-status-header,
+.fmt-system-header {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(80, 160, 255, 0.7);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.fmt-status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.fmt-k {
+  font-size: 12px;
+  color: rgba(80, 160, 255, 0.55);
+}
+
+.fmt-v {
+  font-size: 13px;
+  color: #c8dcff;
+  font-weight: 700;
+}
+
+.fmt-system-body {
+  font-size: 14px;
+  color: rgba(200, 220, 255, 0.8);
+  line-height: 22px;
+}
+
+.fmt-chat {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 24px 0;
+}
+
+.fmt-chat-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 3px 0;
+}
+
+.fmt-chat-user {
+  font-size: 11px;
+  color: rgba(80, 160, 255, 0.6);
+  font-weight: 600;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+
+.fmt-chat-msg {
+  font-size: 13px;
+  color: rgba(240, 230, 211, 0.7);
+}
