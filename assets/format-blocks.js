@@ -33,8 +33,10 @@
   function renderChatBlock(para) {
     var content = para.slice('[채팅:'.length, -1);
     var rows = parseParams(content).map(function (p) {
-      return '<div class="fmt-chat-row"><span class="fmt-chat-user">' + esc(p.key) +
-        '</span><span class="fmt-chat-msg">' + esc(p.value) + '</span></div>';
+      var userSpan = p.key
+        ? '<span class="fmt-chat-user">' + esc(p.key) + '</span>'
+        : '';
+      return '<div class="fmt-chat-row">' + userSpan + '<span class="fmt-chat-msg">' + esc(p.value) + '</span></div>';
     }).join('');
     return '<div class="fmt-chat">' + rows + '</div>';
   }

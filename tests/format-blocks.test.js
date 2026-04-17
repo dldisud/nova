@@ -47,6 +47,12 @@ test('채팅: fmt-chat 블록', function () {
   assert(r.includes('와 저거 뭐임'), '메시지 없음');
 });
 
+test('채팅: 유저명 없는 항목 fallback', function () {
+  var r = parseBlocks('[채팅:유저1=메시지|메시지만]');
+  assert(!r.includes('class="fmt-chat-user"><'), 'fmt-chat-user 빈 span 있음');
+  assert(r.includes('메시지만'), '키 없는 메시지 없음');
+});
+
 // 일반 텍스트
 test('일반 텍스트: p 태그', function () {
   var r = parseBlocks('안녕하세요\n\n반갑습니다');
