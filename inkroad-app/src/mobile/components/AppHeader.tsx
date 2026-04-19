@@ -32,7 +32,7 @@ export function AppHeader({
               style={styles.iconButton}
               onPress={onBackPress ?? (() => router.back())}
             >
-              <MaterialIcons name="arrow-back" size={24} color={inkroadTheme.colors.text} />
+              <MaterialIcons name="arrow-back" size={24} color={inkroadTheme.colors.fg1} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.brand} onPress={() => router.push("/")}>
@@ -68,16 +68,16 @@ export function AppHeader({
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#080808",
+    backgroundColor: inkroadTheme.colors.bgHeader,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     height: 52,
     borderBottomWidth: 1,
-    borderBottomColor: inkroadTheme.colors.border,
+    borderBottomColor: inkroadTheme.colors.borderWhite,
     paddingHorizontal: 16,
-    backgroundColor: "#080808",
+    backgroundColor: inkroadTheme.colors.bgHeader,
   },
   leftSlot: {
     flex: 1.2,
@@ -114,13 +114,13 @@ const styles = StyleSheet.create({
   brandText: {
     fontSize: 15,
     fontWeight: "800",
-    color: inkroadTheme.colors.text,
+    color: inkroadTheme.colors.fg1,
     letterSpacing: -0.5,
   },
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: inkroadTheme.colors.text,
+    color: inkroadTheme.colors.fg1,
     letterSpacing: -0.4,
   },
   iconButton: {

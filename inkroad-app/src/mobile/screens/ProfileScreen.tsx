@@ -1,7 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useMemo } from "react";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "../components/AppHeader";
@@ -9,12 +9,22 @@ import { mockProfile } from "../data/mockInkroad";
 import { useAuthSession } from "../hooks/useAuthSession";
 import { inkroadTheme } from "../theme";
 
+const c = inkroadTheme.colors;
+const r = inkroadTheme.radius;
+
+type MenuItem = { label: string; route: string | null; creatorOnly?: boolean };
+
+const MENU_ITEMS: MenuItem[] = [
+  { label: "내 결제내역", route: "/payment" },
+  { label: "연출 서식 도우미", route: "/format-studio", creatorOnly: true },
+  { label: "알림 설정", route: null },
+  { label: "언어 · Language", route: null },
+  { label: "고객센터", route: null },
+];
+
 export default function ProfileScreen() {
   const router = useRouter();
   const { session, isLoadingSession } = useAuthSession();
-  const [notifications, setNotifications] = useState(mockProfile.notifications);
-  const [penName, setPenName] = useState("");
-  const [bio, setBio] = useState("");
 
   const profile = useMemo(() => {
     if (!session?.user) return null;
@@ -32,7 +42,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.shell}>
         <SafeAreaView edges={["top"]} />
-        <AppHeader title="내 정보" />
+        <AppHeader title="MY" showBack />
         <View style={styles.center}>
           <Text style={styles.helperText}>계정 정보를 불러오는 중입니다...</Text>
         </View>
@@ -44,11 +54,11 @@ export default function ProfileScreen() {
     return (
       <View style={styles.shell}>
         <SafeAreaView edges={["top"]} />
-        <AppHeader title="내 정보" />
+        <AppHeader title="MY" showBack />
         <View style={styles.center}>
           <Text style={styles.emptyTitle}>로그인이 필요해요</Text>
           <Text style={styles.helperText}>
-            MY 화면에서는 프로필 설정, 알림 설정, 계정 관리를 할 수 있습니다.
+            MY 화면에서는 프로필, 잔여 코인, 계정 관리를 확인할 수 있습니다.
           </Text>
           <TouchableOpacity style={styles.btnPrimary} onPress={() => router.push("/auth")}>
             <Text style={styles.btnPrimaryText}>로그인하기</Text>
@@ -58,105 +68,63 @@ export default function ProfileScreen() {
     );
   }
 
+  const initial = profile.name?.charAt(0) ?? "?";
+  const visibleMenuItems = MENU_ITEMS.filter((item) => !item.creatorOnly || profile.isCreator);
+
   return (
     <View style={styles.shell}>
       <SafeAreaView edges={["top"]} />
-      <AppHeader title="내 정보" />
-      
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Profile Header Card */}
-        <View style={styles.headerCard}>
-          <View style={styles.avatar}>
-            <MaterialIcons name="person" size={32} color={inkroadTheme.colors.accent} />
-          </View>
-          <View style={styles.infoBox}>
-            <Text style={styles.nameText} numberOfLines={1}>
-              {profile.name}
-            </Text>
-            <Text style={styles.emailText} numberOfLines={1}>
-              {profile.email}
-            </Text>
-          </View>
-        </View>
+      <AppHeader title="MY" showBack onBackPress={() => router.back()} />
 
-        {/* Profile Settings */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>프로필 설정</Text>
-          <View style={styles.formGroup}>
-            <View style={styles.field}>
-              <Text style={styles.label}>닉네임</Text>
-              <TextInput
-                style={styles.input}
-                value={penName}
-                onChangeText={setPenName}
-                placeholder="닉네임 입력"
-                placeholderTextColor="#4a4a4a"
-              />
-            </View>
-            <View style={styles.field}>
-              <Text style={styles.label}>소개</Text>
-              <TextInput
-                style={styles.input}
-                value={bio}
-                onChangeText={setBio}
-                placeholder="소개 문구 (선택)"
-                placeholderTextColor="#4a4a4a"
-              />
-            </View>
-            <TouchableOpacity style={styles.btnPrimary} onPress={() => Alert.alert("알림", "저장했습니다.")}>
-              <Text style={styles.btnPrimaryText}>저장하기</Text>
+      <ScrollView contentContainerStyle={styles.content}>
+
+        {/* Profile card */}
+        <TouchableOpacity activeOpacity={0.8} style={styles.profileCard}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initial}</Text>
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.nameText} numberOfLines={1}>{profile.name}</Text>
+            <Text style={styles.emailText} numberOfLines={1}>{profile.email}</Text>
+          </View>
+          <MaterialIcons name="chevron-right" size={20} color={c.fg3} />
+        </TouchableOpacity>
+
+        {/* Coin balance */}
+        <View style={styles.coinCard}>
+          <Text style={styles.coinKicker}>잔여 코인</Text>
+          <View style={styles.coinRow}>
+            <Text style={styles.coinAmount}>{mockProfile.coins?.toLocaleString() ?? "5,000"} G</Text>
+            <TouchableOpacity style={styles.chargeBtn} onPress={() => Alert.alert("충전", "코인 충전 기능")}>
+              <Text style={styles.chargeBtnText}>충전하기</Text>
             </TouchableOpacity>
           </View>
+          <Text style={styles.coinNote}>• 충전된 코인은 5년간 유효합니다.</Text>
         </View>
 
-        {/* Notifications */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>알림 설정</Text>
-          <View style={styles.togglesGroup}>
-            {[
-              { key: "comments", label: "댓글 알림" },
-              { key: "likes", label: "좋아요 알림" },
-              { key: "sales", label: "세일 알림" },
-            ].map((item) => (
-              <View key={item.key} style={styles.toggleRow}>
-                <Text style={styles.toggleLabel}>{item.label}</Text>
-                <Switch
-                  value={notifications[item.key as keyof typeof notifications]}
-                  onValueChange={(value) =>
-                    setNotifications((current) => ({ ...current, [item.key]: value }))
-                  }
-                  trackColor={{ false: "#333", true: inkroadTheme.colors.accent }}
-                  thumbColor="#fff"
-                />
-              </View>
-            ))}
-          </View>
-          <TouchableOpacity style={styles.btnPrimary} onPress={() => Alert.alert("알림", "알림 설정을 저장했습니다.")}>
-            <Text style={styles.btnPrimaryText}>알림 저장</Text>
+        {/* Menu list */}
+        <View style={styles.menuList}>
+          {visibleMenuItems.map((item, i) => (
+            <TouchableOpacity
+              key={item.label}
+              style={[styles.menuItem, i === visibleMenuItems.length - 1 && styles.menuItemLast]}
+              onPress={() => item.route ? router.push(item.route as any) : Alert.alert(item.label)}
+            >
+              <Text style={styles.menuLabel}>{item.label}</Text>
+              <MaterialIcons name="chevron-right" size={20} color={c.fg3} />
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity
+            style={[styles.menuItem, styles.menuItemLast]}
+            onPress={() => Alert.alert("로그아웃", "로그아웃하시겠습니까?", [
+              { text: "취소", style: "cancel" },
+              { text: "로그아웃", style: "destructive" },
+            ])}
+          >
+            <Text style={[styles.menuLabel, styles.menuLabelDanger]}>로그아웃</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Account Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>계정 관리</Text>
-          <View style={styles.actionsGroup}>
-            <TouchableOpacity 
-              style={[styles.btnBase, styles.btnGhost]} 
-              onPress={() => Alert.alert("알림", "로그아웃 기능")}
-            >
-              <Text style={styles.btnGhostText}>로그아웃</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.btnBase, styles.btnDanger]} 
-              onPress={() => Alert.alert("위험", "정말 탈퇴하시겠습니까?", [
-                { text: "취소", style: "cancel" },
-                { text: "탈퇴", style: "destructive" }
-              ])}
-            >
-              <Text style={styles.btnDangerText}>계정 탈퇴</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </ScrollView>
     </View>
   );
@@ -165,7 +133,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   shell: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: c.background,
   },
   center: {
     flex: 1,
@@ -177,154 +145,145 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 24,
     fontWeight: "800",
-    color: '#f0e6d3',
+    color: c.fg1,
   },
   helperText: {
     fontSize: 14,
     lineHeight: 22,
-    color: '#7a6f5f',
+    color: c.fg3,
     textAlign: "center",
   },
   content: {
-    padding: 16,
-    paddingBottom: 40,
+    padding: 20,
+    paddingBottom: 48,
+    gap: 16,
   },
-  /* Header Card */
-  headerCard: {
+
+  // Profile card
+  profileCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
-    padding: 20,
-    backgroundColor: '#151515',
+    gap: 14,
+    padding: 18,
+    backgroundColor: "rgba(255,255,255,0.04)",
     borderWidth: 1,
-    borderColor: 'rgba(191, 169, 122, 0.15)',
-    borderRadius: 16,
-    marginBottom: 20,
+    borderColor: c.borderWhite,
+    borderRadius: r.lg,
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'rgba(212, 168, 67, 0.15)',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: c.inkGold,
     alignItems: "center",
     justifyContent: "center",
   },
-  infoBox: {
+  avatarText: {
+    fontSize: 20,
+    fontWeight: "900",
+    color: c.fgOnGold,
+  },
+  profileInfo: {
     flex: 1,
-    gap: 4,
   },
   nameText: {
-    margin: 0,
-    fontSize: 18,
-    fontWeight: "700",
-    color: '#f0e6d3',
+    fontSize: 16,
+    fontWeight: "800",
+    color: c.fg1,
   },
   emailText: {
-    margin: 0,
+    marginTop: 2,
     fontSize: 12,
-    color: '#7a6f5f',
+    color: c.fg3,
   },
-  /* Sections */
-  section: {
-    backgroundColor: '#151515',
+
+  // Coin card
+  coinCard: {
+    padding: 18,
+    backgroundColor: "rgba(212,168,67,0.08)",
     borderWidth: 1,
-    borderColor: 'rgba(191, 169, 122, 0.15)',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    borderColor: "rgba(212,168,67,0.25)",
+    borderRadius: r.lg,
   },
-  sectionTitle: {
-    marginBottom: 16,
-    fontSize: 14,
+  coinKicker: {
+    fontSize: 11,
     fontWeight: "700",
-    color: '#d4a843',
+    color: "rgba(255,255,255,0.72)",
+    letterSpacing: 1.4,
     textTransform: "uppercase",
-    letterSpacing: 0.8,
   },
-  /* Form */
-  formGroup: {
-    gap: 12,
-  },
-  field: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: '#7a6f5f',
-    marginLeft: 4,
-  },
-  input: {
-    width: "100%",
-    height: 48,
-    paddingHorizontal: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    borderWidth: 1,
-    borderColor: 'rgba(191, 169, 122, 0.15)',
-    borderRadius: 10,
-    color: '#f0e6d3',
-    fontSize: 15,
-  },
-  /* Toggles */
-  togglesGroup: {
-    gap: 16,
-    marginBottom: 16,
-  },
-  toggleRow: {
+  coinRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    height: 44,
+    marginTop: 8,
   },
-  toggleLabel: {
-    fontSize: 15,
-    color: '#f0e6d3',
+  coinAmount: {
+    fontSize: 28,
+    fontWeight: "900",
+    color: c.inkGold,
+    letterSpacing: -0.8,
   },
-  /* Actions */
-  actionsGroup: {
-    gap: 10,
-  },
-  /* Button Base */
-  btnBase: {
-    height: 50,
+  chargeBtn: {
+    height: 38,
+    paddingHorizontal: 16,
     borderRadius: 10,
+    backgroundColor: c.inkGold,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  chargeBtnText: {
+    fontSize: 13,
+    fontWeight: "800",
+    color: c.fgOnGold,
+  },
+  coinNote: {
+    marginTop: 10,
+    fontSize: 11,
+    color: c.fg3,
+  },
+
+  // Menu list
+  menuList: {
+    borderRadius: r.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: c.borderWhite,
+    backgroundColor: "rgba(255,255,255,0.02)",
+  },
+  menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: c.borderSoft,
   },
+  menuItemLast: {
+    borderBottomWidth: 0,
+  },
+  menuLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: c.fg1,
+  },
+  menuLabelDanger: {
+    color: c.danger,
+  },
+
+  // Buttons
   btnPrimary: {
     height: 50,
-    borderRadius: 10,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    backgroundColor: c.inkGold,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    backgroundColor: '#d4a843',
-    marginTop: 6,
   },
   btnPrimaryText: {
-    color: '#0a0a0a',
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  btnGhost: {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderWidth: 1,
-    borderColor: 'rgba(191, 169, 122, 0.15)',
-  },
-  btnGhostText: {
-    color: '#f0e6d3',
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  btnDanger: {
-    backgroundColor: 'rgba(248, 113, 113, 0.12)',
-    borderWidth: 1,
-    borderColor: 'rgba(248, 113, 113, 0.2)',
-  },
-  btnDangerText: {
-    color: '#f87171',
+    color: c.fgOnGold,
     fontSize: 15,
     fontWeight: "700",
   },

@@ -191,6 +191,12 @@ export function getNovelById(id?: string | string[]) {
   return novels.find((novel) => novel.id === value);
 }
 
+export function getEpisodeById(novelId: string, episodeId?: string) {
+  if (!episodeId) return null;
+  const novel = getNovelById(novelId);
+  return novel?.episodes.find((episode) => episode.id === episodeId) ?? null;
+}
+
 export function getNovelList(ids: string[]) {
   return ids
     .map((id) => novels.find((novel) => novel.id === id))
