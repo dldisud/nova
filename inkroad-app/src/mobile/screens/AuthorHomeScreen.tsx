@@ -17,8 +17,11 @@ import { createMockAuthorRepository } from "../creator/repository";
 import type { AuthorRepository } from "../creator/types";
 import { mockProfile } from "../data/mockInkroad";
 import { useAuthSession } from "../hooks/useAuthSession";
+import { createAccountRepository } from "../reader/accountRepository";
 import type { AuthorDashboardSummary, AuthorWorkSummary } from "../types";
 import { inkroadTheme } from "../theme";
+
+const accountRepository = createAccountRepository();
 
 const c = inkroadTheme.colors;
 const r = inkroadTheme.radius;
@@ -44,6 +47,33 @@ export default function AuthorHomeScreen({
   );
   const [works, setWorks] = useState<AuthorWorkSummary[]>([]);
   const [dashboard, setDashboard] = useState<AuthorDashboardSummary | null>(null);
+  const [isCreatorChecked, setIsCreatorChecked] = useState(false);
+  const [isCreatorReal, setIsCreatorReal] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!session?.user) {
+      setIsCreatorReal(false);
+      setIsCreatorChecked(true);
+      return;
+    }
+    accountRepository
+      .getProfileData(session.user.id, {
+        email: session.user.email,
+        user_metadata: session.user.user_metadata as Record<string, unknown> | undefined,
+      })
+      .then((data) => {
+        if (!active) return;
+        setIsCreatorReal(data.profile.isCreator);
+        setIsCreatorChecked(true);
+      })
+      .catch(() => {
+        if (!active) return;
+        setIsCreatorReal(false);
+        setIsCreatorChecked(true);
+      });
+    return () => { active = false; };
+  }, [session]);
 
   useEffect(() => {
     let active = true;
@@ -54,6 +84,8 @@ export default function AuthorHomeScreen({
       if (!active) return;
       setWorks(items);
       setDashboard(nextDashboard);
+    }).catch(() => {
+      // 데이터 로드 실패 시 빈 상태 유지
     });
     return () => { active = false; };
   }, [authorRepository]);
@@ -83,9 +115,9 @@ export default function AuthorHomeScreen({
     router.push(`/author/work/${work.id}`);
   };
 
-  const isCreator = Boolean(session?.user) && mockProfile.isCreator;
+  const isCreator = Boolean(repository) || isCreatorReal;
 
-  if (isLoadingSession && !repository) {
+  if ((isLoadingSession || !isCreatorChecked) && !repository) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <AppHeader title="작가 스튜디오" showProfile />

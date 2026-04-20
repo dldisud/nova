@@ -67,6 +67,9 @@ export default function AuthorWorkScreen({ workId, repository }: AuthorWorkScree
       setEpisodes(nextEpisodes);
       setReactions(nextReactions);
       setIsLoading(false);
+    }).catch(() => {
+      if (!active) return;
+      setIsLoading(false);
     });
     return () => { active = false; };
   }, [authorRepository, workId]);

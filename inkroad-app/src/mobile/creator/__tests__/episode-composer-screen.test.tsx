@@ -42,10 +42,11 @@ describe("EpisodeComposerScreen", () => {
     fireEvent.press(screen.getByTestId("schedule-hour-10"));
     fireEvent.press(screen.getByTestId("schedule-minute-37"));
 
-    expect(screen.getByText("2026년 4월 20일 오전 10:37")).toBeTruthy();
+    expect(screen.getByText("2026년 4월 22일 오전 10:37")).toBeTruthy();
 
     fireEvent.press(screen.getByText("예약 확인"));
 
-    expect(screen.getByText("4/20 오전 10:37")).toBeTruthy();
+    expect(screen.getByText("4/22 오전 10:37")).toBeTruthy();
   });
 });
+

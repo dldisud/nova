@@ -1,9 +1,18 @@
-import 'react-native-url-polyfill/auto';
-import { createClient } from '@supabase/supabase-js';
-import { appStorage } from '../src/mobile/utils/appStorage';
+import "react-native-url-polyfill/auto";
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = 'https://qtouztmyuemwxxtmaqjm.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0b3V6dG15dWVtd3h4dG1hcWptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNjM5ODEsImV4cCI6MjA5MDYzOTk4MX0.NYu6ic3r_jtJyGl_WqaufHvqOmaBLomilN1SzVdklwA';
+import { appStorage } from "../src/mobile/utils/appStorage";
+
+function readRequiredEnv(name: "EXPO_PUBLIC_SUPABASE_URL" | "EXPO_PUBLIC_SUPABASE_ANON_KEY") {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`${name} is required to initialize Supabase.`);
+  }
+  return value;
+}
+
+const supabaseUrl = readRequiredEnv("EXPO_PUBLIC_SUPABASE_URL");
+const supabaseAnonKey = readRequiredEnv("EXPO_PUBLIC_SUPABASE_ANON_KEY");
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

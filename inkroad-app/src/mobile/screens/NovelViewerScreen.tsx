@@ -1,20 +1,81 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { getNovelById } from "../data/mockInkroad";
+import { NovelFormatRenderer } from "../components/reader/NovelFormatRenderer";
+import { createReaderRepository } from "../reader/repository";
 import { inkroadTheme } from "../theme";
+import type { Episode, Novel } from "../types";
+
+const readerRepository = createReaderRepository();
 
 export default function NovelViewerScreen() {
   const { id, episode } = useLocalSearchParams<{ id: string; episode?: string }>();
   const router = useRouter();
-  const novel = getNovelById(id);
   const episodeNumber = Number(episode ?? 1);
-  const currentEpisode = novel?.episodes.find((item) => item.number === episodeNumber) ?? novel?.episodes[0];
-
   const [chromeVisible, setChromeVisible] = useState(true);
+  const [novel, setNovel] = useState<Novel | null>(null);
+  const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
+  const [previousEpisode, setPreviousEpisode] = useState<Episode | null>(null);
+  const [nextEpisode, setNextEpisode] = useState<Episode | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    readerRepository
+      .getEpisodeView(id, episodeNumber)
+      .then((payload) => {
+        if (cancelled) {
+          return;
+        }
+
+        setNovel(payload?.novel ?? null);
+        setCurrentEpisode(payload?.episode ?? null);
+        setPreviousEpisode(payload?.previousEpisode ?? null);
+        setNextEpisode(payload?.nextEpisode ?? null);
+        setErrorMessage(null);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled) {
+          return;
+        }
+
+        setNovel(null);
+        setCurrentEpisode(null);
+        setPreviousEpisode(null);
+        setNextEpisode(null);
+        setErrorMessage(
+          error instanceof Error ? error.message : "회차를 불러오지 못했습니다."
+        );
+        setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, episodeNumber]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.topChrome}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
+            <MaterialIcons name="arrow-back" size={24} color={inkroadTheme.colors.text} />
+          </TouchableOpacity>
+          <Text style={styles.chromeTitle}>읽는 중</Text>
+          <View style={{ width: 44 }} />
+        </View>
+        <View style={styles.center}>
+          <Text style={styles.emptyTitle}>회차를 불러오는 중입니다</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!novel || !currentEpisode) {
     return (
@@ -28,13 +89,11 @@ export default function NovelViewerScreen() {
         </View>
         <View style={styles.center}>
           <Text style={styles.emptyTitle}>회차를 찾지 못했어요</Text>
+          {errorMessage ? <Text style={styles.emptyText}>{errorMessage}</Text> : null}
         </View>
       </SafeAreaView>
     );
   }
-
-  const previousEpisode = novel.episodes.find((item) => item.number === currentEpisode.number - 1);
-  const nextEpisode = novel.episodes.find((item) => item.number === currentEpisode.number + 1);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -66,7 +125,13 @@ export default function NovelViewerScreen() {
               {currentEpisode.number}화 · {currentEpisode.isFree ? "무료 회차" : `${currentEpisode.price}원`}
             </Text>
           </View>
-          <Text style={styles.body}>{currentEpisode.body.replace(/^#+\s?/gm, "").replace(/\*\*/g, "")}</Text>
+          <NovelFormatRenderer
+            body={currentEpisode.body}
+            episodeTitle={currentEpisode.title}
+            fontSize={18}
+            lineHeight={32}
+            textColor="rgba(255,255,255,0.85)"
+          />
         </TouchableOpacity>
       </ScrollView>
 
@@ -154,6 +219,13 @@ const styles = StyleSheet.create({
     fontWeight: "800", 
     fontSize: 22 
   },
+  emptyText: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 22,
+    color: inkroadTheme.colors.textMuted,
+    textAlign: "center",
+  },
   titleBlock: { 
     marginBottom: 40, 
     alignItems: "center" 
@@ -172,13 +244,6 @@ const styles = StyleSheet.create({
     fontSize: 13, 
     fontWeight: "600" 
   },
-  body: {
-    color: "rgba(255, 255, 255, 0.85)", // Readable off-white for dark mode reading
-    fontSize: 18,
-    lineHeight: 32,
-    letterSpacing: -0.3,
-  },
-
   // Chrome (Footer)
   bottomChrome: {
     position: "absolute",

@@ -1,18 +1,68 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppHeader } from "../components/AppHeader";
-import { getNovelById } from "../data/mockInkroad";
+import { createReaderRepository } from "../reader/repository";
 import { inkroadTheme } from "../theme";
+import type { Episode, Novel } from "../types";
+
+const readerRepository = createReaderRepository();
 
 export default function NovelDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const novel = getNovelById(id);
+  const insets = useSafeAreaInsets();
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
+  const [novel, setNovel] = useState<Novel | null>(null);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    readerRepository
+      .getNovelDetail(id)
+      .then((detail) => {
+        if (cancelled) {
+          return;
+        }
+
+        setNovel(detail?.novel ?? null);
+        setEpisodes(detail?.episodes ?? []);
+        setErrorMessage(null);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled) {
+          return;
+        }
+
+        setErrorMessage(
+          error instanceof Error ? error.message : "상세 정보를 불러오지 못했습니다."
+        );
+        setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <AppHeader title="작품 상세" showBack />
+        <View style={styles.center}>
+          <Text style={styles.emptyTitle}>작품을 불러오는 중입니다</Text>
+          <Text style={styles.emptyText}>공개된 상세 정보를 준비하고 있어요.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (!novel) {
     return (
@@ -20,7 +70,9 @@ export default function NovelDetailScreen() {
         <AppHeader title="작품 상세" showBack />
         <View style={styles.center}>
           <Text style={styles.emptyTitle}>작품을 찾지 못했어요</Text>
-          <Text style={styles.emptyText}>목업 목록에 없는 작품이라 상세 정보를 불러오지 못했습니다.</Text>
+          <Text style={styles.emptyText}>
+            {errorMessage ?? "공개 카탈로그에서 작품 상세를 찾지 못했습니다."}
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -30,8 +82,8 @@ export default function NovelDetailScreen() {
   const hasSale = novel.salePercent && novel.salePercent > 0;
   const oldPrice = novel.pricePerEpisode;
   const salePrice = novel.salePrice;
-  const statusMarkup = `연재중 · ${novel.episodes?.length || novel.totalEpisodes || 0}화`;
-  const isTranslation = novel.isExclusive || false; // mock mapped
+  const statusMarkup = `${novel.status} · ${episodes.length || novel.totalEpisodes || 0}화`;
+  const isTranslation = novel.tags.includes("번역");
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -84,7 +136,7 @@ export default function NovelDetailScreen() {
                 </View>
                 <View style={styles.metaItem}>
                   <Text style={styles.metaLabel}>출처</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>한국 독점</Text>
+                  <Text style={styles.metaValue} numberOfLines={1}>{novel.source}</Text>
                 </View>
               </View>
 
@@ -140,10 +192,10 @@ export default function NovelDetailScreen() {
           <View style={styles.episodeSection}>
             <View style={styles.episodeHeader}>
               <Text style={styles.epHeaderTitle}>회차 목록</Text>
-              <Text style={styles.epHeaderCount}>총 {novel.episodes.length}화</Text>
+              <Text style={styles.epHeaderCount}>총 {episodes.length}화</Text>
             </View>
             <View style={styles.epList}>
-              {novel.episodes.map((ep) => (
+              {episodes.map((ep) => (
                 <TouchableOpacity
                   key={ep.id}
                   style={styles.epItem}
@@ -174,7 +226,7 @@ export default function NovelDetailScreen() {
         </ScrollView>
 
         {/* Sticky CTA Node at bottom padding */}
-        <View style={styles.stickyCta}>
+        <View style={[styles.stickyCta, { bottom: Math.max(insets.bottom, 16) + 8 }]}>
           <TouchableOpacity style={styles.ctaSecondaryBtn}>
             <MaterialIcons name="favorite-border" size={24} color="#f0e6d3" />
           </TouchableOpacity>
@@ -187,7 +239,7 @@ export default function NovelDetailScreen() {
               })
             }
           >
-            <Text style={styles.ctaPrimaryText}>첫화 бесплат로 읽기</Text>
+            <Text style={styles.ctaPrimaryText}>첫 화 무료로 읽기</Text>
           </TouchableOpacity>
         </View>
 
@@ -435,7 +487,6 @@ const styles = StyleSheet.create({
   // CTA Sticky
   stickyCta: {
     position: "absolute",
-    bottom: 24, // Matches bottom: 72px context somewhat if inside SafeArea
     left: 16,
     right: 16,
     flexDirection: "row",
@@ -526,4 +577,3 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
 });
-

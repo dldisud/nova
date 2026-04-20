@@ -33,10 +33,21 @@ jest.mock("../../hooks/useAuthSession", () => ({
   useAuthSession: () => ({
     session: {
       user: {
+        id: "user-1",
         email: "rimuru2178@gmail.com",
       },
     },
     isLoadingSession: false,
+  }),
+}));
+
+jest.mock("../../reader/accountRepository", () => ({
+  createAccountRepository: () => ({
+    getProfileData: jest.fn().mockResolvedValue({
+      profile: {
+        isCreator: true,
+      },
+    }),
   }),
 }));
 
@@ -60,13 +71,13 @@ describe("AuthorHomeScreen", () => {
 
     expect(await screen.findByText("작가 스튜디오")).toBeTruthy();
     expect(screen.getByText("새 회차 쓰기")).toBeTruthy();
-    expect(screen.getByText("최근 작업 이어쓰기")).toBeTruthy();
+    expect(screen.getByText("이어쓰기")).toBeTruthy();
 
     expect(await screen.findByText("칠흑의 마법사와 검은 서약")).toBeTruthy();
     expect(screen.getByText("심연의 사서와 금지된 장서관")).toBeTruthy();
 
     fireEvent.press(screen.getByText("새 회차 쓰기"));
-    fireEvent.press(screen.getByText("최근 작업 이어쓰기"));
+    fireEvent.press(screen.getByText("이어쓰기"));
 
     expect(onCreateEpisode).toHaveBeenCalledTimes(1);
     expect(onResumeDraft).toHaveBeenCalledTimes(1);
@@ -99,7 +110,7 @@ describe("AuthorHomeScreen", () => {
 
       render(<AuthorHomeScreen repository={repo} />);
 
-      fireEvent.press(await screen.findByText("최근 작업 이어쓰기"));
+      fireEvent.press(await screen.findByText("이어쓰기"));
 
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith(
@@ -111,3 +122,4 @@ describe("AuthorHomeScreen", () => {
     }
   });
 });
+

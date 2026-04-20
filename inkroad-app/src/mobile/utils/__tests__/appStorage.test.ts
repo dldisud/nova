@@ -39,15 +39,15 @@ describe("resolveAppStorage", () => {
     await expect(storage.getItem("draft")).resolves.toBeNull();
   });
 
-  it("falls back without loading the package when no native module is detected", async () => {
-    const loadModule = jest.fn(() => {
-      throw new Error("should not load package");
-    });
+  it("falls back when no native module is detected and the loaded package is not a compatible adapter", async () => {
+    const loadModule = jest.fn(() => ({
+      default: null,
+    }));
 
     const storage = resolveAppStorage(loadModule, () => false);
 
     await storage.setItem("draft", "hello");
     await expect(storage.getItem("draft")).resolves.toBe("hello");
-    expect(loadModule).not.toHaveBeenCalled();
+    expect(loadModule).toHaveBeenCalledTimes(1);
   });
 });

@@ -75,11 +75,6 @@ export function resolveAppStorage(
   loadModule: () => StorageModule = () => require("@react-native-async-storage/async-storage") as StorageModule,
   hasNativeModule: () => boolean = hasNativeAsyncStorageModule
 ): StorageAdapter {
-  if (!hasNativeModule()) {
-    warnFallback("native AsyncStorage module was not detected");
-    return fallbackStorage;
-  }
-
   try {
     const module = loadModule();
     if (isStorageAdapter(module?.default)) {
@@ -88,6 +83,12 @@ export function resolveAppStorage(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown storage initialization error";
     warnFallback(message);
+    return fallbackStorage;
+  }
+
+  if (!hasNativeModule()) {
+    warnFallback("native AsyncStorage module was not detected");
+    return fallbackStorage;
   }
 
   return fallbackStorage;

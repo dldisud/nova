@@ -107,7 +107,13 @@ function normalizeStoredDraft(value: unknown): StoredEpisodeDraft | null {
     accessType: draft.accessType,
     price: draft.price,
     body: draft.body,
-    workflowStep: draft.workflowStep ?? (publicationState === "scheduled" ? "scheduled" : publicationState === "published" ? "published" : "draft"),
+    workflowStep:
+      draft.workflowStep ??
+      (publicationState === "scheduled"
+        ? "scheduled"
+        : publicationState === "published"
+        ? "published"
+        : "draft"),
     episodeType: draft.episodeType ?? "episode",
     ageRating: draft.ageRating,
     scheduledAt,
@@ -153,10 +159,10 @@ export async function saveLocalDraft(draft: EpisodeDraft) {
   const existing = await readStoredDraftRecord(draft.novelId, draft.episodeId);
   const requestedState = (draft as Partial<StoredEpisodeDraft>).publicationState;
   const publicationState: DraftPublicationState =
-    requestedState === "published" || requestedState === "updated" || requestedState === "scheduled"
-      ? requestedState
-      : existing?.publicationState === "published" || existing?.publicationState === "updated"
+    existing?.publicationState === "published" || existing?.publicationState === "updated"
       ? "updated"
+      : requestedState === "published" || requestedState === "updated" || requestedState === "scheduled"
+      ? requestedState
       : existing?.publicationState === "scheduled"
       ? "scheduled"
       : existing?.publicationState ?? "draft";
@@ -164,15 +170,16 @@ export async function saveLocalDraft(draft: EpisodeDraft) {
   const storedDraft: StoredEpisodeDraft = {
     ...draft,
     workflowStep:
-      draft.workflowStep ??
-      (publicationState === "scheduled"
+      publicationState === "scheduled"
         ? "scheduled"
         : publicationState === "published"
         ? "published"
-        : "draft"),
+        : publicationState === "updated"
+        ? "draft"
+        : draft.workflowStep ?? "draft",
     episodeType: draft.episodeType ?? existing?.episodeType ?? "episode",
     ageRating: draft.ageRating ?? existing?.ageRating,
-    scheduledAt: draft.scheduledAt ?? existing?.scheduledAt,
+    scheduledAt: publicationState === "scheduled" ? draft.scheduledAt ?? existing?.scheduledAt : undefined,
     updatedAt: Date.now(),
     publishedAt: existing?.publishedAt,
     publicationState,

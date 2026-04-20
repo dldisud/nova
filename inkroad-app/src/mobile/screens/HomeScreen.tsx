@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -14,17 +14,94 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AppHeader } from "../components/AppHeader";
 import { NovelCard } from "../components/NovelCard";
 import { SectionBoard } from "../components/SectionBoard";
-import { getNovelById, getNovelList, genreLabels, homeSections } from "../data/mockInkroad";
+import { createReaderRepository } from "../reader/repository";
+import type { Novel } from "../types";
 import { inkroadTheme } from "../theme";
+
+const readerRepository = createReaderRepository();
 
 export default function HomeScreen() {
   const router = useRouter();
-  const heroNovel = getNovelById(homeSections.heroId);
-  const saleNovels = getNovelList(homeSections.saleIds);
-  const popularNovels = getNovelList(homeSections.popularIds);
-  const recentNovels = getNovelList(homeSections.recentIds);
+  const [heroNovel, setHeroNovel] = useState<Novel | null>(null);
+  const [saleNovels, setSaleNovels] = useState<Novel[]>([]);
+  const [popularNovels, setPopularNovels] = useState<Novel[]>([]);
+  const [recentNovels, setRecentNovels] = useState<Novel[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  if (!heroNovel) return null;
+  useEffect(() => {
+    let cancelled = false;
+
+    readerRepository
+      .getHomeSections()
+      .then((sections) => {
+        if (cancelled) {
+          return;
+        }
+
+        setHeroNovel(sections.hero);
+        setSaleNovels(sections.sale);
+        setPopularNovels(sections.popular);
+        setRecentNovels(sections.recent);
+        setErrorMessage(null);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        if (cancelled) {
+          return;
+        }
+
+        setErrorMessage(
+          error instanceof Error ? error.message : "작품을 불러오지 못했습니다."
+        );
+        setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const genreLabels = useMemo(() => {
+    const tags = new Set<string>();
+    [heroNovel, ...saleNovels, ...popularNovels, ...recentNovels]
+      .filter((novel): novel is Novel => Boolean(novel))
+      .forEach((novel) => {
+        novel.tags.forEach((tag) => {
+          if (tag) {
+            tags.add(tag);
+          }
+        });
+      });
+
+    return ["전체", ...Array.from(tags)];
+  }, [heroNovel, saleNovels, popularNovels, recentNovels]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <AppHeader showSearch showProfile />
+        <View style={styles.centerState}>
+          <Text style={styles.stateTitle}>작품을 불러오는 중입니다</Text>
+          <Text style={styles.stateText}>공개 카탈로그를 준비하고 있어요.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!heroNovel) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <AppHeader showSearch showProfile />
+        <View style={styles.centerState}>
+          <Text style={styles.stateTitle}>작품을 불러오지 못했어요</Text>
+          <Text style={styles.stateText}>
+            {errorMessage ?? "아직 공개된 작품이 없습니다."}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -76,7 +153,7 @@ export default function HomeScreen() {
               )}
             </View>
             <Text style={styles.heroTitle} numberOfLines={2}>{heroNovel.title}</Text>
-            <Text style={styles.heroSubtitle} numberOfLines={2}>{heroNovel.description || heroNovel.author}</Text>
+            <Text style={styles.heroSubtitle} numberOfLines={2}>{heroNovel.tagline || heroNovel.synopsis || heroNovel.author}</Text>
             
             <View style={styles.heroMetaRow}>
               <View style={styles.heroMetaItem}>
@@ -97,7 +174,7 @@ export default function HomeScreen() {
                 <MaterialIcons name="play-arrow" size={20} color="#0a0a0a" />
                 <Text style={styles.heroBtnPrimaryText}>첫 화 보기</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.heroBtnSecondary}>
+              <TouchableOpacity style={styles.heroBtnSecondary} onPress={() => router.push(`/novel/${heroNovel.id}`)}>
                 <MaterialIcons name="add" size={20} color="#fff" />
               </TouchableOpacity>
             </View>
@@ -149,6 +226,25 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: inkroadTheme.colors.background },
   scrollView: { flex: 1 },
   content: { paddingBottom: 100 }, // space for bottom tabs
+  centerState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+  stateTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: inkroadTheme.colors.text,
+    textAlign: "center",
+  },
+  stateText: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 22,
+    color: inkroadTheme.colors.textMuted,
+    textAlign: "center",
+  },
   
   hero: { position: "relative", minHeight: 420, backgroundColor: inkroadTheme.colors.heroBg, overflow: "hidden" },
   heroBackground: { ...StyleSheet.absoluteFillObject },

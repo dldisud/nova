@@ -1,6 +1,5 @@
 import { getNovelById, mockProfile, novels } from "../data/mockInkroad";
 import type {
-  AgeRating,
   AuthorDashboardSummary,
   AuthorEpisodeHistoryEntry,
   AuthorEpisodeSummary,
@@ -10,7 +9,6 @@ import type {
   AuthorWorkSummary,
   EpisodeDraft,
   EpisodePublicationState,
-  EpisodeType,
   PublishStatus,
 } from "../types";
 import {
@@ -27,10 +25,11 @@ import {
   type DraftPublicationState,
   type StoredEpisodeDraft,
 } from "./storage";
+import * as remoteBackend from "./remoteBackend";
 import type { AuthorRepository } from "./types";
 
 function nowStamp() {
-  return "2026-04-18T12:00:00+09:00";
+  return new Date().toISOString();
 }
 
 const DEFAULT_PEN_NAMES = [mockProfile.name, `${mockProfile.name} 스튜디오`, "잉크로드"];
@@ -69,6 +68,64 @@ function compareStoredDrafts(a: StoredEpisodeDraft, b: StoredEpisodeDraft) {
   return aKey.localeCompare(bKey);
 }
 
+function getDraftStorageKey(novelId: string, episodeId?: string) {
+  return `${novelId}:${episodeId ?? "new"}`;
+}
+
+function getPublicationPriority(state?: DraftPublicationState) {
+  switch (state) {
+    case "published":
+      return 3;
+    case "updated":
+      return 2;
+    case "scheduled":
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+function pickPreferredDraft(
+  current: StoredEpisodeDraft | null | undefined,
+  candidate: StoredEpisodeDraft | null | undefined
+) {
+  if (!current) return candidate ?? null;
+  if (!candidate) return current;
+
+  const currentUpdatedAt = current.updatedAt ?? 0;
+  const candidateUpdatedAt = candidate.updatedAt ?? 0;
+  if (currentUpdatedAt !== candidateUpdatedAt) {
+    return candidateUpdatedAt > currentUpdatedAt ? candidate : current;
+  }
+
+  const currentPriority = getPublicationPriority(current.publicationState);
+  const candidatePriority = getPublicationPriority(candidate.publicationState);
+  if (currentPriority !== candidatePriority) {
+    return candidatePriority > currentPriority ? candidate : current;
+  }
+
+  const currentPublishedAt = current.publishedAt ?? 0;
+  const candidatePublishedAt = candidate.publishedAt ?? 0;
+  if (currentPublishedAt !== candidatePublishedAt) {
+    return candidatePublishedAt > currentPublishedAt ? candidate : current;
+  }
+
+  return compareStoredDrafts(current, candidate) <= 0 ? candidate : current;
+}
+
+function dedupeDrafts(drafts: StoredEpisodeDraft[]) {
+  const byKey = new Map<string, StoredEpisodeDraft>();
+  for (const draft of drafts) {
+    const key = getDraftStorageKey(draft.novelId, draft.episodeId);
+    byKey.set(key, pickPreferredDraft(byKey.get(key), draft) ?? draft);
+  }
+  return [...byKey.values()];
+}
+
+function dedupePenNames(names: Array<string | null | undefined>) {
+  return [...new Set(names.filter((value): value is string => Boolean(value && value.trim())).map((value) => value.trim()))];
+}
+
 export function markDraftAsEdited(draft: DraftWithPublicationState): DraftWithPublicationState {
   const publicationState =
     draft.publicationState === "published" || draft.publicationState === "updated"
@@ -94,16 +151,16 @@ export function getDraftStatusMessage(draft: DraftWithPublicationState) {
     return `예약됨 · ${formatScheduledLabel(draft.scheduledAt)}`;
   }
 
-  if (!draft.updatedAt) {
-    return "본문을 입력해 주세요.";
-  }
-
   if (draft.publicationState === "published") {
     return "발행됨";
   }
 
   if (draft.publicationState === "updated") {
     return "발행 후 수정 중";
+  }
+
+  if (!draft.updatedAt) {
+    return "본문을 입력해 주세요.";
   }
 
   return "초안 저장됨";
@@ -135,7 +192,6 @@ function buildEpisodeModel(work: (typeof novels)[number], number: number): Episo
     body: "",
   };
 }
-
 function resolveEpisodeNumber(work: (typeof novels)[number], episodeId?: string) {
   if (!episodeId) return null;
 
@@ -170,7 +226,7 @@ function formatScheduledLabel(value: number) {
 
 function formatRelativeDue(value?: number) {
   if (!value) return "예정 없음";
-  const now = new Date("2026-04-18T12:00:00+09:00").getTime();
+  const now = Date.now();
   const diffDays = Math.max(0, Math.round((value - now) / 86_400_000));
   if (diffDays === 0) return "오늘";
   if (diffDays === 1) return "내일";
@@ -195,17 +251,37 @@ function inferDefaultWorkMeta(work: (typeof novels)[number]): AuthorWorkMeta {
 async function getMergedWorkMeta(workId: string) {
   const work = getNovelById(workId);
   if (!work) return null;
-  return (await loadStoredWorkMeta(workId)) ?? inferDefaultWorkMeta(work);
+
+  const defaultMeta = inferDefaultWorkMeta(work);
+  const userId = await remoteBackend.getCurrentUserId();
+  if (userId) {
+    const remoteMeta = await remoteBackend.loadRemoteWorkMeta(userId, workId);
+    if (remoteMeta) {
+      return {
+        ...defaultMeta,
+        ...remoteMeta,
+        keywords: remoteMeta.keywords.length ? remoteMeta.keywords : defaultMeta.keywords,
+      } satisfies AuthorWorkMeta;
+    }
+  }
+
+  const localMeta = await loadStoredWorkMeta(workId);
+  if (localMeta) {
+    return {
+      ...defaultMeta,
+      ...localMeta,
+      keywords: localMeta.keywords.length ? localMeta.keywords : defaultMeta.keywords,
+    } satisfies AuthorWorkMeta;
+  }
+
+  return defaultMeta;
 }
 
-async function buildEpisodeSummaries(workId: string): Promise<AuthorEpisodeSummary[]> {
+function buildEpisodeSummaries(workId: string, drafts: StoredEpisodeDraft[]): AuthorEpisodeSummary[] {
   const work = getNovelById(workId);
   if (!work) return [];
 
-  const localDraftEntries = await listLocalDrafts();
-  const workDrafts = localDraftEntries
-    .map((entry) => entry.draft)
-    .filter((draft) => draft.novelId === workId);
+  const workDrafts = drafts.filter((draft) => draft.novelId === workId);
   const draftByEpisodeId = new Map(
     workDrafts.filter((draft) => Boolean(draft.episodeId)).map((draft) => [draft.episodeId as string, draft])
   );
@@ -267,7 +343,6 @@ function summarizeCounts(episodes: AuthorEpisodeSummary[]) {
     { draft: 0, scheduled: 0, published: 0 }
   );
 }
-
 function createInboxItems({
   draftCount,
   scheduledCount,
@@ -315,7 +390,10 @@ function createInboxItems({
     id: "revenue",
     type: "promo",
     label: "수익 요약",
-    body: monthlyRevenue > 0 ? `이번 달 예상 정산액은 ${monthlyRevenue.toLocaleString()}원입니다.` : "이번 달 정산을 만들기 위한 첫 유료 발행을 준비해 보세요.",
+    body:
+      monthlyRevenue > 0
+        ? `이번 달 예상 정산액은 ${monthlyRevenue.toLocaleString()}원입니다.`
+        : "이번 달 정산을 만들기 위한 첫 유료 발행을 준비해 보세요.",
     unread: false,
   });
 
@@ -348,11 +426,29 @@ function buildFallbackHistory(workId: string, episodeId?: string, label?: string
 }
 
 export function createMockAuthorRepository(): AuthorRepository {
+  async function listStoredDrafts() {
+    const localDrafts = (await listLocalDrafts()).map((entry) => entry.draft);
+    const userId = await remoteBackend.getCurrentUserId();
+    if (!userId) return localDrafts;
+
+    const remoteDrafts = await remoteBackend.listRemoteDrafts(userId);
+    if (!remoteDrafts) return localDrafts;
+
+    return dedupeDrafts([...localDrafts, ...remoteDrafts]);
+  }
+
+  async function listPenNamesWithRemote() {
+    const userId = await remoteBackend.getCurrentUserId();
+    const remotePenNames = userId ? await remoteBackend.listRemotePenNames(userId) : [];
+    return dedupePenNames([...DEFAULT_PEN_NAMES, ...remotePenNames]);
+  }
+
   return {
     async listWorks() {
+      const storedDrafts = await listStoredDrafts();
       const works = await Promise.all(
         novels.map(async (novel) => {
-          const episodes = await buildEpisodeSummaries(novel.id);
+          const episodes = buildEpisodeSummaries(novel.id, storedDrafts);
           const counts = summarizeCounts(episodes);
           const latestUpdatedAt = episodes
             .map((episode) => new Date(episode.updatedAt).getTime())
@@ -383,23 +479,32 @@ export function createMockAuthorRepository(): AuthorRepository {
     },
     async getDashboardSummary() {
       const works = await this.listWorks();
-      const drafts = await listLocalDrafts();
-      const draftCount = drafts.filter((entry) => entry.draft.publicationState === "draft" || entry.draft.publicationState === "updated").length;
-      const scheduledDrafts = drafts.filter((entry) => entry.draft.publicationState === "scheduled");
-      const updatedCount = drafts.filter((entry) => entry.draft.publicationState === "updated").length;
+      const drafts = await listStoredDrafts();
+      const draftCount = drafts.filter((draft) => draft.publicationState === "draft" || draft.publicationState === "updated").length;
+      const scheduledDrafts = drafts.filter((draft) => draft.publicationState === "scheduled");
+      const updatedCount = drafts.filter((draft) => draft.publicationState === "updated").length;
       const totalViews = works.reduce((sum, work) => sum + (work.totalViews ?? 0), 0);
       const weeklyViews = Math.max(100, Math.round(totalViews * 0.008));
       const monthlyRevenue = works.reduce((sum, work) => sum + (work.monthlyRevenue ?? 0), 0);
       const totalRevenue = works.reduce((sum, work) => sum + Math.round((work.totalViews ?? 0) * 0.28), 0);
       const nextScheduled = scheduledDrafts
-        .map((entry) => entry.draft.scheduledAt)
+        .map((draft) => draft.scheduledAt)
         .filter((value): value is number => typeof value === "number")
         .sort((a, b) => a - b)[0];
-      const publishedCount = drafts.filter((entry) => entry.draft.publicationState === "published").length;
+      const publishedCount = drafts.filter((draft) => draft.publicationState === "published").length;
       const cadenceSource = await Promise.all(works.slice(0, 3).map((work) => this.getWorkMeta(work.id)));
       const cadence = cadenceSource.find(Boolean)?.updateDay ?? "매주 수요일";
+      const penNames = await listPenNamesWithRemote();
+      const userId = await remoteBackend.getCurrentUserId();
+      const remotePrefs = userId ? await remoteBackend.loadRemotePrefs(userId) : null;
       const prefs = await loadAuthorPrefs();
-      const activePenName = prefs.activePenName ?? DEFAULT_PEN_NAMES[0];
+      const activePenName =
+        (remotePrefs?.active_pen_name && penNames.includes(remotePrefs.active_pen_name)
+          ? remotePrefs.active_pen_name
+          : undefined) ??
+        (prefs.activePenName && penNames.includes(prefs.activePenName) ? prefs.activePenName : undefined) ??
+        penNames[0] ??
+        DEFAULT_PEN_NAMES[0];
 
       return {
         totalViews,
@@ -423,19 +528,35 @@ export function createMockAuthorRepository(): AuthorRepository {
           updatedCount,
           monthlyRevenue,
         }),
-        penNames: DEFAULT_PEN_NAMES,
+        penNames,
         activePenName,
       } satisfies AuthorDashboardSummary;
     },
     async listPenNames() {
-      return DEFAULT_PEN_NAMES;
+      return listPenNamesWithRemote();
     },
     async getActivePenName() {
+      const penNames = await listPenNamesWithRemote();
+      const userId = await remoteBackend.getCurrentUserId();
+      const remotePrefs = userId ? await remoteBackend.loadRemotePrefs(userId) : null;
+      if (remotePrefs?.active_pen_name && penNames.includes(remotePrefs.active_pen_name)) {
+        return remotePrefs.active_pen_name;
+      }
+
       const prefs = await loadAuthorPrefs();
-      return prefs.activePenName ?? DEFAULT_PEN_NAMES[0];
+      if (prefs.activePenName && penNames.includes(prefs.activePenName)) {
+        return prefs.activePenName;
+      }
+
+      return penNames[0] ?? DEFAULT_PEN_NAMES[0];
     },
     async setActivePenName(name: string) {
-      const next = DEFAULT_PEN_NAMES.includes(name) ? name : DEFAULT_PEN_NAMES[0];
+      const penNames = await listPenNamesWithRemote();
+      const next = penNames.includes(name) ? name : penNames[0] ?? DEFAULT_PEN_NAMES[0];
+      const userId = await remoteBackend.getCurrentUserId();
+      if (userId) {
+        await remoteBackend.saveRemotePrefs(userId, next);
+      }
       await saveAuthorPrefs({ activePenName: next });
       return next;
     },
@@ -449,23 +570,39 @@ export function createMockAuthorRepository(): AuthorRepository {
     async saveWorkMeta(workId, patch) {
       const current = await getMergedWorkMeta(workId);
       if (!current) return null;
-      return saveStoredWorkMeta(workId, {
+
+      const nextMeta = {
         ...current,
         ...patch,
         keywords: patch.keywords ?? current.keywords,
-      });
+      } satisfies AuthorWorkMeta;
+
+      const userId = await remoteBackend.getCurrentUserId();
+      const remoteSaved = userId ? await remoteBackend.saveRemoteWorkMeta(userId, workId, nextMeta) : null;
+      await saveStoredWorkMeta(workId, nextMeta);
+      return remoteSaved ?? nextMeta;
     },
     async listEpisodes(workId) {
-      return buildEpisodeSummaries(workId);
+      const drafts = await listStoredDrafts();
+      return buildEpisodeSummaries(workId, drafts);
     },
     async listReaderReactions(workId) {
       return buildReactions(workId);
     },
     async listEpisodeHistory(workId, episodeId) {
-      const stored = await loadEpisodeHistory(workId, episodeId);
-      if (stored.length) {
-        return formatHistoryEntries(stored);
+      const localEntries = formatHistoryEntries(await loadEpisodeHistory(workId, episodeId));
+      const userId = await remoteBackend.getCurrentUserId();
+      const remoteEntries = userId ? await remoteBackend.listRemoteHistory(userId, workId, episodeId) : null;
+      const mergedEntries = [...localEntries, ...(remoteEntries ?? [])];
+
+      if (mergedEntries.length) {
+        const deduped = new Map<string, AuthorEpisodeHistoryEntry>();
+        for (const entry of mergedEntries) {
+          deduped.set(entry.id, entry);
+        }
+        return [...deduped.values()].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       }
+
       const work = getNovelById(workId);
       const episodeNumber = work ? resolveEpisodeNumber(work, episodeId) : null;
       const fallbackLabel = episodeNumber ? `${episodeNumber}화` : "새 회차";
@@ -473,8 +610,11 @@ export function createMockAuthorRepository(): AuthorRepository {
     },
     async loadDraft(workId, episodeId) {
       const localDraft = await loadLocalDraft(workId, episodeId);
-      if (localDraft) {
-        return localDraft;
+      const userId = await remoteBackend.getCurrentUserId();
+      const remoteDraft = userId ? await remoteBackend.loadRemoteDraft(userId, workId, episodeId) : null;
+      const preferredDraft = pickPreferredDraft(localDraft, remoteDraft);
+      if (preferredDraft) {
+        return preferredDraft;
       }
 
       const work = getNovelById(workId);
@@ -487,8 +627,6 @@ export function createMockAuthorRepository(): AuthorRepository {
           price: 100,
           body: "",
           workflowStep: "draft",
-          episodeType: "episode",
-          updatedAt: 0,
           publicationState: "draft",
         };
       }
@@ -528,29 +666,38 @@ export function createMockAuthorRepository(): AuthorRepository {
       };
     },
     async saveDraft(input: EpisodeDraft) {
-      return saveLocalDraft(input);
+      const userId = await remoteBackend.getCurrentUserId();
+      const remoteSaved = userId ? await remoteBackend.upsertRemoteDraft(userId, input, "save") : null;
+      const saved = remoteSaved ?? (await saveLocalDraft(input));
+      if (remoteSaved) {
+        await saveLocalDraft(remoteSaved);
+      }
+      return saved;
     },
     async publishDraft(input: EpisodeDraft) {
-      return publishLocalDraft(input);
+      const userId = await remoteBackend.getCurrentUserId();
+      const remotePublished = userId ? await remoteBackend.upsertRemoteDraft(userId, input, "publish") : null;
+      const published = remotePublished ?? (await publishLocalDraft(input));
+      if (remotePublished) {
+        await publishLocalDraft(remotePublished);
+      }
+      return published;
     },
     async getMostRecentDraft() {
-      const drafts = await listLocalDrafts();
+      const drafts = await listStoredDrafts();
       if (!drafts.length) return null;
 
-      const latest = drafts
-        .map((entry) => entry.draft)
-        .sort(compareStoredDrafts)
-        .at(-1);
-
+      const latest = [...drafts].sort(compareStoredDrafts).at(-1);
       return latest ?? null;
     },
   };
 }
-
 export function createEpisodeEditorState(draft: EpisodeDraft) {
   const canPublish =
     draft.title.trim().length > 0 &&
-    draft.body.trim().length > 0 &&
+    draft.body.trim().length >= 500 &&
+    draft.ageRating !== null &&
+    draft.ageRating !== undefined &&
     (draft.accessType === "free" || draft.price > 0);
 
   return {
