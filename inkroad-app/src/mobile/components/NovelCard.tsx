@@ -5,6 +5,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { Novel } from "../types";
 import { inkroadTheme } from "../theme";
+import { formatCoinPrice, formatBundlePrice, formatDiscountedPerEp } from "../utils/format";
 
 interface NovelCardProps {
   novel: Novel;
@@ -15,6 +16,9 @@ interface NovelCardProps {
 export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardProps) {
   const router = useRouter();
 
+  const hasSale = typeof novel.salePercent === "number" && novel.salePercent > 0;
+  const perEpLabel = formatCoinPrice(novel.pricePerEpisode);
+
   if (variant === "scroll") {
     return (
       <TouchableOpacity
@@ -24,7 +28,7 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
       >
         <View style={styles.scrollCoverWrap}>
           <Image source={{ uri: novel.coverUrl }} style={styles.coverImage} />
-          {novel.salePercent && (
+          {hasSale && (
             <View style={styles.scrollBadge}>
               <Text style={styles.scrollBadgeText}>-{novel.salePercent}%</Text>
             </View>
@@ -38,13 +42,15 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
         <Text style={styles.scrollTitle} numberOfLines={2}>{novel.title}</Text>
         <Text style={styles.scrollMeta} numberOfLines={1}>{novel.author}</Text>
         <View style={styles.priceRow}>
-          {novel.salePrice ? (
+          {hasSale ? (
             <>
-              <Text style={styles.priceOld}>{novel.pricePerEpisode}원</Text>
-              <Text style={styles.priceSale}>{novel.salePrice}원</Text>
+              <Text style={styles.priceOld}>{perEpLabel}</Text>
+              <Text style={styles.priceSale}>
+                {formatDiscountedPerEp(novel.pricePerEpisode, novel.salePercent!)}/편
+              </Text>
             </>
           ) : (
-            <Text style={styles.priceSale}>{novel.pricePerEpisode}원</Text>
+            <Text style={styles.priceNormal}>{perEpLabel}/편</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -74,7 +80,7 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
           )}
         </View>
         <View style={styles.listRight}>
-          {novel.salePercent ? (
+          {hasSale ? (
             <Text style={[styles.listBadgeText, { color: inkroadTheme.colors.accentSale }]}>-{novel.salePercent}%</Text>
           ) : (
             <Text style={[styles.listBadgeText, { color: inkroadTheme.colors.textMuted }]}>업데이트</Text>
@@ -94,7 +100,7 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
     >
       <View style={styles.gridCoverWrap}>
         <Image source={{ uri: novel.coverUrl }} style={styles.coverImage} />
-        {novel.salePercent && (
+        {hasSale && (
           <View style={styles.gridBadgeSale}>
             <Text style={styles.gridBadgeSaleText}>-{novel.salePercent}%</Text>
           </View>
@@ -106,22 +112,27 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
         )}
       </View>
       <View style={styles.gridInfo}>
-        <Text style={styles.gridTitle} numberOfLines={1}>{novel.title}</Text>
-        <Text style={styles.gridAuthor} numberOfLines={1}>{novel.author}</Text>
+        <Text style={styles.gridTitle} numberOfLines={2}>{novel.title}</Text>
+        <Text style={styles.gridAuthor} numberOfLines={1}>
+          {novel.author} · ★ {novel.rating.toFixed(1)}
+        </Text>
         
         {readProgress !== undefined ? (
           <View style={styles.gridProgressRow}>
             <Text style={styles.gridProgressText}>읽는 중 <Text style={{color: inkroadTheme.colors.primary}}>{readProgress}%</Text></Text>
           </View>
         ) : (
-          <View style={styles.gridBottom}>
-            <View style={styles.gridRatingWrap}>
-              <MaterialIcons name="star" size={13} color="#b8860b" />
-              <Text style={styles.gridRating}>{novel.rating.toFixed(1)}</Text>
-            </View>
-            <View style={styles.priceRow}>
-              <Text style={styles.priceSale}>{novel.salePrice || novel.pricePerEpisode}원</Text>
-            </View>
+          <View style={[styles.priceRow, { marginTop: 6 }]}>
+            {hasSale ? (
+              <>
+                <Text style={styles.priceOld}>{perEpLabel}</Text>
+                <Text style={styles.priceSale}>
+                  {formatDiscountedPerEp(novel.pricePerEpisode, novel.salePercent!)}/편
+                </Text>
+              </>
+            ) : (
+              <Text style={styles.priceNormal}>{perEpLabel}/편</Text>
+            )}
           </View>
         )}
       </View>
@@ -140,17 +151,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 3,
+    gap: 4,
   },
   priceOld: {
     fontSize: 12,
-    color: inkroadTheme.colors.textMuted,
+    color: "rgba(255, 255, 255, 0.5)",
     textDecorationLine: "line-through",
-    marginRight: 4,
   },
   priceSale: {
     fontSize: 12,
     color: inkroadTheme.colors.accentSale,
     fontWeight: "700",
+  },
+  priceNormal: {
+    fontSize: 12,
+    color: inkroadTheme.colors.inkGoldSoft,
+    fontWeight: "600",
   },
   progressWrap: {
     position: "absolute",
@@ -192,15 +208,15 @@ const styles = StyleSheet.create({
   },
   scrollTitle: {
     marginTop: 8,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "700",
     color: inkroadTheme.colors.text,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   scrollMeta: {
-    marginTop: 2,
-    fontSize: 11,
-    color: inkroadTheme.colors.textMuted,
+    marginTop: 4,
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.65)",
   },
 
   // Grid variant (.mh-card)
@@ -241,27 +257,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: inkroadTheme.colors.text,
     letterSpacing: -0.2,
+    lineHeight: 20,
   },
   gridAuthor: {
-    marginTop: 2,
-    fontSize: 11,
-    color: inkroadTheme.colors.textMuted,
-  },
-  gridBottom: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 6,
-  },
-  gridRatingWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  gridRating: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "#b8860b",
-    marginLeft: 2,
+    marginTop: 4,
+    fontSize: 12,
+    color: "rgba(255, 255, 255, 0.65)",
   },
   gridProgressRow: {
     marginTop: 8,

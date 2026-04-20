@@ -6,6 +6,7 @@ import AuthorHomeScreen from "../../screens/AuthorHomeScreen";
 
 const mockStore = new Map<string, string>();
 const mockPush = jest.fn();
+let mockIsCreator = true;
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
   __esModule: true,
@@ -45,7 +46,7 @@ jest.mock("../../reader/accountRepository", () => ({
   createAccountRepository: () => ({
     getProfileData: jest.fn().mockResolvedValue({
       profile: {
-        isCreator: true,
+        isCreator: mockIsCreator,
       },
     }),
   }),
@@ -55,6 +56,7 @@ describe("AuthorHomeScreen", () => {
   beforeEach(() => {
     mockPush.mockClear();
     mockStore.clear();
+    mockIsCreator = true;
   });
 
   it("renders the studio header, primary actions, and work cards from the author repository", async () => {
@@ -120,6 +122,15 @@ describe("AuthorHomeScreen", () => {
     } finally {
       nowSpy.mockRestore();
     }
+  });
+
+  it("still opens the studio for a logged-in user even when creator linkage is missing", async () => {
+    mockIsCreator = false;
+
+    render(<AuthorHomeScreen />);
+
+    expect(await screen.findByText("작가 스튜디오")).toBeTruthy();
+    expect(await screen.findByText("새 회차 쓰기")).toBeTruthy();
   });
 });
 

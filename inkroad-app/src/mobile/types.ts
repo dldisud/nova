@@ -124,6 +124,7 @@ export interface Novel {
   totalEpisodes: number;
   freeEpisodes: number;
   pricePerEpisode: number;
+  bundleListPrice?: number;
   salePercent?: number;
   salePrice?: number;
   status: "연재중" | "완결";

@@ -171,6 +171,32 @@ export async function saveRemotePrefs(userId: string, activePenName: string) {
   }
 }
 
+export async function listRemoteWorks(userId: string) {
+  try {
+    const supabase = getSupabaseClient();
+    // 1. Get author record for the userId
+    const { data: authorData, error: authorError } = await supabase
+      .from("authors")
+      .select("id, pen_name")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (authorError || !authorData) return [];
+
+    // 2. Get novels for this author
+    const { data, error } = await supabase
+      .from("novels")
+      .select("*")
+      .eq("author_id", authorData.id)
+      .order("updated_at", { ascending: false });
+
+    if (error || !data) return [];
+    return data;
+  } catch {
+    return [];
+  }
+}
+
 export async function loadRemoteWorkMeta(userId: string, workId: string) {
   try {
     const supabase = getSupabaseClient();

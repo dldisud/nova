@@ -92,12 +92,10 @@ describe("ProfileScreen", () => {
 
     render(<ProfileScreen />);
 
-    await waitFor(() => {
-      expect(screen.getByText("림루")).toBeTruthy();
-      expect(screen.getByText("읽는 중 2")).toBeTruthy();
-      expect(screen.getByText("찜 3")).toBeTruthy();
-      expect(screen.getByText("구매 1")).toBeTruthy();
-    });
+    expect(await screen.findByText("rimuru@example.com")).toBeTruthy();
+    expect(await screen.findByText("읽는 중 2")).toBeTruthy();
+    expect(await screen.findByText("찜 3")).toBeTruthy();
+    expect(await screen.findByText("구매 1")).toBeTruthy();
   });
 
   it("logs out through supabase auth instead of a placeholder alert", async () => {

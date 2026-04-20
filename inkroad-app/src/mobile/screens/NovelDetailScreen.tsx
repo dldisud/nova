@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 import { AppHeader } from "../components/AppHeader";
 import { createReaderRepository } from "../reader/repository";
+import { formatCoinPrice, formatDiscountedPerEp, formatNumber } from "../utils/format";
 import { inkroadTheme } from "../theme";
 import type { Episode, Novel } from "../types";
 
@@ -79,9 +80,7 @@ export default function NovelDetailScreen() {
   }
 
   // Derived values for layout matching
-  const hasSale = novel.salePercent && novel.salePercent > 0;
-  const oldPrice = novel.pricePerEpisode;
-  const salePrice = novel.salePrice;
+  const showSale = novel.salePercent && novel.salePercent > 0;
   const statusMarkup = `${novel.status} · ${episodes.length || novel.totalEpisodes || 0}화`;
   const isTranslation = novel.tags.includes("번역");
 
@@ -114,7 +113,7 @@ export default function NovelDetailScreen() {
               <Text style={styles.subtitle}>{novel.author}</Text>
 
               <View style={styles.tagsRow}>
-                {hasSale && <Text style={styles.saleBadge}>-{novel.salePercent}% 할인</Text>}
+                {showSale && <Text style={styles.saleBadge}>-{novel.salePercent}% 할인</Text>}
                 {isTranslation && <Text style={styles.mutedBadge}>한국 → 영어</Text>}
                 {novel.tags && novel.tags.slice(0, 3).map(tag => (
                   <Text key={tag} style={styles.mutedBadge}>{tag}</Text>
@@ -142,16 +141,21 @@ export default function NovelDetailScreen() {
 
               <View style={styles.priceRow}>
                 <View style={styles.priceValues}>
-                  {hasSale ? (
+                  {showSale ? (
                     <>
-                      <Text style={styles.priceOld}>{oldPrice}원</Text>
-                      <Text style={styles.priceSale}>{salePrice}원</Text>
+                      <Text style={styles.priceOld}>{formatCoinPrice(novel.pricePerEpisode)}</Text>
+                      <Text style={styles.priceSale}>
+                        {formatDiscountedPerEp(novel.pricePerEpisode, novel.salePercent!)}/편
+                      </Text>
                     </>
                   ) : (
-                    <Text style={styles.priceCurrent}>{oldPrice}원</Text>
+                    <Text style={styles.priceCurrent}>{formatCoinPrice(novel.pricePerEpisode)}/편</Text>
                   )}
                 </View>
-                <Text style={styles.priceNote}>총 {novel.totalEpisodes}화 · {novel.author}</Text>
+                <Text style={styles.priceNote}>
+                  총 {novel.totalEpisodes}화 · {novel.author}
+                  {novel.bundleListPrice && novel.salePrice ? ` · 전권 대여 ${formatNumber(novel.salePrice)}G` : ""}
+                </Text>
               </View>
             </View>
           </View>
@@ -311,9 +315,9 @@ const styles = StyleSheet.create({
   kicker: {
     margin: 0,
     marginBottom: 12,
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: "700",
-    color: "rgba(255, 255, 255, 0.72)",
+    color: "rgba(255, 255, 255, 0.8)",
     letterSpacing: 1.4, // 0.14em appx
   },
   title: {
@@ -328,9 +332,9 @@ const styles = StyleSheet.create({
   subtitle: {
     margin: 0,
     marginBottom: 12,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 20,
-    color: "rgba(255, 255, 255, 0.76)",
+    color: "rgba(255, 255, 255, 0.85)",
     textAlign: "center",
   },
   tagsRow: {
@@ -429,8 +433,8 @@ const styles = StyleSheet.create({
   },
   priceNote: {
     marginTop: 8,
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.68)",
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.8)",
   },
 
   // Stats
@@ -536,8 +540,8 @@ const styles = StyleSheet.create({
     color: inkroadTheme.colors.text,
   },
   epHeaderCount: {
-    fontSize: 13,
-    color: inkroadTheme.colors.textMuted,
+    fontSize: 14,
+    color: inkroadTheme.colors.textSecondary,
   },
   epList: {
     borderTopWidth: 1,
@@ -560,8 +564,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   epSummary: {
-    color: inkroadTheme.colors.textMuted,
+    color: inkroadTheme.colors.textSecondary,
     fontSize: 13,
+    lineHeight: 20,
   },
   epRight: {
     alignItems: "flex-end",
@@ -573,7 +578,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   epDate: {
-    color: inkroadTheme.colors.textMuted,
-    fontSize: 11,
+    color: inkroadTheme.colors.textSecondary,
+    fontSize: 12,
   },
 });
+

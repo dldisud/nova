@@ -44,6 +44,7 @@ export function mapRemoteNovelToMobileNovel(input: RemoteNovelAggregate): Novel 
     totalEpisodes: input.novel.total_episode_count,
     freeEpisodes: input.novel.free_episode_count,
     pricePerEpisode: input.representativeEpisodePrice,
+    bundleListPrice: input.novel.bundle_list_price ?? undefined,
     salePercent,
     salePrice: input.novel.bundle_sale_price ?? undefined,
     status: input.novel.status === "completed" ? "완결" : "연재중",

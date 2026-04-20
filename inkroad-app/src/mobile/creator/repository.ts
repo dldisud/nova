@@ -425,7 +425,41 @@ function buildFallbackHistory(workId: string, episodeId?: string, label?: string
   ];
 }
 
-export function createMockAuthorRepository(): AuthorRepository {
+export function createAuthorRepository(): AuthorRepository {
+  async function listAllWorks() {
+    const userId = await remoteBackend.getCurrentUserId();
+    const localWorks = novels; // Fallback to mocks if no user
+
+    if (!userId) {
+      return localWorks.map((n) => ({
+        id: n.id,
+        title: n.title,
+        coverUrl: n.coverUrl,
+        author: n.author,
+        status: n.status,
+      }));
+    }
+
+    const remoteWorks = await remoteBackend.listRemoteWorks(userId);
+    if (!remoteWorks || remoteWorks.length === 0) {
+      return localWorks.map((n) => ({
+        id: n.id,
+        title: n.title,
+        coverUrl: n.coverUrl,
+        author: n.author,
+        status: n.status,
+      }));
+    }
+
+    return remoteWorks.map((n) => ({
+      id: n.id,
+      title: n.title,
+      coverUrl: n.cover_url || "",
+      author: n.author || "",
+      status: n.status === "serializing" ? "연재중" : "완결",
+    }));
+  }
+
   async function listStoredDrafts() {
     const localDrafts = (await listLocalDrafts()).map((entry) => entry.draft);
     const userId = await remoteBackend.getCurrentUserId();
@@ -445,10 +479,12 @@ export function createMockAuthorRepository(): AuthorRepository {
 
   return {
     async listWorks() {
+      const allWorks = await listAllWorks();
       const storedDrafts = await listStoredDrafts();
+      
       const works = await Promise.all(
-        novels.map(async (novel) => {
-          const episodes = buildEpisodeSummaries(novel.id, storedDrafts);
+        allWorks.map(async (work) => {
+          const episodes = buildEpisodeSummaries(work.id, storedDrafts);
           const counts = summarizeCounts(episodes);
           const latestUpdatedAt = episodes
             .map((episode) => new Date(episode.updatedAt).getTime())
@@ -459,17 +495,17 @@ export function createMockAuthorRepository(): AuthorRepository {
             .sort()[0];
 
           return {
-            id: novel.id,
-            title: novel.title,
-            coverUrl: novel.coverUrl,
-            status: novel.status,
-            totalEpisodes: novel.totalEpisodes,
+            id: work.id,
+            title: work.title,
+            coverUrl: work.coverUrl,
+            status: work.status as any,
+            totalEpisodes: episodes.length,
             updatedAt: latestUpdatedAt ? new Date(latestUpdatedAt).toISOString() : nowStamp(),
             draftCount: counts.draft,
             scheduledCount: counts.scheduled,
             publishedCount: counts.published,
-            totalViews: novel.views,
-            monthlyRevenue: counts.published * novel.pricePerEpisode * 12,
+            totalViews: 0, // Should be fetched from analytics/novels table
+            monthlyRevenue: 0,
             nextScheduledAt,
           } satisfies AuthorWorkSummary;
         })
@@ -707,4 +743,8 @@ export function createEpisodeEditorState(draft: EpisodeDraft) {
       return createEpisodeEditorState({ ...draft, ...patch });
     },
   };
+}
+
+export function createMockAuthorRepository() {
+  return createAuthorRepository();
 }

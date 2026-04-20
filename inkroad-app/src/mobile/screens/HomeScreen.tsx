@@ -136,16 +136,15 @@ export default function HomeScreen() {
 
           <View style={styles.heroInner}>
             <View style={styles.heroBadges}>
-              {heroNovel.salePercent && (
+              {heroNovel.salePercent ? (
                 <View style={[styles.badge, styles.badgeSale]}>
                   <Text style={styles.badgeText}>-{heroNovel.salePercent}%</Text>
                 </View>
-              )}
-              {heroNovel.freeEpisodes && heroNovel.freeEpisodes > 0 && (
+              ) : heroNovel.freeEpisodes && heroNovel.freeEpisodes > 0 ? (
                 <View style={[styles.badge, styles.badgeFree]}>
                   <Text style={styles.badgeText}>{heroNovel.freeEpisodes}화 무료</Text>
                 </View>
-              )}
+              ) : null}
               {heroNovel.tags[0] && (
                 <View style={[styles.badge, styles.badgeGenre]}>
                   <Text style={styles.badgeTextLight}>{heroNovel.tags[0]}</Text>

@@ -1,17 +1,9 @@
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Platform } from 'react-native';
-import { mockProfile } from '../../src/mobile/data/mockInkroad';
-import { useAuthSession } from '../../src/mobile/hooks/useAuthSession';
 import { inkroadTheme } from '../../src/mobile/theme';
 
 export default function TabLayout() {
-  const { session, isLoadingSession } = useAuthSession();
-  const canShowAuthorTab =
-    !isLoadingSession &&
-    Boolean(session?.user) &&
-    mockProfile.isCreator;
-
   return (
     <Tabs 
       screenOptions={{ 
@@ -25,7 +17,7 @@ export default function TabLayout() {
           paddingTop: 8,
         },
         tabBarActiveTintColor: inkroadTheme.colors.inkGold,
-        tabBarInactiveTintColor: inkroadTheme.colors.fg3,
+        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.35)',
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: '600',
@@ -63,7 +55,6 @@ export default function TabLayout() {
       <Tabs.Screen
         name="author"
         options={{
-          href: canShowAuthorTab ? undefined : null,
           title: '작가',
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="edit" size={24} color={color} />

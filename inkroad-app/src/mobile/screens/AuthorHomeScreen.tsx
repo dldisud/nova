@@ -13,15 +13,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "../components/AppHeader";
-import { createMockAuthorRepository } from "../creator/repository";
+import { createAuthorRepository } from "../creator/repository";
 import type { AuthorRepository } from "../creator/types";
 import { mockProfile } from "../data/mockInkroad";
 import { useAuthSession } from "../hooks/useAuthSession";
-import { createAccountRepository } from "../reader/accountRepository";
 import type { AuthorDashboardSummary, AuthorWorkSummary } from "../types";
 import { inkroadTheme } from "../theme";
-
-const accountRepository = createAccountRepository();
 
 const c = inkroadTheme.colors;
 const r = inkroadTheme.radius;
@@ -42,38 +39,11 @@ export default function AuthorHomeScreen({
   const router = useRouter();
   const { session, isLoadingSession } = useAuthSession();
   const authorRepository = useMemo(
-    () => repository ?? createMockAuthorRepository(),
+    () => repository ?? createAuthorRepository(),
     [repository]
   );
   const [works, setWorks] = useState<AuthorWorkSummary[]>([]);
   const [dashboard, setDashboard] = useState<AuthorDashboardSummary | null>(null);
-  const [isCreatorChecked, setIsCreatorChecked] = useState(false);
-  const [isCreatorReal, setIsCreatorReal] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    if (!session?.user) {
-      setIsCreatorReal(false);
-      setIsCreatorChecked(true);
-      return;
-    }
-    accountRepository
-      .getProfileData(session.user.id, {
-        email: session.user.email,
-        user_metadata: session.user.user_metadata as Record<string, unknown> | undefined,
-      })
-      .then((data) => {
-        if (!active) return;
-        setIsCreatorReal(data.profile.isCreator);
-        setIsCreatorChecked(true);
-      })
-      .catch(() => {
-        if (!active) return;
-        setIsCreatorReal(false);
-        setIsCreatorChecked(true);
-      });
-    return () => { active = false; };
-  }, [session]);
 
   useEffect(() => {
     let active = true;
@@ -115,9 +85,7 @@ export default function AuthorHomeScreen({
     router.push(`/author/work/${work.id}`);
   };
 
-  const isCreator = Boolean(repository) || isCreatorReal;
-
-  if ((isLoadingSession || !isCreatorChecked) && !repository) {
+  if (isLoadingSession && !repository) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <AppHeader title="작가 스튜디오" showProfile />
@@ -128,21 +96,19 @@ export default function AuthorHomeScreen({
     );
   }
 
-  if (!repository && !isCreator) {
+  if (!repository && !session?.user) {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <AppHeader title="작가 스튜디오" showProfile />
         <View style={styles.center}>
           <MaterialIcons name="edit-note" size={48} color={c.fg3} />
-          <Text style={styles.emptyTitle}>작가 계정이 필요해요</Text>
-          <Text style={styles.emptyBody}>작품 관리와 회차 작성은 작가 전용 공간입니다.</Text>
+          <Text style={styles.emptyTitle}>로그인이 필요해요</Text>
+          <Text style={styles.emptyBody}>작품 관리와 회차 작성은 로그인 후 이용할 수 있습니다.</Text>
           <TouchableOpacity
             style={styles.emptyBtn}
-            onPress={() => router.push(session?.user ? "/profile" : "/auth")}
+            onPress={() => router.push("/auth")}
           >
-            <Text style={styles.emptyBtnText}>
-              {session?.user ? "MY에서 계정 확인" : "로그인하기"}
-            </Text>
+            <Text style={styles.emptyBtnText}>로그인하기</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

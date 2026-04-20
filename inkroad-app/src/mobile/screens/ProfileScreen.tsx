@@ -1,6 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
@@ -25,6 +24,45 @@ import { inkroadTheme } from "../theme";
 const c = inkroadTheme.colors;
 const r = inkroadTheme.radius;
 const accountRepository = createAccountRepository();
+
+type ImagePickerAsset = {
+  uri: string;
+  mimeType?: string | null;
+  base64?: string | null;
+};
+
+type ImagePickerResult = {
+  canceled: boolean;
+  assets?: ImagePickerAsset[];
+};
+
+type ImagePickerModule = {
+  requestMediaLibraryPermissionsAsync: () => Promise<{ granted: boolean }>;
+  launchImageLibraryAsync: (options: {
+    quality: number;
+    base64: boolean;
+    mediaTypes?: unknown;
+  }) => Promise<ImagePickerResult>;
+  MediaTypeOptions?: {
+    Images?: unknown;
+  };
+};
+
+let cachedImagePickerModule: ImagePickerModule | null | undefined;
+
+function getImagePickerModule(): ImagePickerModule | null {
+  if (cachedImagePickerModule !== undefined) {
+    return cachedImagePickerModule;
+  }
+
+  try {
+    cachedImagePickerModule = require("expo-image-picker") as ImagePickerModule;
+  } catch {
+    cachedImagePickerModule = null;
+  }
+
+  return cachedImagePickerModule;
+}
 
 type MenuItem = { label: string; route: string | null; creatorOnly?: boolean };
 
@@ -203,13 +241,22 @@ export default function ProfileScreen() {
       return;
     }
 
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const imagePicker = getImagePickerModule();
+    if (!imagePicker) {
+      setSaveMessage(null);
+      setSaveError(
+        "현재 설치된 앱 빌드에는 아바타 업로드 모듈이 없습니다. 앱을 다시 빌드한 뒤 시도해 주세요."
+      );
+      return;
+    }
+
+    const permission = await imagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await imagePicker.launchImageLibraryAsync({
+      mediaTypes: imagePicker.MediaTypeOptions?.Images,
       quality: 0.8,
       base64: true,
     });
