@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Library and Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              black: '#0D0D0D',
+              dark: '#1A1A1A',
+              accent: '#D4A056',
+              text: '#F3F4F6',
+              muted: '#9CA3AF'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    body {
+      background-color: #0D0D0D;
+      color: #F3F4F6;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .nav-link {
+      transition: color 0.2s ease;
+    }
+    .nav-link:hover {
+      color: #D4A056;
+    }
+
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+<!-- BEGIN: Top Navigation -->
+<nav class="bg-brand-black border-b border-brand-dark sticky top-0 z-50">
+<div class="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+<!-- Logo & Main Links -->
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-2" href="#">
+<div class="w-6 h-6 bg-brand-accent rounded-sm flex items-center justify-center">
+<svg class="w-4 h-4 text-brand-black" fill="currentColor" viewbox="0 0 24 24">
+<path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"></path>
+</svg>
+</div>
+<span class="font-bold text-lg tracking-wider">INKROAD</span>
+</a>
+<div class="hidden md:flex items-center gap-6 text-sm text-brand-muted">
+<a class="nav-link" href="#">Store</a>
+<a class="nav-link" href="#">Browse</a>
+<a class="text-brand-text font-medium" href="#">Library</a>
+<a class="nav-link" href="#">Sale</a>
+</div>
+</div>
+<!-- Search & User Actions -->
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative hidden lg:block w-64">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="bg-brand-dark border-none text-sm rounded-full w-full pl-10 pr-4 py-1.5 focus:ring-1 focus:ring-brand-accent text-brand-text placeholder-brand-muted" placeholder="작품명, 작가, 태그 검색" type="text"/>
+</div>
+<!-- Language -->
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-brand-dark text-sm hover:bg-brand-dark transition-colors">
+<svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          EN
+        </button>
+<!-- Profile Dropdown -->
+<button class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-brand-dark hover:bg-brand-dark transition-colors">
+<img alt="User Avatar" class="w-7 h-7 rounded-full bg-brand-accent/20 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3I2wZQjjFesjZusqLW6qPss3axT-IoRAKZiZojSs_PIFcxDyBfaCjcy-Z3xKmaXgF9wof2y0xQ3xjg_vXc4RMSDbfchBVcWMtgQb-L3-tjmG95WOpcY-CG4UlLam0Yt7uh4stO_TJgOaNjbhSEkI8nd4Bnv_gcgiwD0eu9uV7L0xqWKIA_ehH9tUrNzsV820nmqSm76suSWABS5T2XFzkx9MD2nwes-qGBII8vy430R29tApvGofHjAZR_bjc_-majsDGelQ1_pk"/>
+<div class="flex flex-col items-start leading-none">
+<span class="text-xs font-medium text-brand-text">Profile</span>
+<span class="text-[10px] text-brand-muted">Logout</span>
+</div>
+</button>
+</div>
+</div>
+</nav>
+<!-- END: Top Navigation -->
+<!-- BEGIN: Main Layout -->
+<div class="flex-1 max-w-[1600px] w-full mx-auto px-6 py-8 flex gap-8">
+<!-- BEGIN: Sidebar -->
+<aside class="w-[280px] flex-shrink-0 flex flex-col gap-6">
+<!-- User Profile Card -->
+<div class="bg-brand-dark rounded-2xl p-6 flex flex-col items-center">
+<div class="relative w-20 h-20 mb-4">
+<div class="w-full h-full rounded-full bg-brand-accent flex items-center justify-center overflow-hidden border-2 border-brand-black">
+<img alt="Alex Kim" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3I2wZQjjFesjZusqLW6qPss3axT-IoRAKZiZojSs_PIFcxDyBfaCjcy-Z3xKmaXgF9wof2y0xQ3xjg_vXc4RMSDbfchBVcWMtgQb-L3-tjmG95WOpcY-CG4UlLam0Yt7uh4stO_TJgOaNjbhSEkI8nd4Bnv_gcgiwD0eu9uV7L0xqWKIA_ehH9tUrNzsV820nmqSm76suSWABS5T2XFzkx9MD2nwes-qGBII8vy430R29tApvGofHjAZR_bjc_-majsDGelQ1_pk"/>
+</div>
+</div>
+<h2 class="text-xl font-bold mb-6">Alex Kim</h2>
+<div class="w-full space-y-3 text-sm">
+<div class="flex justify-between items-center">
+<span class="text-brand-muted">Books Read:</span>
+<span class="font-medium">87</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-brand-muted">Days Active:</span>
+<span class="font-medium">452</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-brand-muted">Comments Made:</span>
+<span class="font-medium">312</span>
+</div>
+</div>
+</div>
+<!-- Navigation Menu -->
+<nav class="bg-brand-dark rounded-2xl p-3 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-accent/10 text-brand-accent font-medium transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Dashboard
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-text hover:bg-white/5 transition-colors" href="#">
+<svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Library
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-text hover:bg-white/5 transition-colors" href="#">
+<svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Favorite Lists
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-text hover:bg-white/5 transition-colors" href="#">
+<svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Reading History
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-text hover:bg-white/5 transition-colors mt-auto" href="#">
+<svg class="w-5 h-5 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+          Settings
+        </a>
+</nav>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content Area -->
+<main class="flex-1 min-w-0 flex flex-col gap-8 pb-12">
+<header>
+<h1 class="text-3xl font-bold tracking-tight">User Library and Profile</h1>
+</header>
+<!-- BEGIN: Recently Read -->
+<section>
+<h2 class="text-xl font-bold mb-4">Recently Read</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover flex flex-col cursor-pointer border border-white/5">
+<div class="aspect-[2/3] w-full relative">
+<img alt="The Alchemist's Tower" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVIZZ99Ca-lDRyG5CGs-bSo0qX5dq7BNr-JqI4DtkHzfmyumnMyRZZJ7Z1OaQrGcHe3y93aOgatB1BDA_Tp_xUe1oW3GO5_HXmf729OcyILIXbz2zC8Q35bJd2ZDaK-65fKbraWsGxJh6uGVpjh75ZMFf14eZpTy2apVN32iEF6pL8_G0s30KspZruaUKU1yIxuetid1mDFnF6DSwHDzTfVftNawSd-KGV-dAEOiWEp88CF7UF5pN_VRNM2poEfVuakUbxSLfbDAo"/>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div>
+<h3 class="font-bold text-lg leading-tight line-clamp-1">The Alchemist's Tower</h3>
+<p class="text-sm text-brand-muted">신사형</p>
+</div>
+<div class="mt-auto pt-2">
+<div class="flex justify-between text-xs text-brand-muted mb-1">
+<span>Read read</span>
+<span class="text-brand-accent">85%</span>
+</div>
+<div class="h-1 bg-black/50 rounded-full overflow-hidden">
+<div class="h-full bg-brand-accent w-[85%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover flex flex-col cursor-pointer border border-white/5">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Crimson Oath" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB99KPPnt-XfzHpVXveKQZmuDs_2lPmG8k1gFBpNz6GpC84Pgsp7Wx8Mu9zDqSznc9Q58IBczyutmBHFgd3vzHGqVZsn6b6_HgF8TGAMXja0oKLZiVhR28DxCAIlcRatTsO2YyyhM3DXqppjqNqElyubbV8gIcw9vEZ9Ran0Yp6r6cUfkXY2r1fbXZ98wxMwIoTIqYXAD6fGhBaWIzwlJVp7t3A8jyvLw2k4b5TFOWXxRWMsxYM3JZrA5Sk9btCNCXuC9oS2IqleM"/>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div>
+<h3 class="font-bold text-lg leading-tight line-clamp-1">Crimson Oath</h3>
+<p class="text-sm text-brand-muted">아사달이</p>
+</div>
+<div class="mt-auto pt-2">
+<div class="flex justify-between text-xs text-brand-muted mb-1">
+<span>Prog read</span>
+<span class="text-brand-accent">32%</span>
+</div>
+<div class="h-1 bg-black/50 rounded-full overflow-hidden">
+<div class="h-full bg-brand-accent w-[32%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover flex flex-col cursor-pointer border border-white/5">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Shadows of the Empire" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeSZxaH-0dqe3ZZwKpq-yd-c7YrXCwDl-JqW15d4s_bU2RvoidJljd22F19ospj7ue63aZ9fA3LTsiiUWVMulwGkW419Alauh-x1aNscDwmHEDcT_yg6LkQ_3hH5n0Q-Fs-lXJ6M3uU0hUUWcvMeU7bZbyWux2bJoeLC4eASPp8S42EwsPYprHhR9yqRFJ5VyGK967y_ihn0pC0nIVTbXUNkqST9XF2xEzoswJj55Dh9i9TKx0fcVzZbaewQpMRmQdyYBV9rMkCVg"/>
+</div>
+<div class="p-4 flex flex-col gap-2 flex-1">
+<div>
+<h3 class="font-bold text-lg leading-tight line-clamp-1">Shadows of the Empire</h3>
+<p class="text-sm text-brand-muted">이창환</p>
+</div>
+<div class="mt-auto pt-2">
+<div class="flex justify-between text-xs text-brand-muted mb-1">
+<span>Prog read</span>
+<span class="text-brand-accent">5%</span>
+</div>
+<div class="h-1 bg-black/50 rounded-full overflow-hidden">
+<div class="h-full bg-brand-accent w-[5%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Recently Read -->
+<!-- BEGIN: Tabs & Main Library Grid -->
+<section class="flex flex-col gap-6">
+<!-- Tabs -->
+<div class="flex gap-8 border-b border-white/10">
+<button class="pb-3 text-lg font-medium text-brand-accent border-b-2 border-brand-accent px-1">Library</button>
+<button class="pb-3 text-lg font-medium text-brand-muted hover:text-brand-text transition-colors px-1">Favorite Lists</button>
+<button class="pb-3 text-lg font-medium text-brand-muted hover:text-brand-text transition-colors px-1">Reading History</button>
+</div>
+<!-- Toolbar -->
+<div class="flex justify-end gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-brand-dark hover:bg-white/5 text-sm transition-colors">
+<svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Filter
+          </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-brand-dark hover:bg-white/5 text-sm transition-colors">
+<svg class="w-4 h-4 text-brand-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Sort
+          </button>
+</div>
+<!-- Library Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Library Book 1 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="The Darkest Magic" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU3pQ5lfd_yFvBFqCMR12zx9-bDQZWFuSz-vE-Tf_f7Xw7UKnqchZyOXlRrUISf5FVeks5PbQjJ-ChRuNbBUjTwbbZfSU3k4NSrX3AxXDSxhRdK9wP7DPzVdB9fG1iVEPCMixpQgiHhHwQ66YcBcBDVDa1jt0ZY2_4FTXMyNXBSSV6FjgrM4I6KVsWxsFTQTTWwYIZ1Bqhpb6uCD3NGplnqnbpELQKEyBr7aotXs0YwJD8QIZGRKlz8HcuDHp4yT3yGn5eAO6ixfM"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">The Darkest Magic</h3>
+<p class="text-sm text-brand-muted">신사형</p>
+<p class="text-xs text-brand-muted mt-1">Ongoing</p>
+</div>
+</div>
+<!-- Library Book 2 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Return of the Sword God" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxmQnmvjxKbsHMEjMfa90kgZ7PvhxdoImshsNb0dRHVHoB3Da1XVbRspjGXrOvq-gI9C0ZrPm-r0GW9JsSvFfsS-pcFLHwuIB6mmw7il-ZS4VhsbjNoPOYsMWAISaNbFUBqMQ94Fmqkn2Pz56_dz2-1vojU7kg17UEEZ0hX42FwLItApXL0cOxTP6klZZ5WapsGYwXVlV11FikFqPTtaNUT60CRb0S8LbnLAv-lefa8AV57DUGIhLVtszieCKNlbfwU8Js-wln-HE"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">Return of the Sword God</h3>
+<p class="text-sm text-brand-muted">단새이</p>
+<p class="text-xs text-brand-muted mt-1">Ongoing</p>
+</div>
+</div>
+<!-- Library Book 3 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Reincarnated as a Villainess" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGDnLD7S3Bg2oNxQMhmMx0gLpRaMdeCB9hCDE3ZFO9tDvWlNMFilmI79vc3w_IaLd-1MQAwgE_WY5Mo2t12Lnese3zdBGp-VdDa4aT3AgFDRKe6PANyB4UCF_Fj-mX6f-HA_EkWw08NK9eCZvGn4Txic-Xn3uVhdQPwYmjHPb3p67uihimiOioX9_JbeSJ-OquUNseUfy2QeK1NYHbndGgJw70BIBzDqG-L2ajfoRCFj6zNSAmZ4ErwtPdizcgZUPNFJcYjfwLKlk"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">Reincarnated as a Villainess</h3>
+<p class="text-sm text-brand-muted">이창환</p>
+<p class="text-xs text-brand-muted mt-1">완결 · Ongoing</p>
+</div>
+</div>
+<!-- Library Book 4 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Starfall Academy" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsuU_gI6sBhP94hOGoqSGThs-_6Lm0iHPqA8Tyd772SvRCXn_OnnnwThy7cCBCXFpRreVSySKfYd0g_ysN_Qcy11iEFWbreI449MeF6ZMafqu-aqdm1uoKCyHOG0Yo452HGfsxkDiBF8edMmHJPeBvJFdxtWcPZgGpfzQS9tY2Gjt9LG3Xf8BmAPM5wHz1-RNSrRyRB4Is-9oW2YMx-uCFXSuLr_SLnqQMK0vSzdAdZquS7S9TejTELgKA2HUZtFn728Nf5F9c-SE"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">Starfall Academy</h3>
+<p class="text-sm text-brand-muted">아상원</p>
+<p class="text-xs text-brand-muted mt-1">회귀 · Ongoing</p>
+</div>
+</div>
+<!-- Library Book 5 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="The Forbidden Grimoire" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARUgUsiPTSGFAPshRPV54-DsgcthbP4o-O6BQa4fZ16Uv4sOWlFxgw1wBu6DmBraTo6TLnGUR1aubMdwyo5VckfRY__ard__Zb7RelzXCBU019ZdDyauL-QlQTvrSwSAUrq-AhBMxjJDzTtx6-B5cgbYbZEYLlInU2DMMx7dJcPE3QwiaRPaC4yq482-Z1mMCKipnsjNnaCZrQgqs2ZL5Li2sXIhm3Tq49tbmjuMydeF801TPBTZtyXWAKo60oQaByVZ99Dw-FNCM"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">The Forbidden Grimoire</h3>
+<p class="text-sm text-brand-muted">아상원</p>
+<p class="text-xs text-brand-muted mt-1">사서 · Ongoing</p>
+</div>
+</div>
+<!-- Library Book 6 -->
+<div class="bg-brand-dark rounded-2xl overflow-hidden card-hover border border-white/5 cursor-pointer">
+<div class="aspect-[2/3] w-full relative">
+<img alt="Legend of the Dragon King" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo2xN6H9PTX_uYjXcwlxC1rzX9AihhioKLRTqBvpNfbJBjbNSLQLAfgYb0oTiQNY72iUQCsw_uY62LFB0suSF0WMJGk80xhz26Q9lC1rytWDPWsjggjtQxAWSl0UwXKBeq1JxMDpVqwgr2xYEv3megBn7ySEAJWPpvnfse5u6T06GLxZi0kpjN2eO1NAXLBJLxIc3tuX_9P-W4Uz7_x9UDoJBeUkFLHjkaQKuoANbfOr4aqol1Fe3fFgcNbTC_0UNzOhbWVpJtQZs"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg leading-tight mb-1 line-clamp-2">Legend of the Dragon King</h3>
+<p class="text-sm text-brand-muted">이창환</p>
+<p class="text-xs text-brand-muted mt-1">회귀 · Ongoing</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Tabs & Main Library Grid -->
+</main>
+<!-- END: Main Content Area -->
+</div>
+<!-- END: Main Layout -->
+<!-- BEGIN: Footer -->
+<footer class="bg-brand-black border-t border-white/10 mt-auto">
+<div class="max-w-[1600px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-brand-muted">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-brand-accent rounded-sm flex items-center justify-center">
+<svg class="w-3 h-3 text-brand-black" fill="currentColor" viewbox="0 0 24 24">
+<path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"></path>
+</svg>
+</div>
+<span class="font-bold tracking-wider text-brand-text">INKROAD</span>
+</div>
+<div class="flex gap-6">
+<a class="hover:text-brand-text transition-colors" href="#">Terms</a>
+<a class="hover:text-brand-text transition-colors" href="#">Privacy</a>
+<a class="hover:text-brand-text transition-colors" href="#">Support</a>
+<a class="hover:text-brand-text transition-colors" href="#">Creator</a>
+</div>
+<div>
+        © 2028 INKROAD. All rights reserved.
+      </div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>

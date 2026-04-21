@@ -58,7 +58,7 @@
     ageRatingSelect: document.querySelector("[data-episode-age-rating]"),
     titleInput: document.querySelector("[data-episode-title]"),
     bodyInput: document.querySelector("[data-episode-body]"),
-    editorContainer: document.querySelector("[data-editor-container]"),
+    editorCanvas: document.querySelector("#editor-canvas"), // New: ContentEditable area
     editorStatus: document.querySelector("[data-editor-status]"),
     modeToggle: document.querySelector("[data-editor-mode-toggle]"),
     snapshotToggle: document.querySelector("[data-snapshot-toggle]"),
@@ -85,7 +85,9 @@
     episodePurge: document.querySelector("[data-episode-purge]"),
     editMeta: document.querySelector("[data-episode-edit-meta]"),
     editNumber: document.querySelector("[data-episode-edit-number]"),
-    editUpdated: document.querySelector("[data-episode-edit-updated]")
+    editUpdated: document.querySelector("[data-episode-edit-updated]"),
+    pbModalOverlay: document.querySelector("#pb-modal-overlay"),
+    pbTypeButtons: Array.from(document.querySelectorAll("[data-pb-type]"))
   };
 
   function q(selector, root) {
@@ -543,49 +545,40 @@
   }
 
   function initEditor() {
-    if (state.editor || !refs.editorContainer || typeof toastui === "undefined") return;
+    if (state.editor || !refs.editorCanvas) return;
+
+    // Use ContentEditable instead of Toast UI
+    state.editor = refs.editorCanvas;
 
     const draft = state.mode === "edit" ? "" : (localStorage.getItem(draftKey()) || "");
+    if (draft) {
+      state.editor.innerHTML = draft;
+      setSaveStatus(t("editor.draft_restored"), "offline");
+    }
 
-    state.editor = new toastui.Editor({
-      el: refs.editorContainer,
-      initialEditType: "wysiwyg",
-      previewStyle: "vertical",
-      height: "500px",
-      initialValue: draft,
-      language: "ko-KR",
-      toolbarItems: [
-        ["bold", "italic", "strike"],
-        ["hr", "quote"],
-        ["ul", "ol"]
-      ],
-      placeholder: t("editor.placeholder"),
-      usageStatistics: false
-    });
-
-    state.editor.on("change", function () {
+    state.editor.addEventListener("input", function () {
       onContentChange();
       setSubmitState(false);
     });
 
-    if (draft) {
-      setSaveStatus(t("editor.draft_restored"), "offline");
-    }
+    state.editor.addEventListener("paste", function (e) {
+        // Simple plain text paste handling if needed
+    });
   }
 
   function getEditorContent() {
-    if (state.editorMode === "wysiwyg" && state.editor) {
-      return state.editor.getMarkdown();
+    if (state.editor) {
+      return state.editor.innerHTML;
     }
-    return refs.bodyInput ? refs.bodyInput.value : "";
+    return "";
   }
 
-  function setEditorContent(markdown) {
+  function setEditorContent(html) {
     if (state.editor) {
-      state.editor.setMarkdown(markdown || "", false);
+      state.editor.innerHTML = html || "";
     }
     if (refs.bodyInput) {
-      refs.bodyInput.value = markdown || "";
+      refs.bodyInput.value = html || "";
     }
   }
 
@@ -1213,21 +1206,28 @@
     try {
       let rpcResult;
 
+      const ageRatingMap = { "all": 0, "15": 15, "19": 19 };
+      const pAgeRating = ageRatingMap[ageRating] || 0;
+
       if (state.mode === "edit") {
         rpcResult = await state.client.rpc("update_episode_for_author", {
           p_episode_id: state.editingEpisodeId,
           p_title: title,
           p_body: body,
           p_access_type: accessType,
-          p_price: accessType === "paid" ? price : 0
+          p_price: accessType === "paid" ? price : 0,
+          p_published_at: scheduledAtStr,
+          p_age_rating: pAgeRating
         });
       } else {
         rpcResult = await state.client.rpc("create_episode_for_author_novel", {
-          p_user_id: session.user.id,
-          p_novel_id: work.id,
+          p_novel_slug: work.slug,
           p_title: title,
           p_body: body,
-          p_is_free: accessType === "free"
+          p_price: accessType === "paid" ? price : 0,
+          p_access_type: accessType,
+          p_published_at: scheduledAtStr,
+          p_age_rating: pAgeRating
         });
       }
 
@@ -1295,9 +1295,24 @@
       refs.accessSelect.addEventListener("change", togglePrice);
     }
 
-    if (refs.scheduleModeSelect) {
       refs.scheduleModeSelect.addEventListener("change", function () {
         if (refs.scheduleModeSelect.value === "schedule") {
+          if (refs.scheduleDateWrap) refs.scheduleDateWrap.hidden = false;
+        } else {
+          if (refs.scheduleDateWrap) refs.scheduleDateWrap.hidden = true;
+        }
+      });
+    }
+
+    // Production Block Events
+    if (refs.pbTypeButtons) {
+      refs.pbTypeButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const type = btn.dataset.pbType;
+          openPbModal(type);
+        });
+      });
+    }
           refs.scheduleDateWrap.hidden = false;
           refs.scheduleDateInput.required = true;
         } else {
@@ -1452,6 +1467,117 @@
 
     setSubmitState(false);
   }
+
+  // --- Production Block Logic ---
+
+  function openPbModal(type) {
+    if (!refs.pbModalOverlay) return;
+    refs.pbModalOverlay.hidden = false;
+    
+    // Hide all modals first
+    const modals = refs.pbModalOverlay.querySelectorAll(".pb-config-modal");
+    modals.forEach(m => m.hidden = true);
+    
+    // Show selected one
+    const target = refs.pbModalOverlay.querySelector("#modal-" + type);
+    if (target) target.hidden = false;
+  }
+
+  window.closePbModal = function() {
+    if (refs.pbModalOverlay) refs.pbModalOverlay.hidden = true;
+  };
+
+  function insertContentIntoEditor(html) {
+    if (!state.editor) return;
+    
+    // Focus the editor first
+    state.editor.focus();
+    
+    // Insert HTML at cursor position for ContentEditable
+    const sel = window.getSelection();
+    if (sel.getRangeAt && sel.rangeCount) {
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      
+      const el = document.createElement("div");
+      el.innerHTML = html;
+      const frag = document.createDocumentFragment();
+      let node;
+      let lastNode;
+      while ((node = el.firstChild)) {
+        lastNode = frag.appendChild(node);
+      }
+      range.insertNode(frag);
+      
+      // Move cursor after inserted node
+      if (lastNode) {
+        range.setStartAfter(lastNode);
+        range.setEndAfter(lastNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    } else {
+        // Fallback: just append if no selection
+        state.editor.innerHTML += html;
+    }
+    
+    onContentChange();
+    window.closePbModal();
+  }
+
+  window.insertRubyBlock = function() {
+    const baseText = document.querySelector("#ruby-base").value.trim();
+    const rtText = document.querySelector("#ruby-rt").value.trim();
+    if (!baseText) return alert("기준 텍스트를 입력해주세요.");
+    
+    const html = `<div class="relative group py-2 inline-block"><div class="inline-flex flex-col items-center bg-surface-container-low px-4 py-2 rounded-md border border-primary/20 relative"><div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-surface px-2"><span class="font-label text-xs text-primary uppercase tracking-widest">Ruby Text</span></div><span class="text-xs font-label text-primary-fixed-dim text-center w-full mb-1 p-0 h-5" style="display:block;">${rtText}</span><span class="text-xl font-headline text-on-surface text-center w-full p-0" style="display:block;">${baseText}</span></div></div>&nbsp;`;
+    insertContentIntoEditor(html);
+  };
+
+  window.insertSystemWindowBlock = function() {
+    const tag = document.querySelector("#sys-tag").value.trim() || "SYSTEM";
+    const title = document.querySelector("#sys-title").value.trim();
+    const l1 = document.querySelector("#sys-label-1").value.trim();
+    const v1 = document.querySelector("#sys-value-1").value.trim();
+    const l2 = document.querySelector("#sys-label-2").value.trim();
+    const v2 = document.querySelector("#sys-value-2").value.trim();
+    
+    const html = `<div class="my-6 p-6 rounded-2xl bg-surface-container-high border-2 border-secondary/30 relative overflow-hidden"><div class="absolute top-0 right-0 p-3 opacity-10"><span class="material-symbols-outlined text-4xl">widgets</span></div><div class="flex items-center gap-2 mb-4 bg-secondary/10 px-3 py-1 rounded-full w-fit"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="text-[10px] font-label text-secondary uppercase tracking-widest">${tag}</span></div><h4 class="text-xl font-headline text-on-surface mb-6 font-bold">${title}</h4><div class="grid grid-cols-2 gap-4"><div class="p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10"><p class="text-[10px] uppercase text-on-surface-variant/60 tracking-wider mb-1">${l1}</p><p class="text-sm font-bold text-on-surface">${v1}</p></div><div class="p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10"><p class="text-[10px] uppercase text-on-surface-variant/60 tracking-wider mb-1">${l2}</p><p class="text-sm font-bold text-on-surface">${v2}</p></div></div></div><p><br></p>`;
+    insertContentIntoEditor(html);
+  };
+
+  window.insertChatBlock = function() {
+    const sender = document.querySelector("#chat-sender").value.trim() || "???";
+    const text = document.querySelector("#chat-text").value.trim();
+    const direction = document.querySelector("#chat-direction").value;
+    const initial = sender.charAt(0).toUpperCase();
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (!text) return alert("메시지 내용을 입력해주세요.");
+
+    const alignment = direction === 'outgoing' ? 'flex-row-reverse' : '';
+    const itemAlign = direction === 'outgoing' ? 'items-end' : '';
+    const roundedClass = direction === 'outgoing' ? 'rounded-tr-none' : 'rounded-tl-none';
+
+    const html = `<div class="my-6 rounded-2xl bg-surface-container border border-outline-variant/20 overflow-hidden"><div class="bg-surface-container-high px-4 py-2 flex items-center justify-between border-b border-outline-variant/10"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-xs text-primary">forum</span><span class="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Secure Channel</span></div><span class="text-[9px] text-primary bg-primary/10 px-2 py-0.5 rounded-full">ENCRYPTED</span></div><div class="p-6 space-y-4 bg-surface-container-lowest/50"><div class="flex gap-4 ${alignment}"><div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20"><span class="text-xs font-bold text-primary">${initial}</span></div><div class="flex flex-col ${itemAlign}"><div class="flex items-center gap-2 mb-1"><span class="text-[11px] font-bold text-on-surface">${sender}</span><span class="text-[9px] text-on-surface-variant/60">${time}</span></div><div class="px-4 py-2 bg-surface rounded-2xl ${roundedClass} border border-outline-variant/20 max-w-[90%] text-sm leading-relaxed text-on-surface">${text}</div></div></div></div></div><p><br></p>`;
+    insertContentIntoEditor(html);
+  };
+
+  window.insertFlashbackBlock = function() {
+    const text = document.querySelector("#flashback-text").value.trim();
+    if (!text) return alert("회상 내용을 입력해주세요.");
+    
+    const html = `<div class="my-6 relative py-4"><div class="absolute inset-0 bg-primary/5 rounded-2xl -skew-x-2 border-l-4 border-primary"></div><div class="relative px-6 py-2 italic text-on-surface-variant leading-loose tracking-wide font-serif">${text.replace(/\n/g, "<br>")}</div></div><p><br></p>`;
+    insertContentIntoEditor(html);
+  };
+
+  window.insertSystemMsgBlock = function() {
+    const text = document.querySelector("#sys-msg-text").value.trim();
+    if (!text) return alert("메시지 내용을 입력해주세요.");
+    
+    const html = `<div class="my-4 flex items-center justify-center"><div class="px-4 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-2 text-[10px] font-label tracking-widest uppercase"><span class="material-symbols-outlined text-sm">notification_important</span><span>${text}</span></div></div><p><br></p>`;
+    insertContentIntoEditor(html);
+  };
 
   async function boot() {
     if (!refs.authShell || !refs.form) return;

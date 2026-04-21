@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Immersive Novel Reader</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'reader-bg': '#000000',
+            'reader-surface': '#111111',
+            'reader-panel': '#1e1c18',
+            'reader-text': '#d4c4a8',
+            'reader-text-muted': '#a09480',
+            'reader-accent': '#d4c4a8',
+            'reader-accent-hover': '#f0e0c0',
+            'reader-border': '#333333',
+            'reader-highlight': '#e6d5b8',
+            'reader-highlight-bg': '#2a2418',
+            'btn-bg': '#222222',
+            'btn-border': '#444444',
+            'btn-hover': '#333333',
+            'comment-bg': '#1e1e1e',
+            'upvote': '#3D482F',
+            'downvote': '#4E2A2A',
+          },
+          fontFamily: {
+            'serif': ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+            'sans': ['system-ui', '-apple-system', 'sans-serif'],
+            'mono': ['Menlo', 'Monaco', 'Consolas', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars">
+    /* Custom scrollbar for settings panel if needed */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #111;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body class="bg-reader-bg text-reader-text font-serif min-h-screen flex flex-col selection:bg-reader-highlight-bg selection:text-reader-highlight">
+<!-- BEGIN: Top Bar & Progress -->
+<div class="fixed top-0 left-0 w-full z-50">
+<!-- Progress Bar -->
+<div class="h-[3px] bg-gray-800 w-full flex items-center px-4 relative">
+<div class="absolute left-4 text-[10px] text-reader-text-muted top-2">40%</div>
+<div class="h-[3px] bg-reader-accent w-[40%] rounded-r ml-12"></div>
+</div>
+<!-- Settings Link (Top Right) -->
+<div class="absolute top-1 right-6 text-sm flex items-center gap-2 cursor-pointer hover:text-reader-accent-hover text-reader-text-muted z-50">
+<i class="fas fa-cog"></i>
+<span>Settings</span>
+</div>
+<!-- Main Header Navigation -->
+<header class="bg-[#0a0a0a] border-b border-reader-border py-3 px-6 flex justify-between items-center mt-6">
+<div class="flex items-center">
+<!-- Logo Placeholder -->
+<div class="text-reader-accent text-2xl">
+<i class="fas fa-feather-alt transform -rotate-45"></i>
+</div>
+</div>
+<div class="flex gap-4">
+<button class="px-4 py-1.5 rounded bg-btn-bg border border-btn-border text-reader-text-muted hover:text-reader-text hover:bg-btn-hover transition-colors text-sm font-sans">
+          Previous Chapter
+        </button>
+<button class="px-4 py-1.5 rounded bg-btn-bg border border-reader-text text-reader-accent hover:bg-btn-hover transition-colors text-sm font-sans">
+          Next Chapter
+        </button>
+</div>
+</header>
+</div>
+<!-- END: Top Bar & Progress -->
+<!-- BEGIN: Main Content Layout -->
+<div class="flex flex-1 pt-[100px]"> <!-- pt offsets fixed header -->
+<!-- Reader Area -->
+<main class="flex-1 flex justify-center px-8 pb-20 overflow-y-auto">
+<div class="max-w-3xl w-full mt-12">
+<!-- Story Content -->
+<article class="mb-20">
+<h1 class="text-3xl md:text-4xl text-reader-highlight mb-10 leading-snug tracking-wide">
+            THE UNCHARTED REALM - Chapter 3:<br/>
+            The Whispering Woods
+          </h1>
+<div class="text-xl leading-[1.8] text-reader-text">
+<p class="mb-6">
+              The air hung thick and damp in the Whispering Woods, the towering trees pressing in on all sides like ancient sentinels guarding their secrets.
+            </p>
+</div>
+</article>
+<!-- Chapter Discussion -->
+<section class="border-t border-reader-border pt-12">
+<h2 class="text-2xl text-reader-highlight mb-6">Chapter Discussion</h2>
+<!-- Comment Input -->
+<div class="mb-10">
+<textarea class="w-full bg-[#1a1a1a] border border-[#333] rounded-lg p-4 text-reader-text focus:ring-1 focus:ring-reader-accent focus:border-reader-accent resize-none font-sans text-sm" placeholder="Leave a comment..." rows="3"></textarea>
+<div class="flex justify-end mt-3">
+<button class="bg-[#243b55] hover:bg-[#2c4a6f] text-blue-100 px-5 py-1.5 rounded-md border border-[#344c6a] text-sm font-sans transition-colors">
+                Post Comment
+              </button>
+</div>
+</div>
+<!-- Comments List -->
+<div class="space-y-6 font-sans">
+<!-- Comment Thread 1 -->
+<div class="flex gap-4">
+<img alt="ReaderOne" class="w-10 h-10 rounded-full border-2 border-[#555]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfEOZRhK6hkSioPwnnJwTmBG86spmc5H-wxAgNdLbOpvHHAUFJo0ahqp7XkvyTXVqFhCvahQGPGkNZqQCLVBADho_zOwsTnnXcWqARjR36Z7-Z3_3iVn69qqgEOtahbSpXFOJMqaGpLQ8NrTA1dq9QASZ4FjDsC2oAMEze5uyYbjHa9-vmq-lLeIjYw54ebOjTp7VvWFusgYbgx66-aMa3HueSXqCvko2cy7Xu40noQe5VGhd52DQ3v3RHACqx0H593XguoJEKA8w"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<div>
+<span class="font-bold text-reader-text">ReaderOne</span>
+<span class="text-reader-text-muted text-xs ml-2">2 hours ago</span>
+</div>
+<div class="flex gap-2">
+<button class="w-6 h-6 rounded bg-upvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-up"></i></button>
+<button class="w-6 h-6 rounded bg-downvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-down"></i></button>
+</div>
+</div>
+<p class="text-sm text-reader-text-muted mb-2">The suspense is killing me! I love how Elara's character is developing.</p>
+<div class="flex gap-4 text-xs text-reader-text-muted">
+<button class="hover:text-reader-text"><i class="fas fa-ellipsis-h"></i></button>
+</div>
+<!-- Nested Reply -->
+<div class="flex gap-4 mt-4 relative">
+<!-- Thread Line -->
+<div class="absolute -left-10 top-0 bottom-0 w-px bg-reader-border"></div>
+<div class="absolute -left-10 top-5 w-4 h-px bg-reader-border"></div>
+<img alt="Author" class="w-8 h-8 rounded-full border-2 border-reader-highlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo3ljgl6S_e_iiJMy9sx8kROzhuNRf8UXthJ76SKC-kj_cKhQu3q1NY7ZpF6Uyghs453Aa77Ju4mr71bklA9GrgDlw0CWSyCaQklJnVqHvZMjvZpIwFqB5CYO5wve46Dzjb6mL7zeTjDV4D__KUkl1RURpUnEVC3bXgALHQ2hLvbK6FSIsEXMjkE7cIB96QPO-hyuygJ7c9vIJp4UDGGF4NvuJ01WuiGGhHTxcH_XEoT5bXilBaALyWIi1BKylZnoG5uL10rxEWMQ"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<div>
+<span class="font-bold text-reader-highlight">Author</span>
+<span class="text-reader-text-muted text-xs ml-2">1 hour ago</span>
+</div>
+<div class="flex gap-2">
+<button class="w-6 h-6 rounded bg-upvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-up"></i></button>
+<button class="w-6 h-6 rounded bg-downvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-down"></i></button>
+</div>
+</div>
+<p class="text-sm text-reader-text-muted mb-2">Thank you! More suspense in the next chapter.</p>
+<div class="flex gap-4 text-xs text-reader-text-muted">
+<button class="hover:text-reader-text"><i class="fas fa-ellipsis-h"></i></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Comment Thread 2 -->
+<div class="flex gap-4">
+<img alt="StoryFan" class="w-10 h-10 rounded-full border-2 border-[#555]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp8E250W_Re8LK4_wys7F93lUSNMGsERbBg01WOMCbGjDSflUCBDjPDJzdyAgfm7QcwyJcd0P9A3zCF_DrdngmCc1ez5evOkMxH-vVdP0XMWkABFURcBAr9H2DpvA3G8uQPt6vj8i1DLvXioesZwLYkgQbdvYIuAwXNfHOFNFC7-UYN4VDlYgVoHNJCGHiqkXrzGYpqKUvu_mHgmNgQpt4OTL3ob40PnoZKUnrPBpxN9a-f3zd5tCSSs-KGmqKpynx67omgtPXZq0"/>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<div>
+<span class="font-bold text-reader-text">StoryFan</span>
+</div>
+<div class="flex gap-2">
+<button class="w-6 h-6 rounded bg-upvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-up"></i></button>
+<button class="w-6 h-6 rounded bg-downvote flex items-center justify-center text-xs opacity-70 hover:opacity-100"><i class="fas fa-chevron-down"></i></button>
+</div>
+</div>
+<p class="text-sm text-reader-text-muted mb-2">The Whispering Woods description is so vivid.</p>
+<div class="flex gap-4 text-xs text-reader-text-muted">
+<button class="hover:text-reader-text"><i class="fas fa-ellipsis-h"></i></button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BEGIN: Settings Sidebar -->
+<aside class="w-80 bg-reader-panel border-l border-reader-border flex flex-col font-sans relative mr-4 mt-4 rounded-xl mb-4">
+<!-- Triangle pointer -->
+<div class="absolute -top-3 right-6 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[12px] border-b-reader-panel"></div>
+<div class="p-5 border-b border-[#333]">
+<h3 class="text-sm tracking-wider text-reader-text-muted uppercase font-semibold">Reader Settings</h3>
+</div>
+<div class="p-5 overflow-y-auto flex-1 space-y-8">
+<!-- Typography Section -->
+<section>
+<h4 class="text-base text-reader-highlight mb-4 font-sans">Typography</h4>
+<div class="space-y-4">
+<!-- Font Family -->
+<div>
+<label class="block text-sm text-reader-text-muted mb-2">Font Family</label>
+<div class="flex bg-btn-bg rounded border border-btn-border overflow-hidden">
+<button class="flex-1 py-1.5 text-sm bg-reader-highlight text-[#111] font-serif">Serif</button>
+<button class="flex-1 py-1.5 text-sm hover:bg-btn-hover text-reader-text-muted font-sans border-l border-btn-border">Sans</button>
+<button class="flex-1 py-1.5 text-sm hover:bg-btn-hover text-reader-text-muted font-mono border-l border-btn-border">Monospace</button>
+</div>
+</div>
+<!-- Size & Line Height -->
+<div class="flex gap-4">
+<div class="flex-1">
+<label class="block text-sm text-reader-text-muted mb-2">Font Size</label>
+<div class="flex bg-btn-bg rounded border border-btn-border overflow-hidden items-center">
+<button class="flex-1 py-1.5 hover:bg-btn-hover text-reader-text-muted text-lg leading-none border-r border-btn-border">−</button>
+<span class="px-3 text-sm text-reader-text-muted font-serif">A</span>
+<button class="flex-1 py-1.5 hover:bg-btn-hover text-reader-text-muted text-lg leading-none border-l border-btn-border">+</button>
+</div>
+</div>
+<div class="flex-1">
+<label class="block text-sm text-reader-text-muted mb-2">Line Height</label>
+<div class="flex bg-btn-bg rounded border border-btn-border overflow-hidden">
+<button class="flex-1 py-1.5 text-xs bg-reader-highlight text-[#111]">1.5x</button>
+<button class="flex-1 py-1.5 text-xs hover:bg-btn-hover text-reader-text-muted border-l border-btn-border">1.8x</button>
+<button class="flex-1 py-1.5 text-xs hover:bg-btn-hover text-reader-text-muted border-l border-btn-border">2.0x</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Themes Section -->
+<section>
+<h4 class="text-base text-reader-highlight mb-4 font-sans">Themes</h4>
+<div class="grid grid-cols-2 gap-3">
+<!-- Light Theme -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full h-16 bg-[#e0e0e0] rounded-lg border border-[#ccc] p-3 flex flex-col justify-center gap-1.5 group-hover:border-gray-400">
+<div class="w-3/4 h-1.5 bg-[#444] rounded"></div>
+<div class="w-full h-1.5 bg-[#444] rounded"></div>
+<div class="w-5/6 h-1.5 bg-[#444] rounded"></div>
+</div>
+<span class="text-xs text-reader-text-muted group-hover:text-reader-text">Light</span>
+</button>
+<!-- Dark Theme -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full h-16 bg-[#1a1a1a] rounded-lg border border-[#333] p-3 flex flex-col justify-center gap-1.5 group-hover:border-[#555]">
+<div class="w-3/4 h-1.5 bg-[#555] rounded"></div>
+<div class="w-full h-1.5 bg-[#555] rounded"></div>
+<div class="w-5/6 h-1.5 bg-[#555] rounded"></div>
+</div>
+<span class="text-xs text-reader-text-muted group-hover:text-reader-text">Dark</span>
+</button>
+<!-- Sepia Theme -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full h-16 bg-[#4a4131] rounded-lg border border-[#6b5e47] p-3 flex flex-col justify-center gap-1.5 group-hover:border-[#8a7a5c]">
+<div class="w-3/4 h-1.5 bg-[#1a1711] rounded"></div>
+<div class="w-full h-1.5 bg-[#1a1711] rounded"></div>
+<div class="w-5/6 h-1.5 bg-[#1a1711] rounded"></div>
+</div>
+<span class="text-xs text-reader-text-muted group-hover:text-reader-text">Sepia</span>
+</button>
+<!-- High Contrast Theme (Active) -->
+<button class="flex flex-col items-center gap-2">
+<div class="w-full h-16 bg-[#e6d5b8] rounded-lg border-2 border-reader-highlight p-3 flex flex-col justify-center gap-1.5 shadow-[0_0_10px_rgba(230,213,184,0.2)]">
+<div class="w-3/4 h-1.5 bg-[#000] rounded"></div>
+<div class="w-full h-1.5 bg-[#000] rounded"></div>
+<div class="w-5/6 h-1.5 bg-[#000] rounded"></div>
+</div>
+<span class="text-xs text-reader-highlight font-medium">High Contrast</span>
+</button>
+</div>
+</section>
+</div>
+</aside>
+<!-- END: Settings Sidebar -->
+</div>
+<!-- END: Main Content Layout -->
+</body></html>

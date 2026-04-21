@@ -1,241 +1,253 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INKROAD | 통계 대시보드</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
-  <link rel="stylesheet" href="assets/pc.css">
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INKROAD | 작가 대시보드</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dashboard-bg': '#0a0a0a',
+            'sidebar-bg': '#121212',
+            'panel-bg': '#121212',
+            'panel-border': '#333333',
+            'text-gold': '#e3cba0',
+            'text-light': '#e5e5e5',
+            'text-muted': '#a3a3a3',
+            'btn-primary': '#163172',
+            'btn-primary-hover': '#1e40af',
+            'badge-ongoing-bg': 'rgba(227, 203, 160, 0.2)',
+            'badge-ongoing-text': '#e3cba0',
+            'badge-published-bg': 'rgba(34, 197, 94, 0.15)',
+            'badge-published-text': '#4ade80',
+            'badge-draft-bg': 'rgba(163, 163, 163, 0.15)',
+            'badge-draft-text': '#a3a3a3',
+            'badge-scheduled-bg': 'rgba(234, 179, 8, 0.15)',
+            'badge-scheduled-text': '#facc15',
+            'border-subtle': '#222222',
+          },
+          fontFamily: {
+            sans: ['Noto Sans KR', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style data-purpose="custom-scrollbars">
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+  </style>
 </head>
-<body class="pc-desktop store-light">
-  <div class="creator-layout">
-    <aside class="creator-sidebar">
-      <div class="creator-sidebar-brand">
-        <span class="brand-mark material-symbols-outlined">auto_stories</span>
-        <span class="brand-copy">
-          <strong class="brand-name">INKROAD</strong>
-          <span class="brand-sub">크리에이터</span>
-        </span>
-      </div>
-      <nav class="creator-sidebar-nav">
-        <a class="creator-nav-link" href="creator_dashboard_pc.html">
-          <span class="material-symbols-outlined">auto_stories</span> 작품 관리
-        </a>
-        <a class="creator-nav-link active" href="author_dashboard_pc.html">
-          <span class="material-symbols-outlined">bar_chart</span> 통계
-        </a>
-        <a class="creator-nav-link" href="profile_settings_pc.html">
-          <span class="material-symbols-outlined">person</span> 내 정보
-        </a>
-        <a class="creator-nav-link" href="novel_upload_pc.html">
-          <span class="material-symbols-outlined">add_circle</span> 작품 등록
-        </a>
-        <a class="creator-nav-link" href="episode_upload_pc.html">
-          <span class="material-symbols-outlined">upload</span> 회차 업로드
-        </a>
-      </nav>
-      <div class="creator-sidebar-footer">
-        <div data-lang-picker></div>
-        <a href="homepage_pc.html">← 스토어로 돌아가기</a>
-      </div>
-    </aside>
-
-    <main class="creator-main">
-      <div class="dashboard-head">
-        <div class="dashboard-head-copy">
-          <h1 class="creator-main-title">통계 대시보드</h1>
-          <p class="creator-main-sub">작품 성과와 독자 활동을 한눈에 확인하세요.</p>
-        </div>
-        <div class="dashboard-period-filter" data-period-filter>
-          <button class="period-btn" type="button" data-period="7d">7일</button>
-          <button class="period-btn is-active" type="button" data-period="30d">30일</button>
-          <button class="period-btn" type="button" data-period="all">전체</button>
-        </div>
-      </div>
-
-      <!-- KPI Summary Cards -->
-      <div class="dashboard-kpi-grid" data-kpi-cards>
-        <article class="dashboard-kpi-card">
-          <div class="kpi-icon-wrap">
-            <span class="material-symbols-outlined">visibility</span>
-          </div>
-          <div class="kpi-metric">
-            <strong class="kpi-value" data-kpi-value="views">0</strong>
-            <span class="kpi-label">총 조회수</span>
-          </div>
-        </article>
-        <article class="dashboard-kpi-card">
-          <div class="kpi-icon-wrap">
-            <span class="material-symbols-outlined">favorite</span>
-          </div>
-          <div class="kpi-metric">
-            <strong class="kpi-value" data-kpi-value="bookmarks">0</strong>
-            <span class="kpi-label">총 찜 수</span>
-          </div>
-        </article>
-        <article class="dashboard-kpi-card">
-          <div class="kpi-icon-wrap">
-            <span class="material-symbols-outlined">chat_bubble</span>
-          </div>
-          <div class="kpi-metric">
-            <strong class="kpi-value" data-kpi-value="comments">0</strong>
-            <span class="kpi-label">총 댓글</span>
-          </div>
-        </article>
-        <article class="dashboard-kpi-card kpi-clickable" data-kpi-clickable="retention">
-          <div class="kpi-icon-wrap">
-            <span class="material-symbols-outlined">trending_up</span>
-          </div>
-          <div class="kpi-metric">
-            <strong class="kpi-value" data-kpi-value="retention">0%</strong>
-            <span class="kpi-label">평균 연독률</span>
-          </div>
-        </article>
-      </div>
-
-      <!-- Main Dashboard Grid -->
-      <div class="dashboard-main-grid">
-        <!-- Left: Novel Performance Table -->
-        <section class="dashboard-panel">
-          <div class="panel-head">
-            <h2 class="panel-title">
-              <span class="material-symbols-outlined">leaderboard</span>
-              작품별 성과
-            </h2>
-          </div>
-          <div class="stats-table-wrap">
-            <table class="dashboard-stats-table">
-              <thead>
-                <tr>
-                  <th>작품</th>
-                  <th class="num">조회수</th>
-                  <th class="num">찜</th>
-                  <th class="num">댓글</th>
-                  <th class="num">평점</th>
-                  <th class="num">연독률</th>
-                </tr>
-              </thead>
-              <tbody data-stats-table>
-                <tr><td colspan="6" class="empty-cell">데이터를 불러오는 중...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Right: Top Novels & Activity -->
-        <aside class="dashboard-side-rail">
-          <!-- Top Novels -->
-          <section class="dashboard-panel">
-            <div class="panel-head">
-              <h2 class="panel-title">
-                <span class="material-symbols-outlined">emoji_events</span>
-                인기 작품 TOP 5
-              </h2>
-            </div>
-            <div class="top-novels-list" data-top-novels>
-              <p class="empty-state">작품 데이터를 분석 중입니다...</p>
-            </div>
-          </section>
-
-          <!-- Recent Activity -->
-          <section class="dashboard-panel">
-            <div class="panel-head">
-              <h2 class="panel-title">
-                <span class="material-symbols-outlined">activity</span>
-                최근 활동
-              </h2>
-            </div>
-            <div class="activity-feed" data-recent-activity>
-              <p class="empty-state">최근 활동이 없습니다.</p>
-            </div>
-          </section>
-        </aside>
-      </div>
-    </main>
-  </div>
-
-  <!-- Retention Rate Modal -->
-  <div class="retention-modal" data-retention-modal hidden>
-    <div class="retention-overlay" data-retention-overlay></div>
-    <div class="retention-panel">
-      <div class="retention-panel-head">
-        <div>
-          <span class="eyebrow">연독률 분석</span>
-          <h3 class="retention-panel-title" data-retention-title>작품명</h3>
-        </div>
-        <button class="retention-close" type="button" data-retention-close>
-          <span class="material-symbols-outlined">close</span>
+<body class="bg-dashboard-bg text-text-light font-sans antialiased flex h-screen overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-sidebar-bg border-r border-panel-border flex flex-col flex-shrink-0" data-purpose="sidebar">
+<!-- Logo area -->
+<div class="h-16 flex items-center px-6 gap-2">
+<img src="assets/logo-icon.png" alt="INKROAD" class="h-7 w-auto"/>
+<span class="text-lg font-semibold text-text-gold tracking-wide">INKROAD</span>
+</div>
+<!-- Navigation Menu -->
+<nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto" data-purpose="sidebar-navigation">
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        대시보드
+      </a>
+<!-- Active Item -->
+<a class="flex items-center px-4 py-2.5 bg-[#2a2418] text-[#e3cba0] rounded-lg transition-colors" href="#">
+<svg class="w-5 h-5 mr-3 text-[#e3cba0]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        내 작품
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        통계
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        댓글
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        수익
+      </a>
+</nav>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content Wrapper -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- BEGIN: Topbar -->
+<header class="h-16 bg-sidebar-bg border-b border-panel-border flex items-center justify-between px-8" data-purpose="topbar">
+<!-- Search -->
+<div class="flex-1 max-w-lg">
+<div class="relative rounded-md shadow-sm">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-[#4a4030] rounded-lg leading-5 bg-[#121212] text-text-light placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-text-gold focus:border-text-gold sm:text-sm" placeholder="검색..." type="text"/>
+</div>
+</div>
+<!-- Right side tools -->
+<div class="ml-4 flex items-center space-x-6">
+<!-- Notifications -->
+<button class="relative text-text-muted hover:text-text-light transition-colors">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-sidebar-bg bg-red-500"></span>
+</button>
+<!-- User Profile Dropdown -->
+<div class="flex items-center space-x-3 cursor-pointer group">
+<img alt="사용자 아바타" class="h-8 w-8 rounded-full object-cover border border-panel-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaANHsSuy1ovuB6W02Hz9O06yzPfIZ1F3d4ad0ufSn_3cMUO8uvJsC0m30Om4kPrqowR-vTbWagn69ZhZdSFfpt0xk5Y02LUS14MeJzinZPa_TJuwMjBRVUjjdBfmhbTCg0_HNpMI_KJ1ttUVkDqe0juysa6cIgrqM1GOzVDpVcAF4dW2jGJnOni352uR6HJXRw0sH-XUgC33T5xyAWqqDz14othCfOAyGLM8u_G0Psdwi1WpK0BdJPxijvaZOLbnz36rxMvIHG_M"/>
+<span class="text-sm font-medium text-text-light group-hover:text-white transition-colors">Alex Reed</span>
+<svg class="h-4 w-4 text-text-muted group-hover:text-text-light transition-colors" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</header>
+<!-- END: Topbar -->
+<!-- BEGIN: Main Page Content -->
+<main class="flex-1 overflow-y-auto p-8" data-purpose="main-content">
+<!-- Page Title -->
+<div class="mb-8">
+<h1 class="text-2xl font-semibold text-text-gold">작품 관리: 별빛 연대기</h1>
+</div>
+<!-- BEGIN: Novel Summary Card -->
+<section class="bg-panel-bg border border-panel-border rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-8 items-start" data-purpose="novel-summary">
+<!-- Cover Image -->
+<div class="w-32 h-48 flex-shrink-0 rounded-md overflow-hidden border border-border-subtle shadow-lg">
+<img alt="별빛 연대기 표지" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprPBiskPLvkGgiLX0jCzfkQxj6cPoOkAV347a2RDTf7tRUVNzh2quLymI6ypqefNvP4m3pop9t5e3QYeYYXENpAI3AShcQb6XgT5kqB6JUWJnm9ihFXQjFqYBma544ei9I_SGMKdPTOyUbtoUjR2L8aO351mD1HebCrbbh4fG8np3WImGt9mqVVKK_sYA52SnUrqS58xqKpLu2TeQYdwrgbp-yhhji2e2dR3Z3Rlw7lHfGc5C7UDGHL_E097cZK57njnnjl1tE40"/>
+</div>
+<!-- Info & Stats -->
+<div class="flex-1 flex flex-col md:flex-row justify-between w-full">
+<!-- Title, Author, Badge -->
+<div class="mb-6 md:mb-0 flex flex-col justify-center">
+<h2 class="text-2xl font-bold text-text-gold mb-1">별빛 연대기</h2>
+<p class="text-text-muted mb-3">Alex Reed</p>
+<div>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-badge-ongoing-bg text-badge-ongoing-text border border-text-gold/20">
+                연재 중
+              </span>
+</div>
+</div>
+<!-- Vertical Divider -->
+<div class="hidden md:block w-px bg-[#333333] self-stretch mx-8"></div>
+<!-- Statistics Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 items-center flex-1">
+<div>
+<p class="text-sm text-text-muted mb-1">연재 상태</p>
+<p class="text-xl font-semibold text-text-light">연재 중</p>
+</div>
+<div>
+<p class="text-sm text-text-muted mb-1">총 조회수</p>
+<p class="text-xl font-semibold text-text-gold">320만</p>
+</div>
+<div>
+<p class="text-sm text-text-muted mb-1">발행 회차</p>
+<p class="text-xl font-semibold text-text-gold">45</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Novel Summary Card -->
+<!-- Action Button -->
+<div class="mb-8">
+<button class="w-full px-6 py-3 bg-btn-primary hover:bg-btn-primary-hover text-white font-medium rounded-lg transition-colors shadow-sm text-center block border border-blue-800/50">
+          새 회차 업로드
         </button>
-      </div>
-
-      <div class="retention-funnel" data-retention-funnel>
-        <div class="funnel-stage">
-          <div class="funnel-bar">
-            <div class="funnel-fill" data-funnel-first data-funnel-max="100"></div>
-          </div>
-          <div class="funnel-label">
-            <span class="funnel-stage-label">첫 화 독자</span>
-            <strong class="funnel-stage-value" data-funnel-first-value>0</strong>
-          </div>
-        </div>
-        <div class="funnel-arrow">
-          <span class="material-symbols-outlined">arrow_downward</span>
-        </div>
-        <div class="funnel-stage">
-          <div class="funnel-bar">
-            <div class="funnel-fill" data-funnel-last data-funnel-max="100"></div>
-          </div>
-          <div class="funnel-label">
-            <span class="funnel-stage-label">마지막 화 독자</span>
-            <strong class="funnel-stage-value" data-funnel-last-value>0</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="retention-summary">
-        <div class="retention-metric">
-          <span class="retention-metric-label">연독률</span>
-          <strong class="retention-metric-value" data-retention-rate>0%</strong>
-        </div>
-        <div class="retention-metric">
-          <span class="retention-metric-label">이탈 독자</span>
-          <strong class="retention-metric-value retention-churn" data-retention-churn>0</strong>
-        </div>
-        <div class="retention-metric">
-          <span class="retention-metric-label">총 화수</span>
-          <strong class="retention-metric-value" data-retention-episodes>0</strong>
-        </div>
-      </div>
-
-      <div class="retention-bar-chart" data-retention-bar-chart>
-        <div class="bar-chart-row">
-          <div class="bar-chart-label">첫 화</div>
-          <div class="bar-chart-track">
-            <div class="bar-chart-fill" data-bar-first data-bar-fill></div>
-          </div>
-          <div class="bar-chart-value" data-bar-first-value>100%</div>
-        </div>
-        <div class="bar-chart-row">
-          <div class="bar-chart-label">마지막 화</div>
-          <div class="bar-chart-track">
-            <div class="bar-chart-fill" data-bar-last data-bar-fill></div>
-          </div>
-          <div class="bar-chart-value" data-bar-last-value>0%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="assets/i18n.js"></script>
-  <script src="assets/supabase-config.js"></script>
-  <script src="assets/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-live.js"></script>
-  <script src="assets/store-redesign.js"></script>
-</body>
-</html>
+</div>
+<!-- BEGIN: Chapter List Section -->
+<section class="bg-panel-bg border border-panel-border rounded-xl overflow-hidden" data-purpose="chapter-list">
+<!-- Section Header -->
+<div class="px-6 py-4 border-b border-border-subtle">
+<h3 class="text-lg font-semibold text-text-gold">회차 목록</h3>
+</div>
+<!-- Table Structure -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<!-- Table Head -->
+<thead>
+<tr class="border-b border-border-subtle bg-[#1a1a1a]">
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">제목</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">상태</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">조회수</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">관리</th>
+</tr>
+</thead>
+<!-- Table Body -->
+<tbody class="divide-y divide-border-subtle">
+<!-- Row 1: Published -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">45화: 숨겨진 도시</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-published-bg text-badge-published-text border border-green-500/20">
+                    발행됨
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-light">15,400</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">수정</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="삭제"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+<!-- Row 2: Draft -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">46화: 새로운 동료</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-draft-bg text-badge-draft-text border border-gray-500/20">
+                    임시저장
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-muted">--</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">수정</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="삭제"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+<!-- Row 3: Scheduled -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">47화: 최후의 시험</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-scheduled-bg text-badge-scheduled-text border border-yellow-500/20">
+                    예약됨
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-light">11월 15일 예약 발행</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">수정</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="삭제"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- END: Chapter List Section -->
+</main>
+<!-- END: Main Page Content -->
+</div>
+<!-- END: Main Content Wrapper -->
+</body></html>

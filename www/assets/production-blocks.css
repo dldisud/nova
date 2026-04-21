@@ -1,0 +1,270 @@
+/* ========================================
+   INKROAD Production Blocks CSS
+   ======================================== */
+
+:root {
+  --pb-gold: #f2ca50;
+  --pb-gold-dim: #d4af37;
+  --pb-bg: #131313;
+  --pb-surface: #1f1f1f;
+  --pb-surface-low: #1b1b1b;
+  --pb-outline: rgba(255, 255, 255, 0.1);
+  --pb-text: #e2e2e2;
+  --pb-text-dim: #d0c5af;
+  --pb-secondary: #bdc2ff;
+}
+
+/* Ruby Text Block */
+.pb-ruby {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--pb-surface-low);
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(242, 202, 80, 0.2);
+  margin: 0 4px;
+  vertical-align: middle;
+}
+
+.pb-ruby-rt {
+  font-size: 10px;
+  color: var(--pb-gold-dim);
+  line-height: 1;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.pb-ruby-base {
+  font-size: 1.1rem;
+  color: var(--pb-text);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+/* System Window Block */
+.pb-system-window {
+  margin: 24px 0;
+  background: rgba(189, 194, 255, 0.05);
+  border: 1px solid rgba(189, 194, 255, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.pb-system-window::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pb-secondary), transparent);
+  opacity: 0.5;
+}
+
+.pb-system-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(189, 194, 255, 0.1);
+}
+
+.pb-system-header .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--pb-secondary);
+}
+
+.pb-system-tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pb-secondary);
+  font-weight: 700;
+}
+
+.pb-system-content {
+  display: grid;
+  gap: 16px;
+}
+
+.pb-system-item {
+  display: grid;
+  gap: 4px;
+}
+
+.pb-system-label {
+  font-size: 10px;
+  color: var(--pb-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pb-system-value {
+  font-size: 14px;
+  color: var(--pb-text);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Chat Log Block */
+.pb-chat-container {
+  margin: 24px 0;
+  background: #0e0e0e;
+  border-radius: 12px;
+  border: 1px solid var(--pb-outline);
+  overflow: hidden;
+}
+
+.pb-chat-header {
+  background: var(--pb-surface-low);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--pb-outline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pb-chat-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--pb-text-dim);
+  letter-spacing: 0.1em;
+}
+
+.pb-chat-status {
+  width: 8px;
+  height: 8px;
+  background: var(--pb-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--pb-gold);
+}
+
+.pb-chat-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pb-message {
+  display: flex;
+  gap: 12px;
+  max-width: 85%;
+}
+
+.pb-message.outgoing {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.pb-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--pb-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.pb-message.incoming .pb-avatar {
+  background: #343d96;
+  color: #a8afff;
+}
+
+.pb-message.outgoing .pb-avatar {
+  border: 1px solid rgba(242, 202, 80, 0.3);
+  color: var(--pb-gold);
+}
+
+.pb-msg-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pb-message.outgoing .pb-msg-info {
+  flex-direction: row-reverse;
+}
+
+.pb-sender {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+
+.pb-timestamp {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.pb-bubble {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pb-message.outgoing .pb-bubble {
+  background: rgba(242, 202, 80, 0.05);
+  border-color: rgba(242, 202, 80, 0.2);
+}
+
+/* Flashback Block */
+.pb-flashback {
+  margin: 32px 0;
+  padding: 20px 30px;
+  border-left: 2px solid var(--pb-gold);
+  background: linear-gradient(90deg, rgba(242, 202, 80, 0.03) 0%, transparent 100%);
+  font-style: italic;
+  color: var(--pb-text-dim);
+  font-family: 'Noto Serif KR', serif;
+  line-height: 1.8;
+  position: relative;
+}
+
+.pb-flashback::after {
+  content: "history_edu";
+  font-family: 'Material Symbols Outlined';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  background: var(--pb-bg);
+  padding: 4px;
+  font-size: 16px;
+  color: var(--pb-gold);
+  border-radius: 50%;
+  font-style: normal;
+}
+
+/* System Message (Inline) */
+.pb-system-msg {
+  display: block;
+  text-align: center;
+  margin: 20px 0;
+  padding: 12px;
+  background: rgba(242, 202, 80, 0.05);
+  border: 1px dashed rgba(242, 202, 80, 0.3);
+  color: var(--pb-gold);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+}

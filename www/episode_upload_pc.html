@@ -1,233 +1,248 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INKROAD | 회차 작성</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
-  <link rel="stylesheet" href="assets/pc.css">
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+
+<html class="dark" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INKROAD | 회차 설정</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "surface-container": "#1f1f1f",
+                        "surface-dim": "#131313",
+                        "secondary-fixed": "#e0e0ff",
+                        "outline": "#99907c",
+                        "on-tertiary-container": "#90000a",
+                        "inverse-surface": "#e2e2e2",
+                        "on-primary-container": "#554300",
+                        "background": "#131313",
+                        "surface-container-highest": "#353535",
+                        "on-tertiary-fixed-variant": "#93000b",
+                        "secondary": "#bdc2ff",
+                        "primary-container": "#d4af37",
+                        "on-surface": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#410002",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "error": "#ffb4ab",
+                        "primary-fixed": "#ffe088",
+                        "tertiary-fixed": "#ffdad6",
+                        "inverse-primary": "#735c00",
+                        "on-error": "#690005",
+                        "outline-variant": "#4d4635",
+                        "on-primary": "#3c2f00",
+                        "tertiary-container": "#ff968b",
+                        "on-secondary-container": "#a8afff",
+                        "error-container": "#93000a",
+                        "inverse-on-surface": "#303030",
+                        "tertiary": "#ffbfb7",
+                        "primary": "#f2ca50",
+                        "on-secondary-fixed": "#000767",
+                        "surface-container-low": "#1b1b1b",
+                        "on-secondary": "#1b247f",
+                        "primary-fixed-dim": "#e9c349",
+                        "surface-variant": "#353535",
+                        "on-tertiary": "#690005",
+                        "on-primary-fixed-variant": "#574500",
+                        "secondary-container": "#343d96",
+                        "on-primary-fixed": "#241a00",
+                        "on-surface-variant": "#d0c5af",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-bright": "#393939",
+                        "surface": "#131313",
+                        "on-background": "#e2e2e2",
+                        "surface-tint": "#e9c349",
+                        "success-container": "#1a4d2e",
+                        "on-success-container": "#e2e2e2"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
-<body class="pc-desktop store-light">
-  <div class="creator-layout">
-    <aside class="creator-sidebar">
-      <div class="creator-sidebar-brand">
-        <span class="brand-mark material-symbols-outlined">auto_stories</span>
-        <span class="brand-copy">
-          <strong class="brand-name">INKROAD</strong>
-          <span class="brand-sub">크리에이터</span>
-        </span>
-      </div>
-      <nav class="creator-sidebar-nav">
-        <a class="creator-nav-link" href="creator_dashboard_pc.html">
-          <span class="material-symbols-outlined">auto_stories</span> 작품 관리
-        </a>
-        <a class="creator-nav-link" href="author_dashboard_pc.html">
-          <span class="material-symbols-outlined">bar_chart</span> 통계
-        </a>
-        <a class="creator-nav-link" href="profile_settings_pc.html">
-          <span class="material-symbols-outlined">person</span> 내 정보
-        </a>
-        <a class="creator-nav-link active" href="episode_upload_pc.html">
-          <span class="material-symbols-outlined">edit_square</span> 회차 작성
-        </a>
-        <a class="creator-nav-link" href="format_studio_pc.html">
-          <span class="material-symbols-outlined">design_services</span> 연출 도우미
-        </a>
-      </nav>
-      <div class="creator-sidebar-footer">
-        <div data-lang-picker></div>
-        <a href="homepage_pc.html">← 스토어로 돌아가기</a>
-      </div>
-    </aside>
-
-    <main class="creator-main">
-      <section class="auth-shell" data-episode-auth></section>
-
-      <div class="creator-main-head">
-        <div class="creator-main-copy">
-          <h1 class="creator-main-title" data-episode-page-title>회차 작성</h1>
-          <p class="creator-main-sub" data-episode-page-subtitle>작품을 고르고 본문에 집중하세요.</p>
-        </div>
-        <span class="workspace-mode-badge" data-episode-mode-badge>새 회차 발행</span>
-        <button class="button primary" type="submit" form="episode-form" data-episode-submit disabled>발행하기</button>
-      </div>
-
-      <section class="episode-empty" data-episode-empty hidden></section>
-
-      <form id="episode-form" data-episode-form hidden>
-        <p class="episode-status-banner" data-episode-status hidden></p>
-
-        <div class="episode-studio-shell">
-          <section class="episode-studio-main">
-            <div class="upload-meta-grid">
-              <label class="upload-field">
-                <span>작품 선택</span>
-                <select data-episode-novel required></select>
-              </label>
-              <label class="upload-field">
-                <span>공개 방식</span>
-                <select data-episode-access>
-                  <option value="free">무료 공개</option>
-                  <option value="paid">회차 구매</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="upload-meta-grid">
-              <label class="upload-field">
-                <span>회차 제목</span>
-                <input type="text" data-episode-title placeholder="예: 제 12화. 금서의 목소리" required>
-              </label>
-              <label class="upload-field" data-episode-price-wrap hidden>
-                <span>회차 가격</span>
-                <input type="number" min="0" step="10" value="100" data-episode-price placeholder="100">
-              </label>
-            </div>
-
-            <div class="upload-meta-grid">
-              <label class="upload-field">
-                <span>발행 방식</span>
-                <select data-episode-schedule-mode>
-                  <option value="now">즉시 발행</option>
-                  <option value="schedule">예약 발행</option>
-                </select>
-              </label>
-              <label class="upload-field" data-episode-schedule-date-wrap hidden>
-                <span>예약 일시</span>
-                <input type="datetime-local" data-episode-schedule-date>
-                <span class="creator-field-hint" style="margin-top:0.25rem;">설정한 시간에 회차가 공개됩니다.</span>
-              </label>
-            </div>
-            
-            <div class="upload-meta-grid">
-              <label class="upload-field">
-                <span>연령 등급</span>
-                <select data-episode-age-rating>
-                  <option value="all">전체 이용가</option>
-                  <option value="15">15세 이용가</option>
-                  <option value="19">19세 이용가 (성인)</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="episode-edit-meta" data-episode-edit-meta hidden>
-              <div class="episode-edit-meta-title">수정 중인 회차</div>
-              <div class="episode-edit-meta-row">
-                <span>회차 번호</span>
-                <strong data-episode-edit-number>-</strong>
-              </div>
-              <div class="episode-edit-meta-row">
-                <span>마지막 수정</span>
-                <strong data-episode-edit-updated>-</strong>
-              </div>
-            </div>
-
-            <section class="episode-editor-card">
-              <div class="editor-toolbar-custom">
-                <div class="editor-toolbar-left editor-mode-toggle" data-editor-mode-toggle>
-                  <button type="button" data-mode="wysiwyg" aria-pressed="true">위지윅</button>
-                  <button type="button" data-mode="markdown" aria-pressed="false">마크다운</button>
-                </div>
-                <div class="editor-toolbar-right">
-                  <span class="editor-status" data-editor-status data-save-state="saved">변경사항 없음</span>
-                  <button class="button ghost small" type="button" data-snapshot-toggle>버전 역사</button>
-                </div>
-              </div>
-
-              <div class="episode-editor-frame">
-                <div class="editor-container" data-editor-container></div>
-                <textarea class="editor-textarea-fallback" data-episode-body hidden placeholder="본문을 작성하세요. 마크다운 문법도 그대로 사용할 수 있습니다."></textarea>
-                <input type="hidden" data-episode-content>
-              </div>
-
-              <div class="episode-editor-foot">
-                <p class="episode-editor-note">저장 실패 시 브라우저에 임시 초안을 남깁니다.</p>
-                <div class="button-row">
-                  <button class="button primary" type="submit" data-episode-submit disabled>발행하기</button>
-                </div>
-              </div>
-            </section>
-          </section>
-
-          <aside class="episode-studio-side">
-            <article class="episode-side-card" data-selected-work>
-              <div class="episode-side-card-head">
-                <span class="eyebrow">선택한 작품</span>
-                <a class="episode-side-link" href="creator_dashboard_pc.html">작품 관리</a>
-              </div>
-              <div class="episode-work-hero">
-                <div class="episode-work-thumb">
-                  <img src="https://placehold.co/320x440/111827/f3f4f6?text=InkRoad" alt="선택한 작품 표지" data-selected-work-image>
-                </div>
-                <div class="episode-work-info">
-                  <h3 data-selected-work-title>작품을 골라주세요</h3>
-                  <p data-selected-work-summary>선택한 작품의 소개가 여기에 보입니다.</p>
-                </div>
-              </div>
-              <div class="episode-meta-row" data-selected-work-meta>
-                <span class="episode-chip">작품 선택 대기</span>
-              </div>
-              <div class="episode-tag-row" data-selected-work-tags>
-                <span class="episode-chip">태그 없음</span>
-              </div>
-            </article>
-
-            <article class="episode-side-card episode-manage-card">
-              <div class="episode-side-card-head">
-                <span class="eyebrow">보조 관리</span>
-                <strong class="episode-index-count" data-episode-index-count>0화</strong>
-              </div>
-              <p class="episode-manage-copy">회차 운영 기능</p>
-              <div class="episode-index-filters" data-episode-filter-bar>
-                <button class="button ghost small" type="button" data-episode-filter="all" data-active="true" aria-pressed="true">전체</button>
-                <button class="button ghost small" type="button" data-episode-filter="published" data-active="false" aria-pressed="false">공개중</button>
-                <button class="button ghost small" type="button" data-episode-filter="hidden" data-active="false" aria-pressed="false">숨김</button>
-                <button class="button ghost small" type="button" data-episode-filter="trashed" data-active="false" aria-pressed="false">휴지통</button>
-              </div>
-              <div class="episode-index-summary" data-episode-summary-row>
-                <span class="episode-chip" data-episode-summary-published>공개중 0화</span>
-                <span class="episode-chip" data-episode-summary-hidden>숨김 0화</span>
-                <span class="episode-chip" data-episode-summary-trashed>휴지통 0화</span>
-              </div>
-              <div class="episode-index-bulk-actions" data-episode-bulk-actions hidden>
-                <button class="button secondary small" type="button" data-episode-restore-all>전체 복원</button>
-                <button class="button ghost small" type="button" data-episode-purge>비우기</button>
-              </div>
-              <div class="episode-index-list" data-episode-index-list></div>
-              <p class="episode-index-empty" data-episode-index-empty hidden>선택한 작품의 회차가 표시됩니다.</p>
-            </article>
-          </aside>
-        </div>
-      </form>
-
-      <aside class="snapshot-panel" data-snapshot-panel data-open="false">
-        <div class="snapshot-panel-header">
-          <div>
-            <span class="eyebrow">버전 역사</span>
-            <h3>저장된 스냅샷</h3>
-          </div>
-          <button class="snapshot-panel-close" type="button" data-snapshot-close>&times;</button>
-        </div>
-        <div class="diff-view" data-diff-view hidden></div>
-        <div class="snapshot-list" data-snapshot-list>
-          <p class="snapshot-list-empty">저장된 스냅샷이 없습니다.</p>
-        </div>
-      </aside>
-    </main>
-  </div>
-
-  <script src="assets/i18n.js"></script>
-  <script src="assets/supabase-config.js"></script>
-  <script src="assets/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-live.js"></script>
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/diff-match-patch@1.0.5/index.js"></script>
-  <script src="assets/episode-upload.js"></script>
-</body>
-</html>
+<body class="bg-surface-container-lowest text-on-surface font-body min-h-screen flex selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar (Web Only) -->
+<nav class="hidden md:flex flex-col h-screen w-64 border-r border-white/5 bg-[#0e0e0e] py-8 px-4 flex-shrink-0 sticky top-0">
+<div class="mb-10 px-4">
+<img src="assets/logo-icon.png" alt="INKROAD" class="h-10 w-auto mb-4"/>
+<h1 class="font-headline text-[#f2ca50] text-2xl font-bold">INKROAD</h1>
+<p class="text-on-surface-variant text-sm mt-1 font-body">The Curator</p>
+</div>
+<button class="mb-8 mx-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-md py-3 px-4 font-label font-bold tracking-wide flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+            New Chapter
+        </button>
+<div class="flex flex-col gap-2 flex-grow">
+<a class="text-gray-500 hover:bg-white/10 hover:text-[#f2ca50] transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">book</span>
+                원고
+            </a>
+<a class="text-[#f2ca50] bg-white/5 font-bold transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest relative" href="#">
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#f2ca50] rounded-r-full"></div>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">format_list_numbered</span>
+                회차 목록
+            </a>
+<a class="text-gray-500 hover:bg-white/10 hover:text-[#f2ca50] transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">group</span>
+                구독자
+            </a>
+<a class="text-gray-500 hover:bg-white/10 hover:text-[#f2ca50] transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">settings</span>
+                설정
+            </a>
+<a class="text-gray-500 hover:bg-white/10 hover:text-[#f2ca50] transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+                보관함
+            </a>
+</div>
+<div class="mt-auto pt-4 border-t border-white/5">
+<a class="text-gray-500 hover:bg-white/10 hover:text-[#f2ca50] transition-all duration-200 ease-in-out px-4 py-3 rounded-md flex items-center gap-3 font-manrope text-sm uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined">help</span>
+                고객지원
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-8 py-4 bg-[#131313]/80 backdrop-blur-xl docked full-width top-0 z-50 tonal shift bg-[#131313] shadow-[0px_12px_32px_rgba(0,0,0,0.5)] border-b border-outline-variant/10 sticky">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-300">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="font-headline text-lg tracking-tight text-on-surface">회차 설정</h2>
+</div>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-gray-400 font-manrope hover:text-[#f2ca50] transition-colors duration-300" href="#">서재</a>
+<a class="text-[#f2ca50] border-b-2 border-[#f2ca50] pb-1 hover:text-[#f2ca50] transition-colors duration-300 font-manrope" href="#">작성</a>
+<a class="text-gray-400 font-manrope hover:text-[#f2ca50] transition-colors duration-300" href="#">통계</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant font-label text-sm hover:text-primary transition-colors px-4 py-2">임시저장</button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2 rounded-md font-label font-bold text-sm hover:opacity-90 transition-opacity">발행</button>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 overflow-y-auto p-6 md:p-10">
+<div class="max-w-7xl mx-auto">
+<!-- Page Title Area -->
+<div class="mb-10">
+<p class="text-primary font-label text-sm uppercase tracking-widest mb-2">편집 중: 흑요석 왕관</p>
+<h1 class="font-headline text-4xl text-on-surface tracking-tight">회차 설정</h1>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Column 1: Chapter Details -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-surface p-8 rounded-lg shadow-[0px_12px_32px_rgba(0,0,0,0.2)]">
+<h3 class="font-headline text-xl text-primary mb-6 border-b border-outline-variant/30 pb-2">기본 정보</h3>
+<div class="space-y-6">
+<div>
+<label class="block font-label text-sm text-on-surface-variant mb-2">회차 번호</label>
+<input class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 text-on-surface font-body px-0 py-2 transition-colors" type="text" value="1"/>
+</div>
+<div>
+<label class="block font-label text-sm text-on-surface-variant mb-2">회차 제목</label>
+<input class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 text-on-surface font-headline text-lg px-0 py-2 transition-colors placeholder:text-on-surface-variant/50" type="text" value="각성"/>
+</div>
+<div>
+<label class="block font-label text-sm text-on-surface-variant mb-2">작가의 말 (선택)</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-md focus:border-primary focus:ring-1 focus:ring-primary text-on-surface font-body p-3 transition-colors resize-y text-sm" placeholder="독자에게 전하는 작가의 말을 입력하세요..." rows="5"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Publishing Settings -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="bg-surface p-8 rounded-lg shadow-[0px_12px_32px_rgba(0,0,0,0.2)]">
+<h3 class="font-headline text-xl text-primary mb-6 border-b border-outline-variant/30 pb-2">공개 설정</h3>
+<div class="space-y-4 mb-8">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 mt-0.5">
+<input checked="" class="peer sr-only" name="visibility" type="radio"/>
+<div class="w-5 h-5 border-2 border-primary rounded-full peer-checked:bg-primary transition-colors flex items-center justify-center">
+<div class="w-2 h-2 bg-background rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div>
+<span class="block text-on-surface font-label text-sm font-medium">즉시 발행</span>
+<span class="block text-on-surface-variant text-xs mt-0.5">독자에게 즉시 공개됩니다.</span>
+</div>
+</label>
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5 mt-0.5">
+<input class="peer sr-only" name="visibility" type="radio"/>
+<div class="w-5 h-5 border-2 border-outline-variant rounded-full peer-checked:border-primary peer-checked:bg-primary transition-colors flex items-center justify-center">
+<div class="w-2 h-2 bg-background rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div>
+<span class="block text-on-surface font-label text-sm font-medium">예약 발행</span>
+<span class="block text-on-surface-variant text-xs mt-0.5">미래 발행 날짜를 설정합니다.</span>
+</div>
+</label>
+<!-- Hidden initially, shown when scheduled is selected -->
+<div class="ml-8 opacity-50 pointer-events-none">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">calendar_month</span>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 text-on-surface font-body pl-8 py-2 text-sm transition-colors cursor-not-allowed" placeholder="날짜 및 시간 선택" type="text"/>
+</div>
+</div>
+<label class="flex items-start gap-3 cursor-pointer group pt-2">
+<div class="relative flex items-center justify-center w-5 h-5 mt-0.5">
+<input class="peer sr-only" name="visibility" type="radio"/>
+<div class="w-5 h-5 border-2 border-outline-variant rounded-full peer-checked:border-primary peer-checked:bg-primary transition-colors flex items-center justify-center">
+<div class="w-2 h-2 bg-background rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div>
+<span class="block text-on-surface font-label text-sm font-medium">임시저장</span>
+<span class="block text-on-surface-variant text-xs mt-0.5">준비될 때까지 숨깁니다.</span>
+</div>
+</label>
+</div>
+<div class="pt-6 border-t border-outline-variant/30 space-y-4">
+<button class="w-full bg-success-container text-on-success-container py-3 rounded-md font-label font-bold tracking-wide hover:brightness-110 transition-all flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-sm">rocket_launch</span>
+                                    Publish Chapter
+                                </button>
+<button class="w-full bg-surface-container-highest text-on-surface py-3 rounded-md font-label text-sm hover:bg-surface-bright transition-colors">
+                                    Save Draft
+                                </button>
+<button class="w-full text-error text-sm font-label py-2 mt-4 hover:underline transition-all flex justify-center items-center gap-1 opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined text-sm">delete</span>
+                                    Delete Draft
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

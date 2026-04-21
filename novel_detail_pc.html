@@ -1,121 +1,263 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>INKROAD | 작품 상세</title>
-  <meta name="description" content="INKROAD 웹소설 작품 상세 정보. 줄거리, 회차 목록, 리뷰를 확인하세요.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
-  <link rel="stylesheet" href="assets/pc.css">
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>INKROAD | 작품 상세</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style data-purpose="custom-styles">
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+    
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #0f1011;
+      color: #e5e7eb;
+    }
+
+    .hero-bg {
+      background: linear-gradient(to bottom, rgba(15, 16, 17, 0.8) 0%, rgba(15, 16, 17, 0.9) 60%, rgba(15, 16, 17, 1) 100%), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2670&auto=format&fit=crop') center/cover no-repeat;
+      position: relative;
+    }
+    
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to bottom, transparent 50%, #0f1011 100%);
+      pointer-events: none;
+    }
+
+    .glass-search {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
+      color: #111827;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background-color: #1f2225;
+      border: 1px solid #2d3034;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background-color: #2d3034;
+    }
+
+    .tag-badge {
+      background-color: #2a2d31;
+      color: #9ca3af;
+    }
+
+    .chapter-row {
+      border-bottom: 1px solid #1f2225;
+    }
+    .chapter-row:last-child {
+      border-bottom: none;
+    }
+
+    .status-free {
+      border: 1px solid #4b5563;
+      color: #9ca3af;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+    }
+    
+    .status-paid {
+      border: 1px solid #fbbf24;
+      color: #fbbf24;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+    }
+  </style>
 </head>
-<body class="pc-desktop store-light">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="homepage_pc.html">
-        <span class="brand-mark material-symbols-outlined">auto_stories</span>
-        <span class="brand-copy">
-          <strong class="brand-name">INKROAD</strong>
-          <span class="brand-sub">글로벌 웹소설 스토어</span>
-        </span>
-      </a>
-      <nav class="nav">
-        <a class="nav-link" data-nav-link href="homepage_pc.html" data-i18n="nav.store">스토어</a>
-        <a class="nav-link" data-nav-link href="search_pc.html" data-i18n="nav.search">탐색</a>
-        <a class="nav-link" data-nav-link href="my_library_pc.html" data-i18n="nav.my_library">내 서재</a>
-        <a class="nav-link nav-link-sale" href="homepage_pc.html#sale-section" data-i18n="nav.sale">세일</a>
-      </nav>
-      <form class="store-top-search" action="search_pc.html">
-        <span class="material-symbols-outlined">search</span>
-        <input type="search" name="q" placeholder="작품명, 작가, 태그 검색">
-      </form>
-      <div data-lang-picker></div>
-      <div class="topbar-user-menu" data-user-menu>
-        <button class="topbar-user-trigger" data-topbar-auth data-i18n="nav.login" type="button">로그인</button>
-        <div class="topbar-user-dropdown" data-user-dropdown hidden>
-          <a class="topbar-dropdown-item" href="my_library_pc.html"><span class="material-symbols-outlined">auto_stories</span>내 서재</a>
-          <a class="topbar-dropdown-item" href="profile_settings_pc.html"><span class="material-symbols-outlined">person</span>내 정보</a>
-          <a class="topbar-dropdown-item" href="creator_dashboard_pc.html" data-menu-creator><span class="material-symbols-outlined">edit_note</span>크리에이터</a>
-          <a class="topbar-dropdown-item" href="admin_dashboard_pc.html" data-menu-admin hidden><span class="material-symbols-outlined">shield_person</span>관리자</a>
-          <div class="topbar-dropdown-divider"></div>
-          <button class="topbar-dropdown-item" type="button" data-menu-logout><span class="material-symbols-outlined">logout</span>로그아웃</button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="pc-page store-home">
-    <div class="store-shell" style="padding-top:32px;">
-      <!-- Cover + Info -->
-      <section class="detail-top" data-detail-top>
-        <div class="detail-cover" data-detail-cover>
-          <img src="https://placehold.co/400x556/eee/999?text=Cover" alt="표지">
-          <div class="detail-cover-actions">
-            <a class="button primary" data-detail-read href="novel_viewer_pc.html">1화 읽기</a>
-            <button class="button secondary button-heart" type="button" data-bookmark-id="detail-main" aria-label="찜하기">
-              <span class="material-symbols-outlined">favorite</span>
-            </button>
-          </div>
-        </div>
-        <div class="detail-info" data-detail-info>
-          <div class="detail-badges" data-detail-badges></div>
-          <h1 class="detail-title" data-detail-title>작품 제목</h1>
-          <p class="detail-subtitle" data-detail-subtitle></p>
-          <div class="detail-meta-grid" data-detail-meta></div>
-          <div class="detail-tags" data-detail-tags></div>
-          <p class="detail-synopsis" data-detail-synopsis></p>
-          <div class="price-box" data-price-box></div>
-        </div>
-      </section>
-
-      <!-- Episode list -->
-      <section class="store-section" data-episode-section>
-        <div class="episode-section-head">
-          <h2 class="store-section-title">회차 목록</h2>
-          <div class="episode-tabs" data-tab-group>
-            <button class="filter-chip" data-tab-target="all" data-state="include" type="button">전체</button>
-            <button class="filter-chip" data-tab-target="free" type="button">무료</button>
-            <button class="filter-chip" data-tab-target="paid" type="button">유료</button>
-          </div>
-        </div>
-        <div class="episode-list" data-episode-list></div>
-      </section>
-
-      <!-- Similar novels -->
-      <section class="store-section" data-similar-section>
-        <div class="store-section-head">
-          <h2 class="store-section-title">비슷한 작품</h2>
-        </div>
-        <div class="novel-grid" data-similar-grid></div>
-      </section>
-
-      <footer class="store-footer">
-        <div class="footer-brand">
-          <span class="brand-mark material-symbols-outlined">auto_stories</span>
-          <strong>INKROAD</strong>
-        </div>
-        <div class="footer-links">
-          <a href="#">이용약관</a>
-          <a href="#">개인정보처리방침</a>
-          <a href="#">고객센터</a>
-          <a href="creator_dashboard_pc.html">크리에이터</a>
-        </div>
-        <div class="footer-copy">
-          <span>&copy; <span data-year></span> INKROAD. All rights reserved.</span>
-        </div>
-      </footer>
-    </div>
-  </main>
-
-  <script src="assets/i18n.js"></script>
-  <script src="assets/supabase-config.js"></script>
-  <script src="assets/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/supabase-live.js"></script>
-  <script src="assets/store-redesign.js"></script>
-</body>
-</html>
+<body class="antialiased selection:bg-yellow-500 selection:text-white">
+<!-- BEGIN: MainHeader -->
+<header class="sticky top-0 z-50 bg-[#0f1011]/90 backdrop-blur-md border-b border-white/5 py-4 px-6 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<!-- Logo -->
+<a class="flex items-center gap-2 text-yellow-500 font-bold text-xl tracking-tight" href="#"><img src="assets/logo-icon.png" alt="INKROAD" class="h-7 w-auto"/> <span class="text-white ml-1">INKROAD</span></a>
+<!-- Nav Links -->
+<nav class="hidden md:flex items-center gap-6 text-sm text-gray-400">
+<a class="hover:text-white transition-colors" href="#">스토어</a>
+<a class="hover:text-white transition-colors" href="#">탐색</a>
+<a class="hover:text-white transition-colors" href="#">서재</a>
+<a class="hover:text-white transition-colors" href="#">할인</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative hidden lg:block">
+<input class="glass-search text-white text-sm rounded-full py-2 px-4 pr-10 w-64 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 placeholder-gray-500 bg-[#1a1c20] border-none" placeholder="작품명, 작가, 태그 검색" type="text"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<i class="fa-solid fa-search text-gray-500 text-sm"></i>
+</div>
+</div>
+<!-- Language Toggle -->
+<button class="text-gray-400 hover:text-white text-sm flex items-center gap-1 bg-transparent border-none px-2 py-1.5">
+<i class="fa-solid fa-globe text-xs"></i> EN
+      </button>
+<!-- Login -->
+<button class="bg-[#2a2d31] hover:bg-[#3b3f44] text-gray-300 text-sm font-medium py-1.5 px-5 rounded-md transition-colors border-none">
+        로그인
+      </button>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: Hero Section -->
+<section class="hero-bg pt-20 pb-12 px-6 lg:px-20 relative z-10">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 items-start relative z-20">
+<!-- Book Cover -->
+<div class="w-full md:w-1/3 max-w-[320px] mx-auto md:mx-0 flex-shrink-0">
+<div class="rounded-xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/10 relative pb-[140%]">
+<img alt="칠흑의 마법사와 검은 서약 표지" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdO_YkKNTIX83PQYDM2_IHNPm6VVEL0JVHC5kb-yv2NXjuHpRL_tek2IgnAzGDO_ufk-F3xmIqDHDwmgr0CXXDfrGnmLPj-PozEzU0U-E1y_OGn3iDUwM5cygS__Th7iIz_jJ5DKtX9WC9wUz58PkftBD0pZYDoj1u68S7_tXgEOZI4LlzMrtZlDbc7bdBT023HcpclkVXrXVsdZUVmazzaitC09kPZ4YLZb1Zm4kw25JPjCGkQDOqRmfVmof5lMEUH-Q-Q7imtX4"/>
+</div>
+</div>
+<!-- Book Info -->
+<div class="w-full md:w-2/3 pt-4">
+<h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">칠흑의 마법사와 검은 서약</h1>
+<p class="text-xl text-gray-300 mb-6">한서림</p>
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="tag-badge px-3 py-1 rounded-full text-sm font-medium">다크 판타지</span>
+<span class="tag-badge px-3 py-1 rounded-full text-sm font-medium">마법사</span>
+<span class="tag-badge px-3 py-1 rounded-full text-sm font-medium">검사</span>
+</div>
+<!-- Rating -->
+<div class="flex items-center gap-2 mb-8">
+<i class="fa-solid fa-star text-yellow-500 text-lg"></i>
+<span class="text-white font-bold text-lg">평점 9.4</span>
+</div>
+<!-- Description -->
+<p class="text-gray-300 text-lg leading-relaxed max-w-2xl mb-12 font-light">A dark fantasy epic beginning on a desolate cliff.<br/>
+          The story of a mage shrouded in darkness and<br/>
+          his dark oath with a cursed swordsman.<br/>
+          A world where magic is declining and power is<br/>
+          absolute.</p>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 max-w-xl">
+<button class="btn-primary flex-1 py-4 px-6 rounded-lg font-bold text-lg shadow-[0_0_40px_rgba(251,191,36,0.3)] relative z-10">
+            1화 읽기
+          </button>
+<button class="btn-secondary flex-1 py-4 px-6 rounded-lg font-medium text-lg text-gray-300 flex items-center justify-center gap-2">
+<i class="fa-regular fa-heart"></i> 찜하기
+          </button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Hero Section -->
+<!-- BEGIN: Main Content -->
+<main class="max-w-6xl mx-auto px-6 lg:px-20 pt-24 pb-12 flex flex-col lg:flex-row gap-16 relative z-20">
+<!-- Left Column: Chapter List -->
+<div class="flex-1">
+<h2 class="text-2xl font-bold text-white mb-6">회차 목록</h2>
+<div class="bg-[#151719] rounded-xl overflow-hidden border border-white/5">
+<!-- Table Header -->
+<div class="grid grid-cols-[60px_1fr_120px_100px] gap-4 p-4 bg-[#1a1c20] text-sm text-gray-400 font-medium">
+<div class="text-center">번호</div>
+<div>제목</div>
+<div class="text-right pr-4">업데이트 날짜</div>
+<div></div>
+</div>
+<!-- Table Body -->
+<div class="flex flex-col">
+<!-- Chapter Item 1 -->
+<div class="chapter-row grid grid-cols-[60px_1fr_120px_100px] gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors cursor-pointer group bg-white/[0.03]">
+<div class="text-center text-gray-500">1</div>
+<div class="text-gray-200 group-hover:text-white transition-colors">Chapter 1. 서약의 시작</div>
+<div class="text-right text-gray-500 text-sm pr-4">2023.08.10</div>
+<div class="flex items-center justify-between pr-2">
+<span class="status-free">무료</span>
+<i class="fa-solid fa-check text-yellow-500"></i>
+</div>
+</div>
+<!-- Chapter Item 2 -->
+<div class="chapter-row grid grid-cols-[60px_1fr_120px_100px] gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors cursor-pointer group">
+<div class="text-center text-gray-500">2</div>
+<div class="text-gray-200 group-hover:text-white transition-colors">Chapter 2. 어둠 속의 조우</div>
+<div class="text-right text-gray-500 text-sm pr-4">2023.08.11</div>
+<div class="flex items-center justify-between pr-2">
+<span class="status-free">무료</span>
+</div>
+</div>
+<!-- Chapter Item 3 -->
+<div class="chapter-row grid grid-cols-[60px_1fr_120px_100px] gap-4 p-4 items-center hover:bg-white/[0.02] transition-colors cursor-pointer group">
+<div class="text-center text-gray-500">3</div>
+<div class="text-gray-200 group-hover:text-white transition-colors">Chapter 3. 이명사의 흔적</div>
+<div class="text-right text-gray-500 text-sm pr-4">2023.08.12</div>
+<div class="flex items-center justify-between pr-2">
+<span class="status-paid">편당 150원</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Recommendations -->
+<div class="w-full lg:w-72 flex-shrink-0">
+<h2 class="text-2xl font-bold text-white mb-6">추천 작품</h2>
+<div class="flex flex-col gap-6">
+<!-- Recommendation 1 -->
+<a class="block group" href="#">
+<div class="bg-[#151719] rounded-xl overflow-hidden border border-white/5 pb-4 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 hover:border-white/10">
+<div class="aspect-[2/3] w-full overflow-hidden mb-3">
+<img alt="아카데미 최강 흑마법사" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdO_YkKNTIX83PQYDM2_IHNPm6VVEL0JVHC5kb-yv2NXjuHpRL_tek2IgnAzGDO_ufk-F3xmIqDHDwmgr0CXXDfrGnmLPj-PozEzU0U-E1y_OGn3iDUwM5cygS__Th7iIz_jJ5DKtX9WC9wUz58PkftBD0pZYDoj1u68S7_tXgEOZI4LlzMrtZlDbc7bdBT023HcpclkVXrXVsdZUVmazzaitC09kPZ4YLZb1Zm4kw25JPjCGkQDOqRmfVmof5lMEUH-Q-Q7imtX4"/>
+</div>
+<div class="px-4">
+<h3 class="text-white text-sm font-bold mb-1 truncate group-hover:text-yellow-400 transition-colors">아카데미 최강 흑마법사</h3>
+<p class="text-gray-500 text-xs truncate">한시림</p>
+</div>
+</div>
+</a>
+<!-- Recommendation 2 -->
+<a class="block group" href="#">
+<div class="bg-[#151719] rounded-xl overflow-hidden border border-white/5 pb-4 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 hover:border-white/10">
+<div class="aspect-[2/3] w-full overflow-hidden mb-3">
+<img alt="망한 공작가의 어떤 가주다" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0-vv8q0WYn9BEZ5qmmJGsdUlOchlSLqEwVeNt0drceIg44KaM5QmzGpwhywv9qkkCfU-8JMWAZ_CjsXP3e9-zpPlZT2-yuxZkoQWWL-If8QCddnVPbYK0drNZ4UNGHCcl4tk7gAAj9XVPVcjlrqyXyAgZN6YRJKlRwqYXGlg3etMVia0aMjVRvGP5hq29DF9u5bjnWDmqcbmwFBa-6fivz7mAu2wCPuPspvcB99S149H3rS4ZX0sMgw6fOfwYj-vgc-ctTcuDKPM"/>
+</div>
+<div class="px-4">
+<h3 class="text-white text-sm font-bold mb-1 truncate group-hover:text-yellow-400 transition-colors">망한 공작가의 어떤 가주다</h3>
+<p class="text-gray-500 text-xs truncate">이상원</p>
+</div>
+</div>
+</a>
+<!-- Recommendation 3 -->
+<a class="block group" href="#">
+<div class="bg-[#151719] rounded-xl overflow-hidden border border-white/5 pb-4 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 hover:border-white/10">
+<div class="aspect-[2/3] w-full overflow-hidden mb-3">
+<img alt="악역 영애는 후원 계약 남는다" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz_D3i0r_Gds4JHIVBQrP90JLlRFdDsVkiAXnSyD9skYA6OE-G0YpCIbe47Ce5YViMb5Agobn7mogCvlmmkQWh4MpgqVsvz-lLCM3l1imeNth-Tm_7VEHiJsY0LHRxhthmC-QpBYdT0uNQNcpGEfuQ9c7ymFBnwxUgqeiNEpgI6P6REosfd85Qd3KPCQeYz3gPvQdgoc3jlz_V9SLlmJga3kQ2PoXABwVXL4suiEmljjMgqqkksQMZj4javXrhL6sCzbKpZmXq3nQ"/>
+</div>
+<div class="px-4">
+<h3 class="text-white text-sm font-bold mb-1 truncate group-hover:text-yellow-400 transition-colors">악역 영애는 후원 계약 남는다</h3>
+<p class="text-gray-500 text-xs truncate">로렌스 핀티지</p>
+</div>
+</div>
+</a>
+</div>
+</div>
+</main>
+<!-- END: Main Content -->
+<!-- BEGIN: Footer -->
+<footer class="bg-[#0a0a0b] py-8 border-t border-white/5 mt-12">
+<div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+<div class="flex items-center gap-2 text-gray-400 font-bold tracking-tight"><span class="bg-yellow-600 text-black w-5 h-5 flex items-center justify-center rounded-[3px]"><i class="fa-solid fa-book text-[10px]"></i></span> <span class="text-gray-400 ml-1">INKROAD</span></div>
+<div class="flex gap-6">
+<a class="hover:text-gray-300 transition-colors" href="#">이용약관</a>
+<a class="hover:text-gray-300 transition-colors" href="#">개인정보처리방침</a>
+<a class="hover:text-gray-300 transition-colors" href="#">고객지원</a>
+<a class="hover:text-gray-300 transition-colors" href="#">작가 센터</a>
+</div>
+<div>© 2028 INKROAD. All rights reserved.</div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>

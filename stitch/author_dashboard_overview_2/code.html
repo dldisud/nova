@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Author Dashboard - Novel Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dashboard-bg': '#0a0a0a',
+            'sidebar-bg': '#121212',
+            'panel-bg': '#121212',
+            'panel-border': '#333333',
+            'text-gold': '#e3cba0',
+            'text-light': '#e5e5e5',
+            'text-muted': '#a3a3a3',
+            'btn-primary': '#163172',
+            'btn-primary-hover': '#1e40af',
+            'badge-ongoing-bg': 'rgba(227, 203, 160, 0.2)',
+            'badge-ongoing-text': '#e3cba0',
+            'badge-published-bg': 'rgba(34, 197, 94, 0.15)',
+            'badge-published-text': '#4ade80',
+            'badge-draft-bg': 'rgba(163, 163, 163, 0.15)',
+            'badge-draft-text': '#a3a3a3',
+            'badge-scheduled-bg': 'rgba(234, 179, 8, 0.15)',
+            'badge-scheduled-text': '#facc15',
+            'border-subtle': '#222222',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-scrollbars">
+    /* Subtle scrollbar for main content area if needed */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+<body class="bg-dashboard-bg text-text-light font-sans antialiased flex h-screen overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-sidebar-bg border-r border-panel-border flex flex-col flex-shrink-0" data-purpose="sidebar">
+<!-- Logo area -->
+<div class="h-16 flex items-center px-6">
+<svg class="w-6 h-6 text-text-gold mr-2" fill="currentColor" viewbox="0 0 24 24">
+<!-- Placeholder for quill/pen icon -->
+<path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path>
+</svg>
+<span class="text-lg font-semibold text-text-gold tracking-wide">Premium Author</span>
+</div>
+<!-- Navigation Menu -->
+<nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto" data-purpose="sidebar-navigation">
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Dashboard
+      </a>
+<!-- Active Item -->
+<a class="flex items-center px-4 py-2.5 bg-[#2a2418] text-[#e3cba0] rounded-lg transition-colors" href="#">
+<svg class="w-5 h-5 mr-3 text-[#e3cba0]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        My Novels
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Analytics
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Comments
+      </a>
+<a class="flex items-center px-4 py-2.5 text-text-muted hover:text-text-light hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<svg class="w-5 h-5 mr-3 text-text-muted group-hover:text-text-light" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Earnings
+      </a>
+</nav>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content Wrapper -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- BEGIN: Topbar -->
+<header class="h-16 bg-sidebar-bg border-b border-panel-border flex items-center justify-between px-8" data-purpose="topbar">
+<!-- Search -->
+<div class="flex-1 max-w-lg">
+<div class="relative rounded-md shadow-sm">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border border-[#4a4030] rounded-lg leading-5 bg-[#121212] text-text-light placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-text-gold focus:border-text-gold sm:text-sm" placeholder="Search..." type="text"/>
+</div>
+</div>
+<!-- Right side tools -->
+<div class="ml-4 flex items-center space-x-6">
+<!-- Notifications -->
+<button class="relative text-text-muted hover:text-text-light transition-colors">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<!-- Red dot badge -->
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-sidebar-bg bg-red-500"></span>
+</button>
+<!-- User Profile Dropdown -->
+<div class="flex items-center space-x-3 cursor-pointer group">
+<img alt="Alex Reed Avatar" class="h-8 w-8 rounded-full object-cover border border-panel-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaANHsSuy1ovuB6W02Hz9O06yzPfIZ1F3d4ad0ufSn_3cMUO8uvJsC0m30Om4kPrqowR-vTbWagn69ZhZdSFfpt0xk5Y02LUS14MeJzinZPa_TJuwMjBRVUjjdBfmhbTCg0_HNpMI_KJ1ttUVkDqe0juysa6cIgrqM1GOzVDpVcAF4dW2jGJnOni352uR6HJXRw0sH-XUgC33T5xyAWqqDz14othCfOAyGLM8u_G0Psdwi1WpK0BdJPxijvaZOLbnz36rxMvIHG_M"/>
+<span class="text-sm font-medium text-text-light group-hover:text-white transition-colors">Alex Reed</span>
+<svg class="h-4 w-4 text-text-muted group-hover:text-text-light transition-colors" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</header>
+<!-- END: Topbar -->
+<!-- BEGIN: Main Page Content -->
+<main class="flex-1 overflow-y-auto p-8" data-purpose="main-content">
+<!-- Page Title -->
+<div class="mb-8">
+<h1 class="text-2xl font-semibold text-text-gold">Novel Management: The Starlight Chronicles</h1>
+</div>
+<!-- BEGIN: Novel Summary Card -->
+<section class="bg-panel-bg border border-panel-border rounded-xl p-6 mb-8 flex flex-col md:flex-row gap-8 items-start" data-purpose="novel-summary">
+<!-- Cover Image -->
+<div class="w-32 h-48 flex-shrink-0 rounded-md overflow-hidden border border-border-subtle shadow-lg">
+<img alt="The Starlight Chronicles Cover" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprPBiskPLvkGgiLX0jCzfkQxj6cPoOkAV347a2RDTf7tRUVNzh2quLymI6ypqefNvP4m3pop9t5e3QYeYYXENpAI3AShcQb6XgT5kqB6JUWJnm9ihFXQjFqYBma544ei9I_SGMKdPTOyUbtoUjR2L8aO351mD1HebCrbbh4fG8np3WImGt9mqVVKK_sYA52SnUrqS58xqKpLu2TeQYdwrgbp-yhhji2e2dR3Z3Rlw7lHfGc5C7UDGHL_E097cZK57njnnjl1tE40"/>
+</div>
+<!-- Info & Stats -->
+<div class="flex-1 flex flex-col md:flex-row justify-between w-full">
+<!-- Title, Author, Badge -->
+<div class="mb-6 md:mb-0 flex flex-col justify-center">
+<h2 class="text-2xl font-bold text-text-gold mb-1">The Starlight Chronicles</h2>
+<p class="text-text-muted mb-3">Alex Reed</p>
+<div>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-badge-ongoing-bg text-badge-ongoing-text border border-text-gold/20">
+                Ongoing
+              </span>
+</div>
+</div>
+<!-- Vertical Divider -->
+<div class="hidden md:block w-px bg-[#333333] self-stretch mx-8"></div>
+<!-- Statistics Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 items-center flex-1">
+<div>
+<p class="text-sm text-text-muted mb-1">Status</p>
+<p class="text-xl font-semibold text-text-light">Ongoing</p>
+</div>
+<div>
+<p class="text-sm text-text-muted mb-1">Total reads</p>
+<p class="text-xl font-semibold text-text-gold">3.2M</p>
+</div>
+<div>
+<p class="text-sm text-text-muted mb-1">Published Chapters</p>
+<p class="text-xl font-semibold text-text-gold">45</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Novel Summary Card -->
+<!-- Action Button -->
+<div class="mb-8">
+<button class="w-full px-6 py-3 bg-btn-primary hover:bg-btn-primary-hover text-white font-medium rounded-lg transition-colors shadow-sm text-center block border border-blue-800/50">
+          Upload New Chapter
+        </button>
+</div>
+<!-- BEGIN: Chapter List Section -->
+<section class="bg-panel-bg border border-panel-border rounded-xl overflow-hidden" data-purpose="chapter-list">
+<!-- Section Header -->
+<div class="px-6 py-4 border-b border-border-subtle">
+<h3 class="text-lg font-semibold text-text-gold">Chapter List</h3>
+</div>
+<!-- Table Structure -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<!-- Table Head -->
+<thead>
+<tr class="border-b border-border-subtle bg-[#1a1a1a]">
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">Name</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">Status</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">Views</th>
+<th class="px-6 py-3 text-xs font-medium text-[#777777] uppercase tracking-wider">Actions</th>
+</tr>
+</thead>
+<!-- Table Body -->
+<tbody class="divide-y divide-border-subtle">
+<!-- Row 1: Published -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">Chapter 45: The Hidden City</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-published-bg text-badge-published-text border border-green-500/20">
+                    Published
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-light">15,400</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">Edit</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="Delete"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+<!-- Row 2: Draft -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">Chapter 46: A New Ally</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-draft-bg text-badge-draft-text border border-gray-500/20">
+                    Draft
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-muted">--</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">Edit</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="Delete"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+<!-- Row 3: Scheduled -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-6 py-4 text-sm text-text-light font-medium">Chapter 47: The Final Test</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-badge-scheduled-bg text-badge-scheduled-text border border-yellow-500/20">
+                    Scheduled
+                  </span>
+</td>
+<td class="px-6 py-4 text-sm text-text-light">Scheduled for Nov 15</td>
+<td class="px-6 py-4 flex items-center justify-end space-x-4 whitespace-nowrap">
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-text-light border border-panel-border hover:border-text-muted rounded transition-colors">Edit</button>
+<button class="text-red-500 hover:text-red-400 rounded transition-colors inline-flex items-center justify-center align-middle" title="Delete"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- END: Chapter List Section -->
+</main>
+<!-- END: Main Page Content -->
+</div>
+<!-- END: Main Content Wrapper -->
+</body></html>

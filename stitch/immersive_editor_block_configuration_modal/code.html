@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Gilded Anthology - Editor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#f2ca50",
+                        "surface-variant": "#353535",
+                        "secondary-fixed": "#e0e0ff",
+                        "on-surface": "#e2e2e2",
+                        "surface-dim": "#131313",
+                        "surface-container": "#1f1f1f",
+                        "outline": "#99907c",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed-variant": "#343d96",
+                        "secondary-container": "#343d96",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-container": "#90000a",
+                        "primary-fixed": "#ffe088",
+                        "on-primary-fixed": "#241a00",
+                        "surface-container-highest": "#353535",
+                        "surface-tint": "#e9c349",
+                        "on-primary": "#3c2f00",
+                        "surface": "#131313",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#000767",
+                        "on-primary-container": "#554300",
+                        "outline-variant": "#4d4635",
+                        "on-tertiary-fixed-variant": "#93000b",
+                        "error": "#ffb4ab",
+                        "surface-container-low": "#1b1b1b",
+                        "background": "#131313",
+                        "tertiary-container": "#ff968b",
+                        "inverse-on-surface": "#303030",
+                        "on-surface-variant": "#d0c5af",
+                        "on-primary-fixed-variant": "#574500",
+                        "on-tertiary-fixed": "#410002",
+                        "surface-bright": "#393939",
+                        "primary-fixed-dim": "#e9c349",
+                        "inverse-primary": "#735c00",
+                        "on-secondary-container": "#a8afff",
+                        "on-secondary": "#1b247f",
+                        "tertiary": "#ffbfb7",
+                        "tertiary-fixed": "#ffdad6",
+                        "on-background": "#e2e2e2",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "inverse-surface": "#e2e2e2",
+                        "on-tertiary": "#690005",
+                        "on-error": "#690005",
+                        "tertiary-fixed-dim": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "secondary": "#bdc2ff",
+                        "primary-container": "#d4af37"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-[#131313]/80 backdrop-blur-md shadow-[0px_12px_32px_rgba(0,0,0,0.5)] flex justify-between items-center px-8 h-20 w-full fixed top-0 z-40">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">edit_square</span>
+<h1 class="font-headline tracking-tight text-xl font-bold bg-gradient-to-r from-[#f2ca50] to-[#d4af37] bg-clip-text text-transparent">The Gilded Anthology</h1>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-[#0e0e0e] text-on-surface hover:bg-surface-variant transition-colors px-6 py-2 rounded-lg font-medium text-sm border border-outline-variant/15 shadow-[0px_12px_32px_rgba(0,0,0,0.5)]">
+                Save Draft
+            </button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2 rounded-lg font-medium text-sm flex items-center gap-2 shadow-[0px_12px_32px_rgba(0,0,0,0.5)] hover:opacity-90 transition-opacity">
+                Publish
+            </button>
+<div class="flex items-center gap-4 ml-4 border-l border-outline-variant/30 pl-6">
+<button class="text-[#e2e2e2] opacity-60 hover:opacity-100 transition-opacity scale-95 active:scale-90 duration-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="text-[#e2e2e2] opacity-60 hover:opacity-100 transition-opacity scale-95 active:scale-90 duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="flex h-screen pt-20">
+<!-- SideNavBar (Production Blocks) -->
+<aside class="w-64 bg-[#0e0e0e] border-r border-[#353535]/15 flex flex-col pt-8 pb-8 h-full shrink-0 relative z-30">
+<div class="px-6 mb-8">
+<h2 class="font-headline text-lg text-primary font-bold tracking-tight">Production</h2>
+<p class="text-on-surface-variant text-xs mt-1 uppercase tracking-wider">Block Editor</p>
+</div>
+<nav class="flex-1 px-4 flex flex-col gap-2">
+<!-- Active Nav Item -->
+<button class="flex items-center gap-3 bg-[#2a2a2a] text-[#f2ca50] rounded-md px-4 py-3 border-l-4 border-[#d4af37] w-full text-left font-manrope text-sm font-medium tracking-wide uppercase transition-colors duration-300 ease-in-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">match_case</span>
+<span>Ruby Text</span>
+</button>
+<!-- Inactive Nav Items -->
+<button class="flex items-center gap-3 text-[#e2e2e2]/50 px-4 py-3 hover:bg-[#131313] hover:text-[#e2e2e2] w-full text-left rounded-md font-manrope text-sm font-medium tracking-wide uppercase transition-colors duration-300 ease-in-out">
+<span class="material-symbols-outlined">terminal</span>
+<span>System Window</span>
+</button>
+<button class="flex items-center gap-3 text-[#e2e2e2]/50 px-4 py-3 hover:bg-[#131313] hover:text-[#e2e2e2] w-full text-left rounded-md font-manrope text-sm font-medium tracking-wide uppercase transition-colors duration-300 ease-in-out">
+<span class="material-symbols-outlined">forum</span>
+<span>Chat Logs</span>
+</button>
+<button class="flex items-center gap-3 text-[#e2e2e2]/50 px-4 py-3 hover:bg-[#131313] hover:text-[#e2e2e2] w-full text-left rounded-md font-manrope text-sm font-medium tracking-wide uppercase transition-colors duration-300 ease-in-out">
+<span class="material-symbols-outlined">reorder</span>
+<span>Scene Break</span>
+</button>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-lg font-bold text-sm shadow-[0px_12px_32px_rgba(0,0,0,0.5)] flex justify-center items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-lg">add</span>
+                    New Chapter
+                </button>
+</div>
+</aside>
+<!-- Main Editor Area -->
+<main class="flex-1 overflow-y-auto bg-surface relative z-10">
+<div class="max-w-3xl mx-auto py-16 px-12">
+<!-- Chapter Metadata -->
+<div class="mb-12">
+<input class="w-full bg-transparent border-none text-4xl font-headline text-on-surface tracking-tight focus:ring-0 p-0 placeholder-on-surface-variant/50" placeholder="Chapter Title" type="text" value="Chapter 42: The Gathering Storm"/>
+<div class="flex gap-4 mt-4 text-sm text-on-surface-variant font-label">
+<span>Word count: 1,402</span>
+<span class="text-outline-variant">•</span>
+<span>Last saved 2 mins ago</span>
+</div>
+</div>
+<!-- Editor Content -->
+<div class="font-headline text-lg text-on-surface leading-loose opacity-20 pointer-events-none select-none">
+<p class="mb-6">The heavy oak doors groaned as they swung inward, revealing a grand hall bathed in the flickering amber light of a hundred suspended lanterns. Dust motes danced in the shafts of illumination, settling like golden snow upon the ancient stone floor.</p>
+<p class="mb-6">"You shouldn't have come," a voice echoed from the shadows at the far end of the chamber. It was smooth, dangerous, like silk drawn over a blade.</p>
+<p class="mb-6">Kaelen tightened his grip on the hilt of his sword, the leather wrap familiar and comforting against his calloused palm. He didn't speak. He simply stepped forward, his boots ringing hollowly against the flagstones.</p>
+<p class="mb-6">He knew what awaited him. The <span class="text-primary border-b border-primary/30 pb-0.5">천뢰섬</span> technique required absolute focus, a singularity of will that he had barely mastered.</p>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-[#0e0e0e]/80 backdrop-blur-sm z-50 flex items-center justify-center">
+<!-- Modal Content -->
+<div class="bg-surface-container-highest rounded-xl shadow-[0px_12px_32px_rgba(0,0,0,0.8)] w-[480px] p-8 border border-outline-variant/15 flex flex-col gap-6">
+<!-- Header -->
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline text-2xl text-primary font-bold tracking-tight flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">match_case</span>
+                        Insert Ruby Text
+                    </h2>
+<p class="text-on-surface-variant text-sm mt-1">Add phonetic or semantic annotations above base text.</p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Form Fields -->
+<div class="space-y-5">
+<!-- Main Text Input -->
+<div>
+<label class="block text-xs font-label text-on-surface-variant uppercase tracking-wider mb-2">Main Text (Base)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 font-headline text-lg transition-colors" placeholder="e.g., 천뢰섬" type="text" value="천뢰섬"/>
+</div>
+</div>
+<!-- Annotation Input -->
+<div>
+<label class="block text-xs font-label text-on-surface-variant uppercase tracking-wider mb-2">Annotation (Ruby)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-0 border-b border-outline-variant focus:border-primary focus:ring-0 text-on-surface p-3 font-body text-sm transition-colors" placeholder="e.g., Heavenly Thunder Flash" type="text" value="Heavenly Thunder Flash"/>
+</div>
+</div>
+<!-- Preview -->
+<div class="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant/20 mt-2">
+<label class="block text-xs font-label text-on-surface-variant uppercase tracking-wider mb-3">Preview</label>
+<div class="flex justify-center items-center py-4">
+<ruby class="font-headline text-2xl text-on-surface">
+                            천뢰섬<rt class="font-body text-xs text-primary mb-1">Heavenly Thunder Flash</rt>
+</ruby>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex justify-end gap-4 mt-4 pt-4 border-t border-outline-variant/15">
+<button class="px-6 py-2 rounded-lg font-medium text-sm text-on-surface hover:bg-surface-variant transition-colors">
+                    Cancel
+                </button>
+<button class="bg-gradient-to-r from-[#2e7d32] to-[#4caf50] text-white px-6 py-2 rounded-lg font-medium text-sm shadow-[0px_4px_12px_rgba(46,125,50,0.3)] hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                    Insert Block
+                </button>
+</div>
+</div>
+</div>
+</body></html>

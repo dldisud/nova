@@ -7,7 +7,7 @@ redirects = []
   [functions."*"]
 
 [build]
-publish = "D:\\nova\\.netlify-static"
+publish = ".netlify-static"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "bash scripts/prepare-netlify.sh"
