@@ -174,7 +174,8 @@ export default function HomeScreen() {
                 <Text style={styles.heroBtnPrimaryText}>첫 화 보기</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.heroBtnSecondary} onPress={() => router.push(`/novel/${heroNovel.id}`)}>
-                <MaterialIcons name="add" size={20} color="#fff" />
+                <MaterialIcons name="favorite-border" size={18} color="#f0e6d3" />
+                <Text style={styles.heroBtnSecondaryText}>서재</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -187,11 +188,6 @@ export default function HomeScreen() {
               style={styles.genreChip}
               onPress={() => router.push({ pathname: "/search", params: { tag: label === "전체" ? "" : label } })}
             >
-              <MaterialIcons
-                name={label === "로맨스" ? "favorite" : label === "판타지" ? "flash-on" : "auto-awesome"}
-                size={15}
-                color={inkroadTheme.colors.textSecondary}
-              />
               <Text style={styles.genreLabel}>{label}</Text>
             </TouchableOpacity>
           ))}
@@ -252,11 +248,11 @@ const styles = StyleSheet.create({
   
   heroBadges: { flexDirection: "row", gap: 6, marginBottom: 10 },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, justifyContent: "center", alignItems: "center" },
-  badgeSale: { backgroundColor: inkroadTheme.colors.accentSale },
-  badgeGenre: { backgroundColor: "rgba(255,255,255,0.15)" },
-  badgeFree: { backgroundColor: inkroadTheme.colors.accentFree },
-  badgeText: { fontSize: 11, fontWeight: "700", color: "#fff", letterSpacing: 0.1 },
-  badgeTextLight: { fontSize: 11, fontWeight: "700", color: "rgba(255,255,255,0.92)", letterSpacing: 0.1 },
+  badgeSale: { backgroundColor: "rgba(212,168,67,0.18)", borderWidth: 1, borderColor: "rgba(212,168,67,0.45)" },
+  badgeGenre: { backgroundColor: "rgba(255,255,255,0.12)", borderWidth: 1, borderColor: "rgba(255,255,255,0.14)" },
+  badgeFree: { backgroundColor: "rgba(74,158,107,0.22)", borderWidth: 1, borderColor: "rgba(74,158,107,0.4)" },
+  badgeText: { fontSize: 11, fontWeight: "700", color: inkroadTheme.colors.inkGold, letterSpacing: 0.1 },
+  badgeTextLight: { fontSize: 11, fontWeight: "700", color: "rgba(255,255,255,0.85)", letterSpacing: 0.1 },
   
   heroTitle: { fontSize: 28, fontWeight: "900", color: "#fff", lineHeight: 32, letterSpacing: -1.1 },
   heroSubtitle: { marginTop: 6, fontSize: 14, color: "rgba(255,255,255,0.72)", lineHeight: 21 },
@@ -268,10 +264,11 @@ const styles = StyleSheet.create({
   heroActions: { flexDirection: "row", gap: 8, marginTop: 16 },
   heroBtnPrimary: { flex: 1, height: 46, flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: inkroadTheme.colors.primary, borderRadius: 12, gap: 6 },
   heroBtnPrimaryText: { color: "#0a0a0a", fontSize: 14, fontWeight: "800" },
-  heroBtnSecondary: { minWidth: 46, height: 46, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.14)", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.18)" },
-  
+  heroBtnSecondary: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5, paddingHorizontal: 16, height: 46, backgroundColor: "rgba(255,255,255,0.10)", borderRadius: 12, borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" },
+  heroBtnSecondaryText: { color: "#f0e6d3", fontSize: 13, fontWeight: "700" },
+
   genreRow: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8, gap: 8 },
-  genreChip: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: inkroadTheme.colors.surface, borderWidth: 1, borderColor: inkroadTheme.colors.border },
+  genreChip: { paddingHorizontal: 16, paddingVertical: 9, borderRadius: 20, backgroundColor: "rgba(255,255,255,0.05)", borderWidth: 1, borderColor: "rgba(191,169,122,0.18)" },
   genreLabel: { fontSize: 13, fontWeight: "600", color: inkroadTheme.colors.textSecondary },
   
   scrollRow: { paddingHorizontal: 20, gap: 12, paddingBottom: 4 },

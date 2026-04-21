@@ -52,6 +52,10 @@
     accessSelect: document.querySelector("[data-episode-access]"),
     priceWrap: document.querySelector("[data-episode-price-wrap]"),
     priceInput: document.querySelector("[data-episode-price]"),
+    scheduleModeSelect: document.querySelector("[data-episode-schedule-mode]"),
+    scheduleDateWrap: document.querySelector("[data-episode-schedule-date-wrap]"),
+    scheduleDateInput: document.querySelector("[data-episode-schedule-date]"),
+    ageRatingSelect: document.querySelector("[data-episode-age-rating]"),
     titleInput: document.querySelector("[data-episode-title]"),
     bodyInput: document.querySelector("[data-episode-body]"),
     editorContainer: document.querySelector("[data-editor-container]"),
@@ -1176,6 +1180,27 @@
       return;
     }
 
+    let isScheduled = false;
+    let scheduledAtStr = null;
+    if (refs.scheduleModeSelect && refs.scheduleModeSelect.value === "schedule") {
+      isScheduled = true;
+      if (!refs.scheduleDateInput || !refs.scheduleDateInput.value) {
+        setStatus("예약 발행 시점을 선택해주세요.", "error");
+        if (refs.scheduleDateInput) refs.scheduleDateInput.focus();
+        return;
+      }
+      const scheduledMs = new Date(refs.scheduleDateInput.value).getTime();
+      if (isNaN(scheduledMs) || scheduledMs <= Date.now()) {
+        setStatus("예약 시간은 현재 시간 이후여야 합니다.", "error");
+        return;
+      }
+      scheduledAtStr = new Date(refs.scheduleDateInput.value).toISOString();
+    }
+    
+    // 이 값들은 나중에 RPC 호출 파라미터로 넘길 수 있도록 변수로 준비해 둡니다.
+    const ageRating = refs.ageRatingSelect ? refs.ageRatingSelect.value : "all";
+
+
     const requestToken = {
       seq: ++state.submitRequestSeq,
       userId: session.user.id
@@ -1268,6 +1293,18 @@
 
     if (refs.accessSelect) {
       refs.accessSelect.addEventListener("change", togglePrice);
+    }
+
+    if (refs.scheduleModeSelect) {
+      refs.scheduleModeSelect.addEventListener("change", function () {
+        if (refs.scheduleModeSelect.value === "schedule") {
+          refs.scheduleDateWrap.hidden = false;
+          refs.scheduleDateInput.required = true;
+        } else {
+          refs.scheduleDateWrap.hidden = true;
+          refs.scheduleDateInput.required = false;
+        }
+      });
     }
 
     if (refs.form) {

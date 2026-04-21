@@ -68,13 +68,17 @@ export default function AuthorHomeScreen({
 
   const handleResumeDraft = async () => {
     if (onResumeDraft) { onResumeDraft(); return; }
-    const recentDraft = await authorRepository.getMostRecentDraft();
-    if (recentDraft?.novelId) {
-      const route = recentDraft.episodeId
-        ? `/author/episode/${recentDraft.novelId}?episodeId=${recentDraft.episodeId}`
-        : `/author/episode/${recentDraft.novelId}`;
-      router.push(route);
-      return;
+    try {
+      const recentDraft = await authorRepository.getMostRecentDraft();
+      if (recentDraft?.novelId) {
+        const route = recentDraft.episodeId
+          ? `/author/episode/${recentDraft.novelId}?episodeId=${recentDraft.episodeId}`
+          : `/author/episode/${recentDraft.novelId}`;
+        router.push(route);
+        return;
+      }
+    } catch {
+      // 초안 로드 실패 시 첫 작품으로 fallback
     }
     const fallbackWorkId = works[0]?.id;
     if (fallbackWorkId) router.push(`/author/episode/${fallbackWorkId}`);
@@ -193,7 +197,8 @@ export default function AuthorHomeScreen({
             style={styles.newWorkAction}
             onPress={() => Alert.alert("새 작품 등록", "작품 제목, 장르, 소개문을 입력하여 새 작품을 등록합니다.")}
           >
-            <MaterialIcons name="add" size={20} color={c.fg2} />
+            <MaterialIcons name="add" size={18} color={c.fg2} />
+            <Text style={styles.newWorkActionText}>새 작품</Text>
           </TouchableOpacity>
         </View>
 
@@ -336,7 +341,7 @@ function StatChip({ label, value, icon, accent, warn }: {
   icon: React.ComponentProps<typeof MaterialIcons>["name"];
   accent?: boolean; warn?: boolean;
 }) {
-  const valueColor = accent ? c.freeBright : warn ? c.inkGold : c.fg1;
+  const valueColor = accent ? c.inkGold : warn ? c.fg3 : c.fg1;
   return (
     <View style={styles.statChip}>
       <MaterialIcons name={icon} size={16} color={c.fg3} />
@@ -409,7 +414,8 @@ const styles = StyleSheet.create({
   primaryActionText: { fontSize: 15, fontWeight: "800", color: c.fgOnGold },
   secondaryAction: { flex: 1, height: 50, borderRadius: 14, borderWidth: 1, borderColor: c.borderWhite, backgroundColor: c.surface2, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6 },
   secondaryActionText: { fontSize: 14, fontWeight: "700", color: c.fg1 },
-  newWorkAction: { width: 50, height: 50, borderRadius: 14, borderWidth: 1, borderColor: c.borderWhite, backgroundColor: c.surface2, alignItems: "center", justifyContent: "center" },
+  newWorkAction: { height: 50, paddingHorizontal: 14, borderRadius: 14, borderWidth: 1, borderColor: c.borderWhite, backgroundColor: c.surface2, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 4 },
+  newWorkActionText: { fontSize: 12, fontWeight: "700", color: c.fg2 },
 
   // ── 15: Schedule card
   scheduleCard: {

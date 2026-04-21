@@ -81,7 +81,7 @@ export function NovelCard({ novel, variant = "grid", readProgress }: NovelCardPr
         </View>
         <View style={styles.listRight}>
           {hasSale ? (
-            <Text style={[styles.listBadgeText, { color: inkroadTheme.colors.accentSale }]}>-{novel.salePercent}%</Text>
+            <Text style={[styles.listBadgeText, { color: inkroadTheme.colors.inkGold }]}>-{novel.salePercent}%</Text>
           ) : (
             <Text style={[styles.listBadgeText, { color: inkroadTheme.colors.textMuted }]}>업데이트</Text>
           )}
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   priceSale: {
     fontSize: 12,
-    color: inkroadTheme.colors.accentSale,
+    color: inkroadTheme.colors.inkGold,
     fontWeight: "700",
   },
   priceNormal: {
@@ -199,12 +199,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 5,
-    backgroundColor: inkroadTheme.colors.accentSale,
+    backgroundColor: "rgba(212,168,67,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(212,168,67,0.55)",
   },
   scrollBadgeText: {
     fontSize: 10,
     fontWeight: "800",
-    color: "#fff",
+    color: inkroadTheme.colors.inkGold,
   },
   scrollTitle: {
     marginTop: 8,
@@ -240,12 +242,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 5,
-    backgroundColor: inkroadTheme.colors.accentSale,
+    backgroundColor: "rgba(212,168,67,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(212,168,67,0.55)",
   },
   gridBadgeSaleText: {
     fontSize: 10,
     fontWeight: "800",
-    color: "#fff",
+    color: inkroadTheme.colors.inkGold,
   },
   gridInfo: {
     paddingTop: 10,

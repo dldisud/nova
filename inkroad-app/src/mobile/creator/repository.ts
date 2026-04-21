@@ -234,8 +234,12 @@ function formatRelativeDue(value?: number) {
 }
 
 function formatSettlementDate() {
-  const base = new Date("2026-04-25T09:00:00+09:00");
-  return `${base.getMonth() + 1}월 ${base.getDate()}일`;
+  const now = new Date();
+  const settlement = new Date(now.getFullYear(), now.getMonth(), 25);
+  if (now.getDate() > 25) {
+    settlement.setMonth(settlement.getMonth() + 1);
+  }
+  return `${settlement.getMonth() + 1}월 ${settlement.getDate()}일`;
 }
 
 function inferDefaultWorkMeta(work: (typeof novels)[number]): AuthorWorkMeta {
@@ -660,7 +664,7 @@ export function createAuthorRepository(): AuthorRepository {
           episodeId,
           title: "",
           accessType: "free",
-          price: 100,
+          price: 0,
           body: "",
           workflowStep: "draft",
           publicationState: "draft",
@@ -692,7 +696,7 @@ export function createAuthorRepository(): AuthorRepository {
         episodeId,
         title: "",
         accessType: "free",
-        price: 100,
+        price: 0,
         body: "",
         workflowStep: "draft",
         episodeType: "episode",

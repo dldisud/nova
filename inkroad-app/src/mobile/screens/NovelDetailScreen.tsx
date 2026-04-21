@@ -108,7 +108,6 @@ export default function NovelDetailScreen() {
 
             {/* mobile-detail-info */}
             <View style={styles.detailInfo}>
-              <Text style={styles.kicker}>상세 작품 정보</Text>
               <Text style={styles.title}>{novel.title}</Text>
               <Text style={styles.subtitle}>{novel.author}</Text>
 
@@ -120,23 +119,10 @@ export default function NovelDetailScreen() {
                 ))}
               </View>
 
-              <View style={styles.metaGrid}>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>작가</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>{novel.author}</Text>
-                </View>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>상태</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>{statusMarkup}</Text>
-                </View>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>평점</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>★ {novel.rating.toFixed(1)}</Text>
-                </View>
-                <View style={styles.metaItem}>
-                  <Text style={styles.metaLabel}>출처</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>{novel.source}</Text>
-                </View>
+              <View style={styles.metaInlineRow}>
+                <Text style={styles.metaInlineValue}>{statusMarkup}</Text>
+                <Text style={styles.metaInlineSep}>·</Text>
+                <Text style={styles.metaInlineValue}>★ {novel.rating.toFixed(1)}</Text>
               </View>
 
               <View style={styles.priceRow}>
@@ -357,8 +343,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   saleBadge: {
-    backgroundColor: inkroadTheme.colors.accentSale,
-    color: "#fff",
+    backgroundColor: "rgba(212,168,67,0.18)",
+    color: inkroadTheme.colors.inkGold,
+    borderWidth: 1,
+    borderColor: "rgba(212,168,67,0.45)",
     paddingHorizontal: 8,
     paddingVertical: 5,
     borderRadius: 12,
@@ -367,6 +355,26 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   
+  // Meta Inline Row
+  metaInlineRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 16,
+    width: "100%",
+  },
+  metaInlineValue: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.8)",
+  },
+  metaInlineSep: {
+    fontSize: 13,
+    color: "rgba(255, 255, 255, 0.35)",
+  },
+
   // Meta Grid
   metaGrid: {
     flexDirection: "row",
@@ -454,12 +462,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statVal: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "800",
     color: inkroadTheme.colors.text,
   },
   statLab: {
-    fontSize: 10,
+    fontSize: 12,
     color: inkroadTheme.colors.textMuted,
     marginTop: 2,
   },

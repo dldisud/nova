@@ -38,6 +38,9 @@
         <a class="creator-nav-link" href="episode_upload_pc.html">
           <span class="material-symbols-outlined">upload</span> 회차 업로드
         </a>
+        <a class="creator-nav-link" href="format_studio_pc.html">
+          <span class="material-symbols-outlined">design_services</span> 연출 도우미
+        </a>
       </nav>
       <div class="creator-sidebar-footer">
         <div data-lang-picker></div>
@@ -96,6 +99,67 @@
             <span class="kpi-label">평균 연독률</span>
           </div>
         </article>
+      </div>
+
+      <!-- NEW: Revenue & Schedule Grid (Dummy) -->
+      <div class="dashboard-main-grid" style="margin-bottom: 24px;">
+        <section class="dashboard-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">
+              <span class="material-symbols-outlined">payments</span>
+              예상 수익 현황
+            </h2>
+            <button class="button ghost small">정산 신청</button>
+          </div>
+          <div style="padding: 24px 0; display:flex; flex-direction:column; gap: 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; padding-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <div style="color:var(--text-soft); font-size:0.9rem; margin-bottom:4px;">이번 달 예상 정산액</div>
+                <div style="font-size:2rem; font-weight:700; color:var(--text); font-family:'Noto Serif KR', serif;">0<span style="font-size:1rem; font-weight:400; color:var(--text-soft); margin-left:4px;">코인</span></div>
+              </div>
+              <div style="text-align:right;">
+                <div style="color:var(--text-soft); font-size:0.9rem; margin-bottom:4px;">지난 달 정산액</div>
+                <div style="font-size:1.2rem; font-weight:600; color:var(--text-faint);">0 코인</div>
+              </div>
+            </div>
+            <p style="color:var(--text-faint); font-size:0.85rem;">* 데이터 수집이 완료되면 일별 상세 그래프가 표시됩니다.</p>
+          </div>
+        </section>
+
+        <section class="dashboard-panel">
+          <div class="panel-head">
+            <h2 class="panel-title">
+              <span class="material-symbols-outlined">calendar_month</span>
+              연재 스케줄 요약
+            </h2>
+            <button class="button ghost small">회차 관리</button>
+          </div>
+          <div style="padding: 12px 0;">
+            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px;">
+              <li style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px;">
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <span style="font-size:0.95rem; font-weight:500;">제 10화. 예약된 폭풍</span>
+                  <span style="font-size:0.8rem; color:var(--text-soft);">어제 오후 6:00 공개됨</span>
+                </div>
+                <span class="status-pill" data-status="published">공개됨</span>
+              </li>
+              <li style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px;">
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <span style="font-size:0.95rem; font-weight:500;">제 11화. 어긋난 만남</span>
+                  <span style="font-size:0.8rem; color:var(--text-soft);">오늘 오후 6:00 발행 예정</span>
+                </div>
+                <span class="status-pill" style="background:rgba(255,197,95,0.15); color:rgba(255,197,95,1);">예약됨</span>
+              </li>
+              <li style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px;">
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <span style="font-size:0.95rem; font-weight:500;">제 12화. 금서의 목소리</span>
+                  <span style="font-size:0.8rem; color:var(--text-soft);">내일 오후 6:00 발행 예정</span>
+                </div>
+                <span class="status-pill" style="background:rgba(255,197,95,0.15); color:rgba(255,197,95,1);">예약됨</span>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
 
       <!-- Main Dashboard Grid -->

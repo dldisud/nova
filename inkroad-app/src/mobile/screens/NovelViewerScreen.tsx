@@ -62,7 +62,7 @@ export default function NovelViewerScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <View style={styles.topChrome}>
           <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
             <MaterialIcons name="arrow-back" size={24} color={inkroadTheme.colors.text} />
@@ -79,7 +79,7 @@ export default function NovelViewerScreen() {
 
   if (!novel || !currentEpisode) {
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <View style={styles.topChrome}>
           <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
             <MaterialIcons name="arrow-back" size={24} color={inkroadTheme.colors.text} />
@@ -111,28 +111,25 @@ export default function NovelViewerScreen() {
         </View>
       )}
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={() => setChromeVisible(false)}
+        onMomentumScrollEnd={() => setChromeVisible(true)}
       >
-        <TouchableOpacity 
-          activeOpacity={1} 
-          onPress={() => setChromeVisible(!chromeVisible)}
-        >
-          <View style={styles.titleBlock}>
-            <Text style={styles.episodeTitle}>{currentEpisode.title}</Text>
-            <Text style={styles.episodeMeta}>
-              {currentEpisode.number}화 · {currentEpisode.isFree ? "무료 회차" : `${currentEpisode.price}원`}
-            </Text>
-          </View>
-          <NovelFormatRenderer
-            body={currentEpisode.body}
-            episodeTitle={currentEpisode.title}
-            fontSize={18}
-            lineHeight={32}
-            textColor="rgba(255,255,255,0.85)"
-          />
-        </TouchableOpacity>
+        <View style={styles.titleBlock}>
+          <Text style={styles.episodeTitle}>{currentEpisode.title}</Text>
+          <Text style={styles.episodeMeta}>
+            {currentEpisode.number}화 · {currentEpisode.isFree ? "무료 회차" : `${currentEpisode.price}원`}
+          </Text>
+        </View>
+        <NovelFormatRenderer
+          body={currentEpisode.body}
+          episodeTitle={currentEpisode.title}
+          fontSize={18}
+          lineHeight={32}
+          textColor="rgba(255,255,255,0.85)"
+        />
       </ScrollView>
 
       {chromeVisible && (

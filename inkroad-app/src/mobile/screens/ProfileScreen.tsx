@@ -109,6 +109,7 @@ export default function ProfileScreen() {
   const [supportMessage, setSupportMessage] = useState("");
   const [supportStatus, setSupportStatus] = useState<string | null>(null);
   const [isSubmittingSupport, setIsSubmittingSupport] = useState(false);
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -205,6 +206,7 @@ export default function ProfileScreen() {
       setDisplayNameInput(updatedProfile.displayName);
       setMarketingOptIn(updatedProfile.marketingOptIn);
       setSaveMessage("프로필 설정이 저장되었습니다.");
+      setSettingsVisible(false);
     } catch (error) {
       setSaveError(
         error instanceof Error ? error.message : "프로필 설정을 저장하지 못했습니다."
@@ -332,7 +334,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.shell}>
         <SafeAreaView edges={["top"]} />
-        <AppHeader title="MY" showBack />
+        <AppHeader title="MY" />
         <View style={styles.center}>
           <Text style={styles.helperText}>계정 정보를 불러오는 중입니다...</Text>
         </View>
@@ -344,7 +346,7 @@ export default function ProfileScreen() {
     return (
       <View style={styles.shell}>
         <SafeAreaView edges={["top"]} />
-        <AppHeader title="MY" showBack />
+        <AppHeader title="MY" />
         <View style={styles.center}>
           <Text style={styles.emptyTitle}>로그인이 필요해요</Text>
           <Text style={styles.helperText}>
@@ -364,12 +366,12 @@ export default function ProfileScreen() {
   return (
     <View style={styles.shell}>
       <SafeAreaView edges={["top"]} />
-      <AppHeader title="MY" showBack onBackPress={() => router.back()} />
+      <AppHeader title="MY" />
 
       <ScrollView contentContainerStyle={styles.content}>
 
         {/* Profile card */}
-        <TouchableOpacity activeOpacity={0.8} style={styles.profileCard}>
+        <TouchableOpacity activeOpacity={0.8} style={styles.profileCard} onPress={() => setSettingsVisible(true)}>
           {avatarUrl ? (
             <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
           ) : (
@@ -399,65 +401,13 @@ export default function ProfileScreen() {
             </View>
           </View>
           <View style={styles.coinRow}>
-            <Text style={styles.coinNote}>
-              {errorMessage ?? "서재 활동은 계정에 연결된 Supabase 데이터 기준으로 집계됩니다."}
-            </Text>
+            {errorMessage ? (
+              <Text style={styles.coinNote}>{errorMessage}</Text>
+            ) : null}
             <TouchableOpacity style={styles.chargeBtn} onPress={() => router.push("/library")}>
               <Text style={styles.chargeBtnText}>서재 보기</Text>
             </TouchableOpacity>
           </View>
-        </View>
-
-        <View style={styles.settingsCard}>
-          <Text style={styles.settingsTitle}>프로필 설정</Text>
-
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>닉네임</Text>
-            <TextInput
-              value={displayNameInput}
-              onChangeText={setDisplayNameInput}
-              placeholder="닉네임을 입력해 주세요"
-              placeholderTextColor={c.fg3}
-              style={styles.textInput}
-              maxLength={20}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-
-          <View style={styles.switchRow}>
-            <View style={styles.switchCopy}>
-              <Text style={styles.fieldLabel}>마케팅 알림 수신</Text>
-              <Text style={styles.helperInline}>이벤트와 프로모션 소식을 받아봅니다.</Text>
-            </View>
-            <Switch value={marketingOptIn} onValueChange={setMarketingOptIn} />
-          </View>
-
-          {(saveMessage || saveError) && (
-            <Text style={saveError ? styles.errorText : styles.successText}>
-              {saveError ?? saveMessage}
-            </Text>
-          )}
-
-          <TouchableOpacity
-            style={[styles.btnPrimary, isSavingProfile && styles.btnDisabled]}
-            onPress={handleSaveProfile}
-            disabled={isSavingProfile}
-          >
-            <Text style={styles.btnPrimaryText}>
-              {isSavingProfile ? "저장 중..." : "저장하기"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.secondaryAction, isUploadingAvatar && styles.btnDisabled]}
-            onPress={handlePickAvatar}
-            disabled={isUploadingAvatar}
-          >
-            <Text style={styles.secondaryActionText}>
-              {isUploadingAvatar ? "업로드 중..." : "아바타 변경"}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Menu list */}
@@ -488,6 +438,67 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* 프로필 설정 Modal */}
+        <Modal visible={settingsVisible} animationType="slide" transparent>
+          <View style={styles.modalScrim}>
+            <View style={styles.modalCard}>
+              <Text style={styles.settingsTitle}>프로필 설정</Text>
+
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>닉네임</Text>
+                <TextInput
+                  value={displayNameInput}
+                  onChangeText={setDisplayNameInput}
+                  placeholder="닉네임을 입력해 주세요"
+                  placeholderTextColor={c.fg3}
+                  style={styles.textInput}
+                  maxLength={20}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              <View style={styles.switchRow}>
+                <View style={styles.switchCopy}>
+                  <Text style={styles.fieldLabel}>마케팅 알림 수신</Text>
+                  <Text style={styles.helperInline}>이벤트와 프로모션 소식을 받아봅니다.</Text>
+                </View>
+                <Switch value={marketingOptIn} onValueChange={setMarketingOptIn} />
+              </View>
+
+              {(saveMessage || saveError) && (
+                <Text style={saveError ? styles.errorText : styles.successText}>
+                  {saveError ?? saveMessage}
+                </Text>
+              )}
+
+              <TouchableOpacity
+                style={[styles.btnPrimary, isSavingProfile && styles.btnDisabled]}
+                onPress={handleSaveProfile}
+                disabled={isSavingProfile}
+              >
+                <Text style={styles.btnPrimaryText}>
+                  {isSavingProfile ? "저장 중..." : "저장하기"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.secondaryAction, isUploadingAvatar && styles.btnDisabled]}
+                onPress={handlePickAvatar}
+                disabled={isUploadingAvatar}
+              >
+                <Text style={styles.secondaryActionText}>
+                  {isUploadingAvatar ? "업로드 중..." : "아바타 변경"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.secondaryAction} onPress={() => setSettingsVisible(false)}>
+                <Text style={styles.secondaryActionText}>닫기</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
         <Modal visible={supportVisible} animationType="slide" transparent>
           <View style={styles.modalScrim}>
@@ -646,7 +657,7 @@ const styles = StyleSheet.create({
   coinRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     marginTop: 8,
     gap: 12,
   },

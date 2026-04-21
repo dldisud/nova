@@ -35,6 +35,9 @@
         <a class="creator-nav-link active" href="episode_upload_pc.html">
           <span class="material-symbols-outlined">edit_square</span> 회차 작성
         </a>
+        <a class="creator-nav-link" href="format_studio_pc.html">
+          <span class="material-symbols-outlined">design_services</span> 연출 도우미
+        </a>
       </nav>
       <div class="creator-sidebar-footer">
         <div data-lang-picker></div>
@@ -83,6 +86,32 @@
               <label class="upload-field" data-episode-price-wrap hidden>
                 <span>회차 가격</span>
                 <input type="number" min="0" step="10" value="100" data-episode-price placeholder="100">
+              </label>
+            </div>
+
+            <div class="upload-meta-grid">
+              <label class="upload-field">
+                <span>발행 방식</span>
+                <select data-episode-schedule-mode>
+                  <option value="now">즉시 발행</option>
+                  <option value="schedule">예약 발행</option>
+                </select>
+              </label>
+              <label class="upload-field" data-episode-schedule-date-wrap hidden>
+                <span>예약 일시</span>
+                <input type="datetime-local" data-episode-schedule-date>
+                <span class="creator-field-hint" style="margin-top:0.25rem;">설정한 시간에 회차가 공개됩니다.</span>
+              </label>
+            </div>
+            
+            <div class="upload-meta-grid">
+              <label class="upload-field">
+                <span>연령 등급</span>
+                <select data-episode-age-rating>
+                  <option value="all">전체 이용가</option>
+                  <option value="15">15세 이용가</option>
+                  <option value="19">19세 이용가 (성인)</option>
+                </select>
               </label>
             </div>
 

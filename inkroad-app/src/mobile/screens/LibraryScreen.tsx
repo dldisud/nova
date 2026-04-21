@@ -253,17 +253,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, 
     justifyContent: "center",
   },
-  filterChipActive: { 
-    backgroundColor: inkroadTheme.colors.primary, 
-    borderColor: inkroadTheme.colors.primary 
+  filterChipActive: {
+    backgroundColor: "rgba(212,168,67,0.16)",
+    borderColor: "rgba(212,168,67,0.5)",
   },
-  filterChipText: { 
-    color: inkroadTheme.colors.textMuted, 
+  filterChipText: {
+    color: inkroadTheme.colors.textMuted,
     fontSize: 14,
-    fontWeight: "600" 
+    fontWeight: "600"
   },
-  filterChipTextActive: { 
-    color: "#0a0a0a" 
+  filterChipTextActive: {
+    color: inkroadTheme.colors.inkGold,
+    fontWeight: "700",
   },
 
   storePanel: {

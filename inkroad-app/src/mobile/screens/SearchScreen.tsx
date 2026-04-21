@@ -1,7 +1,6 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { AppHeader } from "../components/AppHeader";
@@ -81,14 +80,18 @@ export default function SearchScreen() {
         
         {/* .mobile-search-input */}
         <View style={styles.searchInputWrap}>
-          <MaterialIcons name="search" size={24} color={inkroadTheme.colors.textMuted} />
           <TextInput
             style={styles.searchInput}
-            placeholder="작품명, 저자, 태그 검색.."
+            placeholder="어떤 이야기를 찾고 계세요?"
             placeholderTextColor={inkroadTheme.colors.textMuted}
             value={query}
             onChangeText={setQuery}
           />
+          {query.length > 0 && (
+            <TouchableOpacity onPress={() => setQuery("")} style={styles.clearBtn}>
+              <Text style={styles.clearBtnText}>✕</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* .mobile-chip-scroll */}
@@ -114,23 +117,17 @@ export default function SearchScreen() {
 
         {/* .mobile-filter-row */}
         <View style={styles.filterRow}>
-          {["출처", "상태", "정렬"].map((label) => (
-            <TouchableOpacity key={label} style={styles.filterBtn} onPress={() => Alert.alert(label, "해당 필터는 준비 중입니다.")}>
-              <Text style={styles.filterBtnText}>{label}</Text>
-              <MaterialIcons name="arrow-drop-down" size={18} color={inkroadTheme.colors.textMuted} />
-            </TouchableOpacity>
-          ))}
+          <Text style={styles.filterBtnText}>
+            {selectedTag === "전체" ? "전체 장르" : selectedTag}
+            {query ? `  ·  "${query}"` : ""}
+          </Text>
+          <Text style={styles.resultCount}>
+            {filteredNovels.length}편
+          </Text>
         </View>
 
         {/* .mobile-store-panel.mobile-search-panel */}
         <View style={styles.storePanel}>
-          <View style={styles.panelHead}>
-            <Text style={styles.panelTitle}>작품 목록</Text>
-            <Text style={styles.resultCount}>
-              {isLoading ? "..." : `${filteredNovels.length}개`}
-            </Text>
-          </View>
-
           {isLoading ? (
             <Text style={styles.statusText}>작품을 불러오는 중입니다.</Text>
           ) : errorMessage ? (
@@ -160,77 +157,74 @@ const styles = StyleSheet.create({
   },
   
   // .mobile-search-input
-  searchInputWrap: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    gap: 10, 
-    backgroundColor: "rgba(255, 255, 255, 0.05)", 
-    borderWidth: 1, 
-    borderColor: "rgba(255, 255, 255, 0.08)", 
-    borderRadius: inkroadTheme.radius.md, // 14px
+  searchInputWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderWidth: 1,
+    borderColor: "rgba(191,169,122,0.15)",
+    borderRadius: inkroadTheme.radius.md,
     height: 50,
-    paddingHorizontal: 16,
-    marginBottom: 24,
+    paddingHorizontal: 18,
+    marginBottom: 20,
   },
-  searchInput: { 
-    flex: 1, 
-    fontSize: 15, 
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
     color: inkroadTheme.colors.text,
+  },
+  clearBtn: {
+    padding: 4,
+  },
+  clearBtnText: {
+    fontSize: 14,
+    color: inkroadTheme.colors.textMuted,
   },
 
   // .mobile-chip-scroll
   chipScrollWrap: {
     marginHorizontal: -inkroadTheme.spacing.md,
-    marginBottom: 24,
+    marginBottom: 16,
   },
-  chipScroll: { 
+  chipScroll: {
     paddingHorizontal: inkroadTheme.spacing.md,
-    gap: 8, 
+    gap: 8,
   },
-  filterChip: { 
-    height: 38,
-    borderRadius: 19, 
-    borderWidth: 1, 
-    borderColor: "rgba(255, 255, 255, 0.08)", 
-    backgroundColor: "rgba(255, 255, 255, 0.05)", 
-    paddingHorizontal: 16, 
+  filterChip: {
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(191,169,122,0.18)",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    paddingHorizontal: 16,
     justifyContent: "center",
   },
-  filterChipActive: { 
-    backgroundColor: inkroadTheme.colors.primary, 
-    borderColor: inkroadTheme.colors.primary 
+  filterChipActive: {
+    backgroundColor: "rgba(212,168,67,0.16)",
+    borderColor: "rgba(212,168,67,0.5)",
   },
-  filterChipText: { 
-    color: inkroadTheme.colors.textMuted, 
-    fontSize: 14,
-    fontWeight: "600" 
+  filterChipText: {
+    color: inkroadTheme.colors.textMuted,
+    fontSize: 13,
+    fontWeight: "600"
   },
-  filterChipTextActive: { 
-    color: "#0a0a0a" // dark bg text for primary active state
+  filterChipTextActive: {
+    color: inkroadTheme.colors.inkGold,
+    fontWeight: "700",
   },
 
   // .mobile-filter-row
-  filterRow: { 
-    flexDirection: "row", 
-    gap: 8,
-    marginBottom: 24,
+  filterRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingHorizontal: 2,
   },
-  filterBtn: { 
-    flex: 1, 
-    flexDirection: "row", 
-    justifyContent: "center", 
-    alignItems: "center", 
-    gap: 4, 
-    backgroundColor: "rgba(255, 255, 255, 0.03)", 
-    borderWidth: 1, 
-    borderColor: "rgba(255, 255, 255, 0.08)", 
-    borderRadius: inkroadTheme.radius.sm, // 10px
-    height: 42,
-  },
-  filterBtnText: { 
+  filterBtnText: {
     fontSize: 13,
-    fontWeight: "700", 
-    color: inkroadTheme.colors.text 
+    fontWeight: "700",
+    color: inkroadTheme.colors.textSecondary,
   },
 
   // .mobile-store-panel
